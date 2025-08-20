@@ -1,0 +1,109 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+<changeSet id="001" author="pozharov-an@activebt.ru">
+    <createTable tableName="addresses">
+        <column name="id" type="bigserial" remarks="Сгенерированный ID">
+            <constraints primaryKey="true" unique="true"/>
+        </column>
+        <column name="country" type="varchar(128)" remarks="Страна">
+            <constraints nullable="false"/>
+        </column>
+        <column name="city" type="varchar(128)" remarks="Город">
+            <constraints nullable="false"/>
+        </column>
+        <column name="street" type="varchar(128)" remarks="Улица">
+            <constraints nullable="false"/>
+        </column>
+        <column name="house" type="varchar(50)" remarks="Дом">
+            <constraints nullable="false"/>
+        </column>
+        <column name="apartment" type="varchar(50)" defaultValue="N/A" remarks="Номер квартиры"/>
+    </createTable>
+
+    <addUniqueConstraint tableName="addresses"
+                         columnNames="country, city, street, house, apartment"
+                         constraintName="uq_address"
+                         deferrable="true"/>
+
+    <createTable tableName="debtors">
+        <column name="id" type="bigserial" remarks="Сгенерированный ID">
+            <constraints primaryKey="true" unique="true"/>
+        </column>
+        <column name="firstname" type="varchar(128)" remarks="Имя должника">
+            <constraints nullable="false"/>
+        </column>
+        <column name="lastname" type="varchar(128)" remarks="Фамилия должника">
+            <constraints nullable="false"/>
+        </column>
+        <column name="patronymic" type="varchar(128)" remarks="Отчество должника">
+            <constraints nullable="false"/>
+        </column>
+        <column name="passport_number" type="varchar(128)" remarks="Серия и номер паспорта должника">
+            <constraints nullable="false" unique="true"/>
+        </column>
+        <column name="address_id" type="bigint" remarks="Id адреса из таблицы адресов">
+            <constraints nullable="false"
+                         foreignKeyName="fk_debtors_address_id"
+                         referencedTableName="addresses"
+                         referencedColumnNames="id"/>
+        </column>
+        <column name="birthday" type="date" remarks="Дата рождения должника">
+            <constraints nullable="false"/>
+        </column>
+        <column name="gender" type="varchar(10)" defaultValue="unknown" remarks="Пол должника">
+          <constraints nullable="true"/>
+        </column>
+        <column name="phone_number" type="varchar(20)" defaultValue="N/A" remarks="Номер телефона должника">
+        </column>
+    </createTable>
+    
+    <sql>
+        ALTER TABLE debtors
+        ADD CONSTRAINT chk_phone_number_format
+        CHECK (phone_number = 'N/A' OR phone_number ~ '^(\+7|7|8)?[0-9\s\-\(\)]{10,15}$');
+    </sql>
+    
+    <createTable tableName="agreements">
+        <column name="id" type="bigserial" remarks="Сгенерированный ID договора займа">
+            <constraints primaryKey="true" unique="true"/>
+        </column>
+        <column name="original_debt_sum" type="numeric(15, 2)" remarks="Сумма долга по договору">
+            <constraints nullable="false" checkConstraint="original_debt_sum &gt;= 0"/>
+        </column>
+        <column name="actual_debt_sum" type="numeric(15, 2)" remarks="Текущий остаток задолженности по договору">
+            <constraints nullable="false" checkConstraint="actual_debt_sum &lt;= original_debt_sum AND
+            actual_debt_sum >= 0"/>
+        </column>
+        <column name="agreement_start_date" type="date" remarks="Дата подписания договора">
+            <constraints nullable="false" checkConstraint="agreement_start_date &lt;= CURRENT_DATE"/>
+        </column>
+        <column name="transferor" type="varchar(128)" remarks="Название банка-кредитора">
+            <constraints nullable="false"/>
+        </column>
+    </createTable>
+
+    <createTable tableName="debtors_agreements">
+        <column name="id" type="bigserial" remarks="Сгенерированный ID связи заемщика и договора">
+            <constraints primaryKey="true" unique="true"/>
+        </column>
+        <column name="debtor_id" type="bigint" remarks="ID заемщика">
+            <constraints nullable="false"
+                         foreignKeyName="fk_debtors_agreements_debtor_id"
+                         referencedTableName="debtors"
+                         referencedColumnNames="id"/>
+        </column>
+        <column name="agreement_id" type="bigint" remarks="ID договора займа">
+            <constraints nullable="false"
+                         foreignKeyName="fk_debtors_agreements_agreement_id"
+                         referencedTableName="agreements"
+                         referencedColumnNames="id"/>
+        </column>
+        <column name="debtor_type" type="varchar(20)" remarks="Роль заемщика в договоре займа">
+            <constraints nullable="false" checkConstraint="debtor_type IN ('co-debtor', 'single debtor')"/>
+        </column>
+    </createTable>
+</changeSet>
+</databaseChangeLog>

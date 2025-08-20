@@ -108,16 +108,18 @@
 				<artifactId>liquibase-maven-plugin</artifactId>
 				<version>${liquibase.version}</version>
 				<configuration>
+					<propertyFile>config/database/liquibase.properties</propertyFile>
+					<propertyFileWillOverride>true</propertyFileWillOverride>
 					<changeLogFile>db/changelog/db.changelog-master.xml</changeLogFile>
 				</configuration>
 				<dependencies>
 					<dependency>
 						<groupId>org.postgresql</groupId>
 						<artifactId>postgresql</artifactId>
+						<version>${postgresql.version}</version>
 					</dependency>
 				</dependencies>
 			</plugin>
 		</plugins>
 	</build>
-
 </project>
