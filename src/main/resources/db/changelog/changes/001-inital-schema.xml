@@ -106,4 +106,31 @@
         </column>
     </createTable>
 </changeSet>
+
+<changeSet id="002" author="pozharov-an@activebt.ru">
+    <createIndex tableName="debtors" indexName="i_debtors_address_id">
+        <column name="address_id"/>
+    </createIndex>
+
+    <createIndex tableName="debtors" indexName="i_debtors_firstname_lastname">
+        <column name="firstname"/>
+        <column name="lastname"/>
+    </createIndex>
+
+    <createIndex tableName="debtors" indexName="i_debtors_passport_number">
+        <column name="passport_number"/>
+    </createIndex>
+
+    <createIndex tableName="agreements" indexName="i_agreements_transferor">
+        <column name="transferor"/>
+    </createIndex>
+
+    <createIndex tableName="debtors_agreements" indexName="i_debtors_agreements_debtor_id">
+        <column name="debtor_id"/>
+    </createIndex>
+
+    <createIndex tableName="debtors_agreements" indexName="i_debtors_agreements_agreement_id">
+        <column name="agreement_id"/>
+    </createIndex>
+</changeSet>
 </databaseChangeLog>
