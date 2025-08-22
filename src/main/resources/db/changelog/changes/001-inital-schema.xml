@@ -133,4 +133,26 @@
         <column name="agreement_id"/>
     </createIndex>
 </changeSet>
+
+<changeSet id="003" author="pozharov-an@activebt.r">
+    <dropIndex tableName="debtors" indexName="i_debtors_address_id"/>
+</changeSet>
+
+<changeSet id="004" author="pozharov-an@activebt.ru">
+        <sql>
+            <![CDATA[
+            ALTER TABLE agreements
+            ADD CONSTRAINT chk_agreements_original_debt_sum
+            CHECK (original_debt_sum >= 0);
+
+            ALTER TABLE agreements
+            ADD CONSTRAINT chk_agreements_actual_debt_sum
+            CHECK (actual_debt_sum <= original_debt_sum AND actual_debt_sum >= 0);
+
+            ALTER TABLE agreements
+            ADD CONSTRAINT chk_agreements_start_date
+            CHECK (agreement_start_date <= CURRENT_DATE);
+            ]]>
+        </sql>
+</changeSet>
 </databaseChangeLog>
