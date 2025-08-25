@@ -1,0 +1,13 @@
+package dto;
+
+import model.Debtor;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.List;
+
+public record RequestAgreementDTO(BigDecimal originalDebtSum,
+                                  BigDecimal actualDebtSum,
+                                  LocalDate agreementStartDate,
+                                  String transferor,
+                                  List<RequestDebtorDTO> debtors) { }
