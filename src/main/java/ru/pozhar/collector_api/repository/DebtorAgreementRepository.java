@@ -1,6 +1,6 @@
-package repository;
+package ru.pozhar.collector_api.repository;
 
-import model.DebtorAgreement;
+import ru.pozhar.collector_api.model.DebtorAgreement;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

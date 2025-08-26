@@ -1,6 +1,4 @@
-package dto;
-
-import model.Debtor;
+package ru.pozhar.collector_api.dto;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

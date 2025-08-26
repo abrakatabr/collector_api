@@ -1,8 +1,8 @@
-package mapper;
+package ru.pozhar.collector_api.mapper;
 
-import dto.RequestAgreementDTO;
-import model.Agreement;
-import model.DebtorAgreement;
+import ru.pozhar.collector_api.dto.RequestAgreementDTO;
+import ru.pozhar.collector_api.model.Agreement;
+import ru.pozhar.collector_api.model.DebtorAgreement;
 import org.mapstruct.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 

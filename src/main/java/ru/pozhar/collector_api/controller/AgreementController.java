@@ -1,19 +1,15 @@
-package controller;
+package ru.pozhar.collector_api.controller;
 
-import dto.RequestAgreementDTO;
-import dto.ResponseAgreementDTO;
+import ru.pozhar.collector_api.dto.RequestAgreementDTO;
+import ru.pozhar.collector_api.dto.ResponseAgreementDTO;
 import lombok.RequiredArgsConstructor;
-import model.Address;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import service.AgreementService;
+import org.springframework.web.bind.annotation.*;
+import ru.pozhar.collector_api.service.AgreementService;
 
 @RestController
-@RequestMapping("/api/agreement")
+@RequestMapping("/api/agreements")
 @RequiredArgsConstructor
 public class AgreementController {
     private final AgreementService agreementService;

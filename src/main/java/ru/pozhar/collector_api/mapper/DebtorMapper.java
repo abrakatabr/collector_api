@@ -1,12 +1,10 @@
-package mapper;
+package ru.pozhar.collector_api.mapper;
 
-import dto.RequestDebtorDTO;
-import dto.ResponseAddressDTO;
-import dto.ResponseDebtorDTO;
-import model.Debtor;
+import ru.pozhar.collector_api.dto.RequestDebtorDTO;
+import ru.pozhar.collector_api.dto.ResponseAddressDTO;
+import ru.pozhar.collector_api.dto.ResponseDebtorDTO;
+import ru.pozhar.collector_api.model.Debtor;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;

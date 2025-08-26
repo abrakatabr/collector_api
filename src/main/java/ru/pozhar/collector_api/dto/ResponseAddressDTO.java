@@ -1,4 +1,4 @@
-package dto;
+package ru.pozhar.collector_api.dto;
 
 public record ResponseAddressDTO(Long id,
                                  String country,

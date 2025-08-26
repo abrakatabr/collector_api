@@ -1,4 +1,4 @@
-package dto;
+package ru.pozhar.collector_api.dto;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

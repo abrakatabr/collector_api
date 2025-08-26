@@ -1,4 +1,4 @@
-package model;
+package ru.pozhar.collector_api.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;

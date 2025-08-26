@@ -1,7 +1,6 @@
-package dto;
+package ru.pozhar.collector_api.dto;
 
-import model.Address;
-import model.Gender;
+import ru.pozhar.collector_api.model.Gender;
 
 import java.time.LocalDate;
 

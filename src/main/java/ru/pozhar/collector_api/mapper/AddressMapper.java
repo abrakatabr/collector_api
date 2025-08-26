@@ -1,8 +1,8 @@
-package mapper;
+package ru.pozhar.collector_api.mapper;
 
-import dto.RequestAddressDTO;
-import dto.ResponseAddressDTO;
-import model.Address;
+import ru.pozhar.collector_api.dto.RequestAddressDTO;
+import ru.pozhar.collector_api.dto.ResponseAddressDTO;
+import ru.pozhar.collector_api.model.Address;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
