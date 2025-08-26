@@ -41,15 +41,6 @@
         <column name="patronymic" type="varchar(128)" remarks="Отчество должника">
             <constraints nullable="false"/>
         </column>
-        <column name="passport_number" type="varchar(128)" remarks="Серия и номер паспорта должника">
-            <constraints nullable="false" unique="true"/>
-        </column>
-        <column name="address_id" type="bigint" remarks="Id адреса из таблицы адресов">
-            <constraints nullable="false"
-                         foreignKeyName="fk_debtors_address_id"
-                         referencedTableName="addresses"
-                         referencedColumnNames="id"/>
-        </column>
         <column name="birthday" type="date" remarks="Дата рождения должника">
             <constraints nullable="false"/>
         </column>
@@ -71,19 +62,70 @@
             <constraints primaryKey="true" unique="true"/>
         </column>
         <column name="original_debt_sum" type="numeric(15, 2)" remarks="Сумма долга по договору">
-            <constraints nullable="false" checkConstraint="original_debt_sum &gt;= 0"/>
+            <constraints nullable="false"/>
         </column>
         <column name="actual_debt_sum" type="numeric(15, 2)" remarks="Текущий остаток задолженности по договору">
-            <constraints nullable="false" checkConstraint="actual_debt_sum &lt;= original_debt_sum AND
-            actual_debt_sum >= 0"/>
+            <constraints nullable="false"/>
         </column>
         <column name="agreement_start_date" type="date" remarks="Дата подписания договора">
-            <constraints nullable="false" checkConstraint="agreement_start_date &lt;= CURRENT_DATE"/>
+            <constraints nullable="false"/>
         </column>
         <column name="transferor" type="varchar(128)" remarks="Название банка-кредитора">
             <constraints nullable="false"/>
         </column>
+        <column name="status" type="varchar(20)" remarks="Статус договора">
+            <constraints nullable="false" checkConstraint="status IN ('active', 'paid', 'deleted')"/>
+        </column>
     </createTable>
+
+    <sql>
+        <![CDATA[
+            ALTER TABLE agreements
+            ADD CONSTRAINT chk_agreements_original_debt_sum
+            CHECK (original_debt_sum >= 0);
+
+            ALTER TABLE agreements
+            ADD CONSTRAINT chk_agreements_actual_debt_sum
+            CHECK (actual_debt_sum <= original_debt_sum AND actual_debt_sum >= 0);
+
+            ALTER TABLE agreements
+            ADD CONSTRAINT chk_agreements_start_date
+            CHECK (agreement_start_date <= CURRENT_DATE);
+            ]]>
+    </sql>
+
+    <createTable tableName="documents">
+        <column name="id" type="bigserial" remarks="Сгенерированный ID набора документов">
+            <constraints primaryKey="true" unique="true"/>
+        </column>
+        <column name="passport_number" type="varchar(20)" remarks="Серия и номер паспорта">
+            <constraints nullable="false" unique="true"/>
+        </column>
+        <column name="inn" type="varchar(20)" remarks="Номер ИНН">
+            <constraints nullable="true" unique="true"/>
+        </column>
+        <column name="snils" type="varchar(20)" remarks="Номер СНИЛС">
+            <constraints nullable="true" unique="true"/>
+        </column>
+    </createTable>
+
+    <sql>
+        ALTER TABLE documents
+        ADD CONSTRAINT chk_passport_number
+        CHECK (passport_number ~ '^\d{10}$');
+    </sql>
+
+    <sql>
+        ALTER TABLE documents
+        ADD CONSTRAINT chk_inn
+        CHECK (inn ~ '^\d{12}$');
+    </sql>
+
+    <sql>
+        ALTER TABLE documents
+        ADD CONSTRAINT chk_snils
+        CHECK (snils ~ '^\d{11}$');
+    </sql>
 
     <createTable tableName="debtors_agreements">
         <column name="id" type="bigserial" remarks="Сгенерированный ID связи заемщика и договора">
@@ -101,28 +143,46 @@
                          referencedTableName="agreements"
                          referencedColumnNames="id"/>
         </column>
-        <column name="debtor_type" type="varchar(20)" remarks="Роль заемщика в договоре займа">
-            <constraints nullable="false" checkConstraint="debtor_type IN ('co-debtor', 'single debtor')"/>
+        <column name="role" type="varchar(20)" remarks="Роль заемщика в договоре займа">
+            <constraints nullable="false"
+                         checkConstraint="debtor_type IN ('co-debtor', 'single debtor', 'guarantor', 'charger')"/>
+        </column>
+    </createTable>
+
+    <createTable tableName="debtors_documents">
+        <column name="id" type="bigserial" remarks="Сгенерированный ID связи заемщика и документов">
+            <constraints primaryKey="true" unique="true"/>
+        </column>
+        <column name="debtor_id" type="bigint" remarks="ID заемщика из таблицы заемщиков">
+            <constraints nullable="false"
+                         unique="true"
+                         foreignKeyName="fk_debtors_documents_debtor_id"
+                         referencedTableName="debtors"
+                         referencedColumnNames="id"/>
+        </column>
+        <column name="documents_id" type="bigint" remarks="ID набора документов из таблицы наборов документов">
+            <constraints nullable="false"
+                         unique="true"
+                         foreignKeyName="fk_debtors_documents_documents_id"
+                         referencedTableName="documents"
+                         referencedColumnNames="id"/>
         </column>
     </createTable>
 </changeSet>
 
 <changeSet id="002" author="pozharov-an@activebt.ru">
-    <createIndex tableName="debtors" indexName="i_debtors_address_id">
-        <column name="address_id"/>
-    </createIndex>
 
     <createIndex tableName="debtors" indexName="i_debtors_firstname_lastname">
         <column name="firstname"/>
         <column name="lastname"/>
     </createIndex>
 
-    <createIndex tableName="debtors" indexName="i_debtors_passport_number">
-        <column name="passport_number"/>
-    </createIndex>
-
     <createIndex tableName="agreements" indexName="i_agreements_transferor">
         <column name="transferor"/>
+    </createIndex>
+
+    <createIndex tableName="documents" indexName="i_documents_passport_number">
+        <column name="passport_number"/>
     </createIndex>
 
     <createIndex tableName="debtors_agreements" indexName="i_debtors_agreements_debtor_id">
@@ -132,27 +192,15 @@
     <createIndex tableName="debtors_agreements" indexName="i_debtors_agreements_agreement_id">
         <column name="agreement_id"/>
     </createIndex>
+
+    <createIndex tableName="debtors_documents" indexName="i_debtors_documents_debtor_id">
+        <column name="debtor_id"></column>
+    </createIndex>
+
+    <createIndex tableName="debtors_documents" indexName="i_debtors_documents_documents_id">
+        <column name="documents_id"></column>
+    </createIndex>
+
 </changeSet>
 
-<changeSet id="003" author="pozharov-an@activebt.r">
-    <dropIndex tableName="debtors" indexName="i_debtors_address_id"/>
-</changeSet>
-
-<changeSet id="004" author="pozharov-an@activebt.ru">
-        <sql>
-            <![CDATA[
-            ALTER TABLE agreements
-            ADD CONSTRAINT chk_agreements_original_debt_sum
-            CHECK (original_debt_sum >= 0);
-
-            ALTER TABLE agreements
-            ADD CONSTRAINT chk_agreements_actual_debt_sum
-            CHECK (actual_debt_sum <= original_debt_sum AND actual_debt_sum >= 0);
-
-            ALTER TABLE agreements
-            ADD CONSTRAINT chk_agreements_start_date
-            CHECK (agreement_start_date <= CURRENT_DATE);
-            ]]>
-        </sql>
-</changeSet>
 </databaseChangeLog>
