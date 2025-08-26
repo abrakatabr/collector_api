@@ -55,9 +55,9 @@ public class SimpleAddressService implements AddressService {
                 address.getCity(),
                 address.getStreet(),
                 address.getHouse(),
-                address.getHouse()
+                address.getApartment()
         );
-        Address findAddress = optionalAddress.orElse(addressRepository.save(address));
+        Address findAddress = optionalAddress.isPresent() ? optionalAddress.get() : addressRepository.save(address);
         return findAddress;
     }
 }
