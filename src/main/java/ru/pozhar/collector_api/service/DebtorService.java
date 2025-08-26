@@ -10,5 +10,5 @@ import java.util.List;
 
 @Service
 public interface DebtorService {
-    List<ResponseDebtorDTO> createDebtors(List<RequestDebtorDTO> requestDebtorDTOList);
+    List<Debtor> initDebtors(List<RequestDebtorDTO> debtors);
 }

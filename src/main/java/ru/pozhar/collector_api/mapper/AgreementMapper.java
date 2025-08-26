@@ -17,7 +17,7 @@ public abstract class AgreementMapper {
 
     public abstract Agreement toAgreementEntity(RequestAgreementDTO requestAgreementDTO);
 
-    public ResponseAgreementDTO toResponseAgreementDTO(Agreement agreement) {
+    public ResponseAgreementDTO toResponseAgreementDTO(Agreement agreement, List<Debtor> debtors) {
         List<ResponseDebtorDTO> debtorDTOS = debtorMapper.toResponseDebtorDTOList(debtors);
         ResponseAgreementDTO responseAgreementDTO = new ResponseAgreementDTO(agreement.getId(),
                 agreement.getOriginalDebtSum(), agreement.getActualDebtSum(), agreement.getAgreementStartDate(),

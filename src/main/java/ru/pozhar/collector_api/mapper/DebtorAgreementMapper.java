@@ -2,6 +2,7 @@ package ru.pozhar.collector_api.mapper;
 
 import ru.pozhar.collector_api.dto.RequestAgreementDTO;
 import ru.pozhar.collector_api.model.Agreement;
+import ru.pozhar.collector_api.model.Debtor;
 import ru.pozhar.collector_api.model.DebtorAgreement;
 import org.mapstruct.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,12 +15,12 @@ public abstract class DebtorAgreementMapper {
     @Autowired
     DebtorMapper debtorMapper;
 
-    public List<DebtorAgreement> toDebtorAgreementEntityList(RequestAgreementDTO requestAgreementDTO,
+    public List<DebtorAgreement> toDebtorAgreementEntityList(List<Debtor> debtors,
                                                              Agreement agreement) {
-        String debtorType = requestAgreementDTO.debtors().size() > 1 ? "co-debtor" : "single debtor";
-        List<DebtorAgreement> debtorAgreements = requestAgreementDTO.debtors().stream()
+        String debtorType = debtors.size() > 1 ? "co-debtor" : "single debtor";
+        List<DebtorAgreement> debtorAgreements = debtors.stream()
                 .map(d -> DebtorAgreement.builder()
-                        .debtor(debtorMapper.toDebtorEntity(d))
+                        .debtor(d)
                         .agreement(agreement)
                         .debtorType(debtorType)
                         .build())

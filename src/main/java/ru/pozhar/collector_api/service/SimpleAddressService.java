@@ -16,7 +16,9 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class SimpleAddressService implements AddressService {
+
     private final AddressRepository addressRepository;
+
     private final AddressMapper addressMapper;
 
     @Transactional
