@@ -12,8 +12,7 @@ import java.time.LocalDate;
 
 @Entity
 @Table(name = "agreements")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder

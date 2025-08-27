@@ -11,8 +11,7 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 @Table(name = "debtors_addresses")
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
+@Data
 @Builder
 public class DebtorAddress {
     @Id

@@ -9,5 +9,5 @@ public record ResponseAgreementDTO(Long id,
                                    BigDecimal actualDebtSum,
                                    LocalDate agreementStartDate,
                                    String transferor,
-                                   List<ResponseDebtorDTO> debtors) {
+                                   List<ResponseDebtorDTO> debtorsDTOs) {
 }

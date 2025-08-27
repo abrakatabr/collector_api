@@ -8,5 +8,5 @@ import java.util.List;
 
 @Service
 public interface DebtorService {
-    List<Debtor> initDebtors(List<RequestDebtorDTO> debtors);
+    Debtor initDebtor(RequestDebtorDTO debtorDTO);
 }

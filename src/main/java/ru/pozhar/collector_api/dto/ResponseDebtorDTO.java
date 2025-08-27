@@ -2,14 +2,15 @@ package ru.pozhar.collector_api.dto;
 
 import ru.pozhar.collector_api.model.Gender;
 import java.time.LocalDate;
+import java.util.List;
 
 public record ResponseDebtorDTO(Long id,
                                 String firstname,
                                 String lastname,
                                 String patronymic,
-                                String passportNumber,
-                                ResponseAddressDTO address,
                                 LocalDate birthday,
                                 Gender gender,
                                 String phoneNumber,
-                                String debtorType) { }
+                                List<ResponseAddressDTO> addressDTOs,
+                                ResponseDocumentsDTO documentsDTO,
+                                String role) { }

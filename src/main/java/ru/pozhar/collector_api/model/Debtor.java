@@ -11,8 +11,7 @@ import java.time.LocalDate;
 
 @Entity
 @Table(name = "debtors")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder

@@ -8,8 +8,7 @@ import lombok.*;
 
 @Entity
 @Table(name = "debtors_agreements")
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder

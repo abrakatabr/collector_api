@@ -23,41 +23,16 @@ public class SimpleAddressService implements AddressService {
 
     @Transactional
     @Override
-    public List<ResponseAddressDTO> createAddresses(List<RequestAddressDTO> requestAddressDTOList) {
-        List<ResponseAddressDTO> addressesList = requestAddressDTOList.stream()
-                .map(requestAddressDTO -> addressMapper.toAddressEntity(requestAddressDTO))
-                .map(address -> {
-                    Address findAddress = address;
-                    Optional<Address> optionalAddress = addressRepository.findByCountryAndCityAndStreetAndHouseAndApartment(
-                            findAddress.getCountry(),
-                            findAddress.getCity(),
-                            findAddress.getStreet(),
-                            findAddress.getHouse(),
-                            findAddress.getHouse()
-                    );
-                    if(optionalAddress.isPresent()) {
-                        findAddress = optionalAddress.get();
-                    } else {
-                        findAddress = addressRepository.save(findAddress);
-                    }
-                    return findAddress;
-                })
-                .map(address -> addressMapper.toResponseAddressDTO(address))
-                .collect(Collectors.toList());
-        return addressesList;
-    }
-
-    @Transactional
-    @Override
-    public Address initAddress(Address address) {
+    public Address initAddress(RequestAddressDTO addressDTO) {
+        Address address = addressMapper.toAddressEntity(addressDTO);
         Optional<Address> optionalAddress = addressRepository.findByCountryAndCityAndStreetAndHouseAndApartment(
-                address.getCountry(),
-                address.getCity(),
-                address.getStreet(),
-                address.getHouse(),
-                address.getApartment()
+                addressDTO.country(),
+                addressDTO.city(),
+                addressDTO.street(),
+                addressDTO.house(),
+                addressDTO.apartment()
         );
-        Address findAddress = optionalAddress.isPresent() ? optionalAddress.get() : addressRepository.save(address);
-        return findAddress;
+        address= optionalAddress.isPresent() ? optionalAddress.get() : addressRepository.save(address);
+        return address;
     }
 }

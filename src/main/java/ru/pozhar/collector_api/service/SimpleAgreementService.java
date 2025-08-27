@@ -1,5 +1,6 @@
 package ru.pozhar.collector_api.service;
 
+import lombok.RequiredArgsConstructor;
 import ru.pozhar.collector_api.dto.*;
 import lombok.AllArgsConstructor;
 import ru.pozhar.collector_api.mapper.*;
@@ -8,13 +9,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.pozhar.collector_api.repository.*;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class SimpleAgreementService implements AgreementService {
     private final AgreementMapper agreementMapper;
     private final AddressMapper addressMapper;
@@ -27,6 +26,13 @@ public class SimpleAgreementService implements AgreementService {
     private final DebtorMapper debtorMapper;
 
     private final DebtorAgreementMapper debtorAgreementMapper;
+
+    private final DebtorService debtorService;
+    private final DebtorAgreementService debtorAgreementService;
+    private final DocumentsService documentsService;
+    private final DebtorDocumentsService debtorDocumentsService;
+    private final AddressService addressService;
+    private final DebtorAddressService debtorAddressService;
 
     private final AddressRepository addressRepository;
 
@@ -50,29 +56,44 @@ public class SimpleAgreementService implements AgreementService {
       List<DebtorDocuments> createdDebtorDocuments = new LinkedList<>();
       List<DebtorAgreement> createdDebtorAgreements = new LinkedList<>();
       List<Debtor> createdDebtors = new LinkedList<>();
-      List<Address> createdAddresses = new LinkedList<>();
-      List<Documents> createdDocuments = new LinkedList<>();
+      Map<Long, List<Address>> createdAddresses = new HashMap<>();
+      Map<Long,Documents> createdDocuments = new HashMap<>();
       Agreement createdAgreement = agreementRepository.save(agreementMapper.toAgreementEntity(requestAgreementDTO));
       for (RequestDebtorDTO debtorDTO: requestAgreementDTO.debtors()) {
-          Debtor debtor = debtorRepository.save(debtorMapper.toDebtorEntity(debtorDTO));
+          Debtor debtor = debtorService.initDebtor(debtorDTO);
           createdDebtors.add(debtor);
-          DebtorAgreement debtorAgreement = debtorAgreementRepository
-                  .save(debtorAgreementMapper.toDebtorAgreementEntity(debtor, createdAgreement, debtorDTO));
+          DebtorAgreement debtorAgreement = debtorAgreementService
+                  .initDebtorAgreement(debtor, createdAgreement, debtorDTO);
           createdDebtorAgreements.add(debtorAgreement);
+          Documents documents = documentsService.initDocuments(debtorDTO.documentsDTO());
+          createdDocuments.put(debtor.getId(), documents);
+          DebtorDocuments debtorDocuments = debtorDocumentsService.initDebtorDocuments(debtor, documents);
+          createdDebtorDocuments.add(debtorDocuments);
+          List<Address> createdAddressesList = new LinkedList<>();
           for(RequestAddressDTO addressDTO : debtorDTO.addressDTOs()) {
-              Address address = addressRepository.save(addressMapper.toAddressEntity(addressDTO));
-              createdAddresses.add(address);
-              DebtorAddress debtorAddress = debtorAddressRepository
-                      .save(debtorAddressMapper.toDebtorAddressEntity(debtor, address, addressDTO));
+              Address address = addressService.initAddress(addressDTO);
+              createdAddressesList.add(address);
+              DebtorAddress debtorAddress = debtorAddressService.initDebtorAddress(debtor, address, addressDTO);
               createdDebtorAddresses.add(debtorAddress);
           }
-          for(RequestDocumentsDTO documentsDTO : debtorDTO.documentsDTOs()) {
-              Documents documents = documentsRepository.save(documentsMapper.toDocumentsEntity(documentsDTO));
-              createdDocuments.add(documents);
-              DebtorDocuments debtorDocuments = debtorDocumentsRepository
-                      .save(debtorDocumentsMapper.toDebtorDocumentsEntity(debtor, documents));
-              createdDebtorDocuments.add(debtorDocuments);
-          }
+          createdAddresses.put(debtor.getId(), createdAddressesList);
       }
+      List<ResponseDebtorDTO> responseDebtorDTOList = new LinkedList<>();
+      for (Debtor debtor : createdDebtors) {
+          DebtorAgreement debtorAgreement = createdDebtorAgreements.stream()
+                  .filter(da -> da.getDebtor().getId() == debtor.getId()).findFirst().get();
+          List<ResponseAddressDTO> responseAddressDTOList = new LinkedList<>();
+          for (Address address : createdAddresses.get(debtor.getId())) {
+              DebtorAddress debtorAddress = createdDebtorAddresses.stream()
+                      .filter(da -> address.getId() == da.getAddress().getId()).findFirst().get();
+              responseAddressDTOList.add(addressMapper.toResponseAddressDTO(address, debtorAddress));
+          }
+          ResponseDocumentsDTO responseDocumentsDTO = documentsMapper
+                  .toResponseDocumentDTO(createdDocuments.get(debtor.getId()));
+          ResponseDebtorDTO responseDebtorDTO = debtorMapper
+                  .toResponseDebtorDTO(debtor, debtorAgreement, responseAddressDTOList, responseDocumentsDTO);
+          responseDebtorDTOList.add(responseDebtorDTO);
+      }
+      return agreementMapper.toResponseAgreementDTO(createdAgreement, responseDebtorDTOList);
     }
 }

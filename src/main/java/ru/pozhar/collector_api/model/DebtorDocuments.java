@@ -8,8 +8,7 @@ import lombok.*;
 @Table(name = "debtors_documents")
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
+@Data
 @Builder
 public class DebtorDocuments {
     @Id

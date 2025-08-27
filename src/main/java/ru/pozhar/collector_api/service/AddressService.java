@@ -9,8 +9,5 @@ import java.util.List;
 
 @Service
 public interface AddressService {
-
-    List<ResponseAddressDTO> createAddresses(List<RequestAddressDTO> requestAddressDTOList);
-
-    Address initAddress(Address address);
+    Address initAddress(RequestAddressDTO addressDTO);
 }

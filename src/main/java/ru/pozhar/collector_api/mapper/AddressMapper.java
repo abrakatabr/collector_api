@@ -5,12 +5,14 @@ import ru.pozhar.collector_api.dto.ResponseAddressDTO;
 import ru.pozhar.collector_api.model.Address;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import ru.pozhar.collector_api.model.DebtorAddress;
 
 @Mapper(componentModel = "spring")
 public interface AddressMapper {
 
-    ResponseAddressDTO toResponseAddressDTO(Address address);
-
     @Mapping(target = "id", ignore = true)
     Address toAddressEntity(RequestAddressDTO addressDTO);
+
+    @Mapping(target = "addressStatus", source = "debtorAddress.addressStatus")
+    ResponseAddressDTO toResponseAddressDTO(Address address, DebtorAddress debtorAddress);
 }

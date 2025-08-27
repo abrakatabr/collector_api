@@ -12,4 +12,4 @@ public record RequestDebtorDTO(String firstname,
                                Gender gender,
                                String role,
                                List<RequestAddressDTO> addressDTOs,
-                               List<RequestDocumentsDTO> documentsDTOs) { }
+                               RequestDocumentsDTO documentsDTO) { }
