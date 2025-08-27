@@ -3,12 +3,13 @@ package ru.pozhar.collector_api.dto;
 import ru.pozhar.collector_api.model.Gender;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public record RequestDebtorDTO(String firstname,
                                String lastname,
                                String patronymic,
-                               String passportNumber,
-                               RequestAddressDTO address,
                                LocalDate birthday,
                                Gender gender,
-                               String phoneNumber) { }
+                               String role,
+                               List<RequestAddressDTO> addressDTOs,
+                               List<RequestDocumentsDTO> documentsDTOs) { }

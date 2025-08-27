@@ -24,11 +24,6 @@ public class SimpleDebtorService implements DebtorService{
     @Transactional
     @Override
     public List<Debtor> initDebtors(List<RequestDebtorDTO> debtors) {
-        List<Debtor> initDebtors = debtorMapper.toDebtorEntityList(debtors);
-        initDebtors.stream()
-                .peek(d -> d.setAddress(addressService.initAddress(d.getAddress())))
-                .collect(Collectors.toList());
-        initDebtors = debtorRepository.saveAll(initDebtors);
-        return initDebtors;
+return null;
     }
 }
