@@ -29,8 +29,8 @@ public class DebtorAgreement {
     private Agreement agreement;
 
     @NotBlank(message = "Роль заемщика в договоре обязательна.")
-    @Pattern(regexp = "co-debtor|single debtor",
-            message = "Роль заемщика в договоре должна быть 'co-debtor' или 'single debtor'.")
-    @Column(name = "debtor_type", nullable = false, length = 20)
-    private String debtorType;
+    @Pattern(regexp = "co-debtor|single debtor|guarantor|charger",
+            message = "Роль заемщика в договоре должна быть 'co-debtor', 'single debtor', 'guarantor' или 'charger'.")
+    @Column(name = "role", nullable = false, length = 20)
+    private String role;
 }

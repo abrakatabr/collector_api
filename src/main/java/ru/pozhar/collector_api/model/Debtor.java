@@ -33,15 +33,6 @@ public class Debtor {
     @Column(name = "patronymic", nullable = false, length = 128)
     private String patronymic;
 
-    @NotBlank(message = "Серия и номер пасспорта обязательны.")
-    @Column(name = "passport_number", nullable = false, unique = true, length = 128)
-    private String passportNumber;
-
-    @NotNull(message = "Адрес обязателен.")
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "address_id", nullable = false)
-    private Address address;
-
     @NotNull(message = "Дата рождения обязательна.")
     @Past(message = "Дата рождения должна быть в прошлом.")
     @Column(name = "birthday", nullable = false)

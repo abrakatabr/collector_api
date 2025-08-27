@@ -45,7 +45,7 @@
             <constraints nullable="false"/>
         </column>
         <column name="gender" type="varchar(10)" defaultValue="unknown" remarks="Пол должника">
-          <constraints nullable="true"/>
+          <constraints nullable="false"/>
         </column>
         <column name="phone_number" type="varchar(20)" defaultValue="N/A" remarks="Номер телефона должника">
         </column>
@@ -73,8 +73,9 @@
         <column name="transferor" type="varchar(128)" remarks="Название банка-кредитора">
             <constraints nullable="false"/>
         </column>
-        <column name="status" type="varchar(20)" remarks="Статус договора">
-            <constraints nullable="false" checkConstraint="status IN ('active', 'paid', 'deleted')"/>
+        <column name="status" type="varchar(20)" defaultValue="active" remarks="Статус договора">
+            <constraints nullable="false"
+                         checkConstraint="status IN ('active', 'paid', 'deleted')"/>
         </column>
     </createTable>
 
@@ -168,6 +169,29 @@
                          referencedColumnNames="id"/>
         </column>
     </createTable>
+
+    <createTable tableName="debtors_addresses">
+        <column name="id" type="bigserial" remarks="Сгенерированный ID связи заемщиков и адвресов">
+            <constraints primaryKey="true" unique="true"/>
+        </column>
+        <column name="debtor_id" type="bigint" remarks="ID заемщика из таблицы заемщиков">
+            <constraints nullable="false"
+                         unique="true"
+                         foreignKeyName="fk_debtors_addresses_debtor_id"
+                         referencedTableName="debtors"
+                         referencedColumnNames="id"/>
+        </column>
+        <column name="address_id" type="bigint" remarks="ID адреса из таблицы адресов">
+            <constraints nullable="false"
+                         unique="true"
+                         foreignKeyName="fk_debtors_addresses_address_id"
+                         referencedTableName="addresses"
+                         referencedColumnNames="id"/>
+        </column>
+        <column name="address_status" type="varchar(20)" defaultValue="registration" remarks="Статус адреса для заемщика">
+            <constraints nullable="false" checkConstraint="address_status IN ('registration', 'residential')"/>
+        </column>
+    </createTable>
 </changeSet>
 
 <changeSet id="002" author="pozharov-an@activebt.ru">
@@ -199,6 +223,10 @@
 
     <createIndex tableName="debtors_documents" indexName="i_debtors_documents_documents_id">
         <column name="documents_id"></column>
+    </createIndex>
+
+    <createIndex tableName="debtors_addresses" indexName="i_debtors_addresses_debtor_id">
+        <column name="debtor_id"></column>
     </createIndex>
 
 </changeSet>
