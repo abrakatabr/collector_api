@@ -8,6 +8,8 @@ import ru.pozhar.collector_api.model.DebtorDocuments;
 import ru.pozhar.collector_api.model.Documents;
 import ru.pozhar.collector_api.repository.DebtorDocumentsRepository;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class SimpleDebtorDocumentsService implements DebtorDocumentsService {
@@ -16,7 +18,13 @@ public class SimpleDebtorDocumentsService implements DebtorDocumentsService {
 
     @Override
     public DebtorDocuments initDebtorDocuments(Debtor debtor, Documents documents) {
-        return debtorDocumentsRepository
-                .save(debtorDocumentsMapper.toDebtorDocumentsEntity(debtor, documents));
+        DebtorDocuments debtorDocuments = debtorDocumentsMapper.toDebtorDocumentsEntity(debtor, documents);
+        Optional<DebtorDocuments> debtorDocumentsOptional = debtorDocumentsRepository.findByDebtorId(debtor.getId());
+        if(debtorDocumentsOptional.isPresent()) {
+            debtorDocuments = debtorDocumentsOptional.get();
+        } else {
+            debtorDocuments = debtorDocumentsRepository.save(debtorDocuments);
+        }
+        return debtorDocuments;
     }
 }

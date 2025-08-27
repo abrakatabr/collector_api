@@ -9,6 +9,8 @@ import ru.pozhar.collector_api.model.Debtor;
 import ru.pozhar.collector_api.model.DebtorAddress;
 import ru.pozhar.collector_api.repository.DebtorAddressRepository;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class SimpleDebtorAddressService implements DebtorAddressService {
@@ -17,7 +19,14 @@ public class SimpleDebtorAddressService implements DebtorAddressService {
 
     @Override
     public DebtorAddress initDebtorAddress(Debtor debtor, Address address, RequestAddressDTO addressDTO) {
-        return debtorAddressRepository
-                .save(debtorAddressMapper.toDebtorAddressEntity(debtor, address, addressDTO));
+        DebtorAddress debtorAddress = debtorAddressMapper.toDebtorAddressEntity(debtor, address, addressDTO);
+        Optional<DebtorAddress> debtorAddressOptional = debtorAddressRepository
+                .findByDebtorIdAndAddressId(debtor.getId(), address.getId());
+        if (debtorAddressOptional.isPresent()) {
+            debtorAddress = debtorAddressOptional.get();
+        } else {
+            debtorAddress = debtorAddressRepository.save(debtorAddress);
+        }
+        return debtorAddress;
     }
 }

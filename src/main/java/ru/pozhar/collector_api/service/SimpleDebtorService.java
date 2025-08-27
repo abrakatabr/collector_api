@@ -29,7 +29,7 @@ public class SimpleDebtorService implements DebtorService{
         Optional<Documents> documentsOptional = documentsRepository
                 .findByPassportNumber(debtorDTO.documentsDTO().passportNumber());
         if (documentsOptional.isPresent()) {
-            Optional<Debtor> debtorOptional = debtorRepository.findByDocuments(documentsOptional.get());
+            Optional<Debtor> debtorOptional = debtorRepository.findByDocumentsId(documentsOptional.get().getId());
             if (debtorOptional.isPresent()) {
                 debtor = debtorOptional.get();
             } else {

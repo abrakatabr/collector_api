@@ -12,8 +12,9 @@ import java.util.Optional;
 @Repository
 public interface DebtorRepository extends JpaRepository<Debtor, Long> {
     @Query(value = """
-            SELECT debtor_id FROM debtors_documents
-            WHERE documents_id = :documents_id
-            """, nativeQuery = true)
-    Optional<Debtor> findByDocuments(@Param("documents_id") Documents documents);
+    SELECT d.* FROM debtors d 
+    JOIN debtors_documents dd ON d.id = dd.debtor_id 
+    WHERE dd.documents_id = :documentId
+    """, nativeQuery = true)
+    Optional<Debtor> findByDocumentsId(@Param("documentId") Long documentId);
 }

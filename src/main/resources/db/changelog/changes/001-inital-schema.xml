@@ -176,14 +176,12 @@
         </column>
         <column name="debtor_id" type="bigint" remarks="ID заемщика из таблицы заемщиков">
             <constraints nullable="false"
-                         unique="true"
                          foreignKeyName="fk_debtors_addresses_debtor_id"
                          referencedTableName="debtors"
                          referencedColumnNames="id"/>
         </column>
         <column name="address_id" type="bigint" remarks="ID адреса из таблицы адресов">
             <constraints nullable="false"
-                         unique="true"
                          foreignKeyName="fk_debtors_addresses_address_id"
                          referencedTableName="addresses"
                          referencedColumnNames="id"/>
