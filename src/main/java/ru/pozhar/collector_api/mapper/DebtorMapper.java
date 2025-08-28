@@ -2,10 +2,7 @@ package ru.pozhar.collector_api.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import ru.pozhar.collector_api.dto.RequestDebtorDTO;
-import ru.pozhar.collector_api.dto.ResponseAddressDTO;
-import ru.pozhar.collector_api.dto.ResponseDebtorDTO;
-import ru.pozhar.collector_api.dto.ResponseDocumentsDTO;
+import ru.pozhar.collector_api.dto.*;
 import ru.pozhar.collector_api.model.Debtor;
 import ru.pozhar.collector_api.model.DebtorAgreement;
 
@@ -23,4 +20,11 @@ public interface DebtorMapper {
                                           DebtorAgreement debtorAgreement,
                                           List<ResponseAddressDTO> addressDTOList,
                                           ResponseDocumentsDTO documentsDTO);
+
+    @Mapping(target = "id", source = "debtor.id")
+    @Mapping(target = "addressDTOs", source = "addressDTOs")
+    @Mapping(target = "documentsDTO", source = "documentsDTO")
+    ResponseUpdateDebtorDTO toResponseUpdateDebtorDTO(Debtor debtor,
+                                                      List<ResponseAddressDTO> addressDTOs,
+                                                      ResponseDocumentsDTO documentsDTO);
 }

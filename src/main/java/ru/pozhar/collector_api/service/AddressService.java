@@ -10,4 +10,5 @@ import java.util.List;
 @Service
 public interface AddressService {
     Address initAddress(RequestAddressDTO addressDTO);
+    Address findAddressById(Long addressId);
 }

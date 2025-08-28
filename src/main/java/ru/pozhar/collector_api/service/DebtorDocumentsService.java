@@ -8,4 +8,6 @@ import ru.pozhar.collector_api.model.Documents;
 @Service
 public interface DebtorDocumentsService {
     DebtorDocuments initDebtorDocuments(Debtor debtor, Documents documents);
+
+    DebtorDocuments findByDebtorId(Long debtorId);
 }

@@ -9,6 +9,7 @@ import ru.pozhar.collector_api.model.Debtor;
 import ru.pozhar.collector_api.model.DebtorAddress;
 import ru.pozhar.collector_api.repository.DebtorAddressRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -28,5 +29,20 @@ public class SimpleDebtorAddressService implements DebtorAddressService {
             debtorAddress = debtorAddressRepository.save(debtorAddress);
         }
         return debtorAddress;
+    }
+
+    @Override
+    public List<Long> findAddressesIdByDebtorId(Long debtorId) {
+        return debtorAddressRepository.findAddressesIdByDebtorId(debtorId);
+    }
+
+    @Override
+    public DebtorAddress findDebtorAddressByDebtorIdAndAddressId(Long debtorId, Long addressId) {
+        Optional<DebtorAddress> debtorAddressOptional = debtorAddressRepository
+                .findDebtorAddressByDebtorIdAndAddressId(debtorId, addressId);
+        if (debtorAddressOptional.isEmpty()) {
+            throw new RuntimeException("Связь заемщика и адреса не найдена в базе данных");
+        }
+        return debtorAddressOptional.get();
     }
 }

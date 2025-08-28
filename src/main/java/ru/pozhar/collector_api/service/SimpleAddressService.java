@@ -35,4 +35,13 @@ public class SimpleAddressService implements AddressService {
         address= optionalAddress.isPresent() ? optionalAddress.get() : addressRepository.save(address);
         return address;
     }
+
+    @Override
+    public Address findAddressById(Long addressId) {
+        Optional<Address> addressOptional = addressRepository.findById(addressId);
+        if (addressOptional.isEmpty()) {
+            throw new RuntimeException("Адрес с таким id не найден в репозитории");
+        }
+        return addressOptional.get();
+    }
 }

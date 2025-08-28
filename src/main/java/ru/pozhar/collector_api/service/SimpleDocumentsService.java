@@ -25,4 +25,13 @@ public class SimpleDocumentsService implements DocumentsService{
         }
         return documents;
     }
+
+    @Override
+    public Documents findDocumentsById(Long documentsId) {
+        Optional<Documents> documentsOptional = documentsRepository.findById(documentsId);
+        if (documentsOptional.isEmpty()) {
+            throw new RuntimeException("Документов с таким ID нет в базе данных");
+        }
+        return documentsOptional.get();
+    }
 }

@@ -27,4 +27,13 @@ public class SimpleDebtorDocumentsService implements DebtorDocumentsService {
         }
         return debtorDocuments;
     }
+
+    @Override
+    public DebtorDocuments findByDebtorId(Long debtorId) {
+        Optional<DebtorDocuments> debtorDocumentsOptional = debtorDocumentsRepository.findByDebtorId(debtorId);
+        if (debtorDocumentsOptional.isEmpty()) {
+            throw new RuntimeException("В базе данных не найдены документы заемщика");
+        }
+        return debtorDocumentsOptional.get();
+    }
 }
