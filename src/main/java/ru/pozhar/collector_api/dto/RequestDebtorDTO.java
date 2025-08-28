@@ -11,5 +11,6 @@ public record RequestDebtorDTO(String firstname,
                                LocalDate birthday,
                                Gender gender,
                                String role,
+                               String phoneNumber,
                                List<RequestAddressDTO> addressDTOs,
                                RequestDocumentsDTO documentsDTO) { }

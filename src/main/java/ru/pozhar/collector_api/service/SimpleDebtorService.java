@@ -32,6 +32,9 @@ public class SimpleDebtorService implements DebtorService{
             Optional<Debtor> debtorOptional = debtorRepository.findByDocumentsId(documentsOptional.get().getId());
             if (debtorOptional.isPresent()) {
                 debtor = debtorOptional.get();
+                if (!validateDebtor(debtor, documentsOptional.get(), debtorDTO)) {
+                    throw new RuntimeException("В базе данных есть другой заемщик с такими доку ментами");
+                }
             } else {
                 throw new RuntimeException("По паспортным данным не найден заемщик в базе даных");
             }
@@ -39,5 +42,26 @@ public class SimpleDebtorService implements DebtorService{
             debtor = debtorRepository.save(debtor);
         }
        return debtor;
+    }
+
+    private boolean validateDebtor(Debtor debtor, Documents documents, RequestDebtorDTO debtorDTO) {
+        boolean isValidInn = true;
+        boolean isValidSnils = true;
+        if (!documents.getInn().isBlank() && documents.getInn() != null) {
+            if (!debtorDTO.documentsDTO().inn().isBlank() && debtorDTO.documentsDTO().inn() != null) {
+                isValidInn = documents.getInn().equals(debtorDTO.documentsDTO().inn());
+            }
+        }
+        if (!documents.getSnils().isBlank() && documents.getSnils() != null) {
+            if (!debtorDTO.documentsDTO().snils().isBlank() && debtorDTO.documentsDTO().snils() != null) {
+                isValidSnils = documents.getSnils().equals(debtorDTO.documentsDTO().snils());
+            }
+        }
+        return debtor.getFirstname().equals(debtorDTO.firstname())
+                && debtor.getLastname().equals(debtorDTO.lastname())
+                && debtor.getPatronymic().equals((debtorDTO.patronymic()))
+                && debtor.getBirthday().isEqual(debtorDTO.birthday())
+                && documents.getPassportNumber().equals(debtorDTO.documentsDTO().passportNumber())
+                &&  isValidInn && isValidSnils;
     }
 }

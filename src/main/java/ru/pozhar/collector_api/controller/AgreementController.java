@@ -14,12 +14,12 @@ import ru.pozhar.collector_api.service.AgreementService;
 public class AgreementController {
     private final AgreementService agreementService;
 
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<ResponseAgreementDTO> createAgreement(
             @RequestBody RequestAgreementDTO requestAgreementDTO) {
         ResponseAgreementDTO responseAgreementDTO = agreementService.createAgreement(requestAgreementDTO);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .header("Location", "api/agreements/" + responseAgreementDTO.id())
+                .header("Location", "api/agreements/create/" + responseAgreementDTO.id())
                 .body(responseAgreementDTO);
     }
 }
