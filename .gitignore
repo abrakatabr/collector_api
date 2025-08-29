@@ -6,7 +6,7 @@ target/
 *.log
 *.env
 config/database/liquibase.*
-config/database/application.*
+config/database/application-*.*
 
 mvnw
 mvnw.cmd
