@@ -5,8 +5,8 @@ target/
 !**/src/test/**/target/
 *.log
 *.env
-config/database/liquibase.properties
-config/database/application.properties
+config/database/liquibase.*
+config/database/application.*
 
 mvnw
 mvnw.cmd
