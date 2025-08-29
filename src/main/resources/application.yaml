@@ -1,0 +1,37 @@
+spring:
+  application:
+    name: REST API FOR COLLECTORS
+
+  server:
+    port: 8081
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/collector_database
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  liquibase:
+    enabled: true
+    change-log: db/changelog/db.changelog-master.xml
+    default-schema: collector
+    liquibase-schema: collector
+
+logging:
+  level:
+    org.springframework: DEBUG
+    org.hibernate:
+      SQL: DEBUG
+      type: DEBUG
+    org.liquibase: INFO
+    controller: TRACE
+    ru.pozhar.collector_api: DEBUG
