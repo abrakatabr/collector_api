@@ -12,6 +12,7 @@ import ru.pozhar.collector_api.service.AgreementService;
 @RequestMapping("/api/agreements")
 @RequiredArgsConstructor
 public class AgreementController {
+
     private final AgreementService agreementService;
 
     @PostMapping("/create")
