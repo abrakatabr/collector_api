@@ -1,58 +1,58 @@
 package ru.pozhar.collector_api.service;
 
 import lombok.RequiredArgsConstructor;
-import ru.pozhar.collector_api.dto.*;
-import lombok.AllArgsConstructor;
-import ru.pozhar.collector_api.mapper.*;
-import ru.pozhar.collector_api.model.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.pozhar.collector_api.dto.RequestAddressDTO;
+import ru.pozhar.collector_api.dto.RequestAgreementDTO;
+import ru.pozhar.collector_api.dto.RequestDebtorDTO;
+import ru.pozhar.collector_api.dto.ResponseAddressDTO;
+import ru.pozhar.collector_api.dto.ResponseAgreementDTO;
+import ru.pozhar.collector_api.dto.ResponseDebtorDTO;
+import ru.pozhar.collector_api.dto.ResponseDocumentsDTO;
+import ru.pozhar.collector_api.mapper.AddressMapper;
+import ru.pozhar.collector_api.mapper.AgreementMapper;
+import ru.pozhar.collector_api.mapper.DebtorMapper;
+import ru.pozhar.collector_api.mapper.DocumentsMapper;
+import ru.pozhar.collector_api.model.Address;
+import ru.pozhar.collector_api.model.Agreement;
+import ru.pozhar.collector_api.model.Debtor;
+import ru.pozhar.collector_api.model.DebtorAgreement;
+import ru.pozhar.collector_api.model.DebtorDocuments;
+import ru.pozhar.collector_api.model.Documents;
 import ru.pozhar.collector_api.repository.*;
-
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
 public class SimpleAgreementService implements AgreementService {
     private final AgreementMapper agreementMapper;
+
     private final AddressMapper addressMapper;
-    private final DebtorAddressMapper debtorAddressMapper;
 
     private final DocumentsMapper documentsMapper;
 
-    private final DebtorDocumentsMapper debtorDocumentsMapper;
-
     private final DebtorMapper debtorMapper;
 
-    private final DebtorAgreementMapper debtorAgreementMapper;
-
     private final DebtorService debtorService;
-    private final DebtorAgreementService debtorAgreementService;
-    private final DocumentsService documentsService;
-    private final DebtorDocumentsService debtorDocumentsService;
-    private final AddressService addressService;
-    private final DebtorAddressService debtorAddressService;
 
-    private final AddressRepository addressRepository;
+    private final DebtorAgreementService debtorAgreementService;
+
+    private final DocumentsService documentsService;
+
+    private final DebtorDocumentsService debtorDocumentsService;
+
+    private final AddressService addressService;
 
     private final AgreementRepository agreementRepository;
-
-    private final DebtorRepository debtorRepository;
-
-    private final DebtorAgreementRepository debtorAgreementRepository;
-
-    private final DebtorAddressRepository debtorAddressRepository;
-
-    private final DocumentsRepository documentsRepository;
-
-    private final DebtorDocumentsRepository debtorDocumentsRepository;
 
 
     @Override
     @Transactional
     public ResponseAgreementDTO createAgreement(RequestAgreementDTO requestAgreementDTO) {
-      List<DebtorAddress> createdDebtorAddresses = new LinkedList<>();
       List<DebtorDocuments> createdDebtorDocuments = new LinkedList<>();
       List<DebtorAgreement> createdDebtorAgreements = new LinkedList<>();
       List<Debtor> createdDebtors = new LinkedList<>();
@@ -71,10 +71,8 @@ public class SimpleAgreementService implements AgreementService {
           createdDebtorDocuments.add(debtorDocuments);
           List<Address> createdAddressesList = new LinkedList<>();
           for(RequestAddressDTO addressDTO : debtorDTO.addressDTOs()) {
-              Address address = addressService.initAddress(addressDTO);
+              Address address = addressService.initAddress(debtor, addressDTO);
               createdAddressesList.add(address);
-              DebtorAddress debtorAddress = debtorAddressService.initDebtorAddress(debtor, address, addressDTO);
-              createdDebtorAddresses.add(debtorAddress);
           }
           createdAddresses.put(debtor.getId(), createdAddressesList);
       }
@@ -84,9 +82,7 @@ public class SimpleAgreementService implements AgreementService {
                   .filter(da -> da.getDebtor().getId() == debtor.getId()).findFirst().get();
           List<ResponseAddressDTO> responseAddressDTOList = new LinkedList<>();
           for (Address address : createdAddresses.get(debtor.getId())) {
-              DebtorAddress debtorAddress = createdDebtorAddresses.stream()
-                      .filter(da -> address.getId() == da.getAddress().getId()).findFirst().get();
-              responseAddressDTOList.add(addressMapper.toResponseAddressDTO(address, debtorAddress));
+              responseAddressDTOList.add(addressMapper.toResponseAddressDTO(address));
           }
           ResponseDocumentsDTO responseDocumentsDTO = documentsMapper
                   .toResponseDocumentDTO(createdDocuments.get(debtor.getId()));

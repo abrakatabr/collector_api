@@ -3,21 +3,14 @@ package ru.pozhar.collector_api.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.pozhar.collector_api.dto.*;
-import ru.pozhar.collector_api.mapper.AddressMapper;
+import ru.pozhar.collector_api.dto.RequestDebtorDTO;
+import ru.pozhar.collector_api.dto.ResponseUpdatePhoneDTO;
 import ru.pozhar.collector_api.mapper.DebtorMapper;
-import ru.pozhar.collector_api.mapper.DocumentsMapper;
-import ru.pozhar.collector_api.model.Address;
 import ru.pozhar.collector_api.model.Debtor;
-import ru.pozhar.collector_api.model.DebtorAddress;
 import ru.pozhar.collector_api.model.Documents;
 import ru.pozhar.collector_api.repository.DebtorRepository;
 import ru.pozhar.collector_api.repository.DocumentsRepository;
-
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -29,17 +22,6 @@ public class SimpleDebtorService implements DebtorService{
 
     private final DocumentsRepository documentsRepository;
 
-    private final DocumentsMapper documentsMapper;
-
-    private final AddressMapper addressMapper;
-
-    private final AddressService addressService;
-
-    private final DebtorDocumentsService debtorDocumentsService;
-
-    private final DocumentsService documentsService;
-
-    private final DebtorAddressService debtorAddressService;
 
     @Transactional
     @Override
@@ -52,7 +34,7 @@ public class SimpleDebtorService implements DebtorService{
             if (debtorOptional.isPresent()) {
                 debtor = debtorOptional.get();
                 if (!validateDebtor(debtor, documentsOptional.get(), debtorDTO)) {
-                    throw new RuntimeException("В базе данных есть другой заемщик с такими доку ментами");
+                    throw new RuntimeException("В базе данных есть другой заемщик с такими документами");
                 }
             } else {
                 throw new RuntimeException("По паспортным данным не найден заемщик в базе даных");
@@ -65,29 +47,15 @@ public class SimpleDebtorService implements DebtorService{
 
     @Transactional
     @Override
-    public ResponseUpdateDebtorDTO updateDebtorPhoneNumber(RequestUpdateDebtorDTO updateDebtorDTO) {
-        Optional<Debtor> debtorOptional = debtorRepository.findById(updateDebtorDTO.id());
+    public ResponseUpdatePhoneDTO updateDebtorPhoneNumber(Long debtorId, String phoneNumber) {
+        Optional<Debtor> debtorOptional = debtorRepository.findByDebtorId(debtorId);
         if (debtorOptional.isEmpty()) {
             throw new RuntimeException("Заемщик не найден в базе данных");
         }
         Debtor debtor = debtorOptional.get();
-        debtor.setPhoneNumber(updateDebtorDTO.phoneNumber());
+        debtor.setPhoneNumber(phoneNumber);
         debtor = debtorRepository.save(debtor);
-        List<Address> addresses = debtorAddressService
-                .findAddressesIdByDebtorId(debtor.getId()).stream()
-                .map(id -> addressService.findAddressById(id))
-                .collect(Collectors.toList());
-        List<ResponseAddressDTO> addressDTOs = new LinkedList<>();
-        for (Address address : addresses) {
-            DebtorAddress debtorAddress = debtorAddressService
-                    .findDebtorAddressByDebtorIdAndAddressId(debtor.getId(), address.getId());
-            ResponseAddressDTO addressDTO = addressMapper.toResponseAddressDTO(address, debtorAddress);
-            addressDTOs.add(addressDTO);
-        }
-        Documents documents = documentsService
-                .findDocumentsById(debtorDocumentsService.findByDebtorId(debtor.getId()).getDocuments().getId());
-        ResponseDocumentsDTO documentsDTO = documentsMapper.toResponseDocumentDTO(documents);
-        return debtorMapper.toResponseUpdateDebtorDTO(debtor, addressDTOs, documentsDTO);
+        return debtorMapper.toResponseUpdatePhoneDTO(debtor);
     }
 
     private boolean validateDebtor(Debtor debtor, Documents documents, RequestDebtorDTO debtorDTO) {

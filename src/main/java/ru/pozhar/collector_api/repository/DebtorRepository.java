@@ -5,7 +5,6 @@ import org.springframework.data.repository.query.Param;
 import ru.pozhar.collector_api.model.Debtor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import ru.pozhar.collector_api.model.Documents;
 
 import java.util.Optional;
 
@@ -17,4 +16,10 @@ public interface DebtorRepository extends JpaRepository<Debtor, Long> {
     WHERE dd.documents_id = :documentId
     """, nativeQuery = true)
     Optional<Debtor> findByDocumentsId(@Param("documentId") Long documentId);
+
+    @Query(value = """
+            SELECT * FROM debtors
+            WHERE id = :debtorId
+            """, nativeQuery = true)
+    Optional<Debtor> findByDebtorId(@Param("debtorId") Long debtorId);
 }

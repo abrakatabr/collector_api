@@ -4,9 +4,43 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
     http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 <changeSet id="001" author="pozharov-an@activebt.ru">
+    <createTable tableName="debtors">
+        <column name="id" type="bigserial" remarks="Сгенерированный ID">
+            <constraints primaryKey="true" unique="true"/>
+        </column>
+        <column name="firstname" type="varchar(128)" remarks="Имя должника">
+            <constraints nullable="false"/>
+        </column>
+        <column name="lastname" type="varchar(128)" remarks="Фамилия должника">
+            <constraints nullable="false"/>
+        </column>
+        <column name="patronymic" type="varchar(128)" defaultValue="N\A" remarks="Отчество должника">
+        </column>
+        <column name="birthday" type="date" remarks="Дата рождения должника">
+            <constraints nullable="false"/>
+        </column>
+        <column name="gender" type="varchar(10)" defaultValue="unknown" remarks="Пол должника">
+          <constraints nullable="false"/>
+        </column>
+        <column name="phone_number" type="varchar(20)" defaultValue="N/A" remarks="Номер телефона должника">
+        </column>
+    </createTable>
+
+    <sql>
+        ALTER TABLE debtors
+        ADD CONSTRAINT chk_phone_number_format
+        CHECK (phone_number = 'N/A' OR phone_number ~ '^(\+7|7|8)?[0-9\s\-\(\)]{10,15}$');
+    </sql>
+
     <createTable tableName="addresses">
         <column name="id" type="bigserial" remarks="Сгенерированный ID">
             <constraints primaryKey="true" unique="true"/>
+        </column>
+        <column name="debtor_id" type="bigint" remarks="ID заемщика из таблицы заемщиков">
+            <constraints nullable="false"
+                         foreignKeyName="fk_addresses_debtor_id"
+                         referencedTableName="debtors"
+                         referencedColumnNames="id"/>
         </column>
         <column name="country" type="varchar(128)" remarks="Страна">
             <constraints nullable="false"/>
@@ -21,42 +55,16 @@
             <constraints nullable="false"/>
         </column>
         <column name="apartment" type="varchar(50)" defaultValue="N/A" remarks="Номер квартиры"/>
+        <column name="address_status" type="varchar(20)" defaultValue="registration" remarks="Статус адреса для заемщика">
+            <constraints nullable="false" checkConstraint="address_status IN ('registration', 'residential')"/>
+        </column>
     </createTable>
 
     <addUniqueConstraint tableName="addresses"
-                         columnNames="country, city, street, house, apartment"
+                         columnNames="country, city, street, house, apartment, address_status"
                          constraintName="uq_address"
                          deferrable="true"/>
 
-    <createTable tableName="debtors">
-        <column name="id" type="bigserial" remarks="Сгенерированный ID">
-            <constraints primaryKey="true" unique="true"/>
-        </column>
-        <column name="firstname" type="varchar(128)" remarks="Имя должника">
-            <constraints nullable="false"/>
-        </column>
-        <column name="lastname" type="varchar(128)" remarks="Фамилия должника">
-            <constraints nullable="false"/>
-        </column>
-        <column name="patronymic" type="varchar(128)" remarks="Отчество должника">
-            <constraints nullable="false"/>
-        </column>
-        <column name="birthday" type="date" remarks="Дата рождения должника">
-            <constraints nullable="false"/>
-        </column>
-        <column name="gender" type="varchar(10)" defaultValue="unknown" remarks="Пол должника">
-          <constraints nullable="false"/>
-        </column>
-        <column name="phone_number" type="varchar(20)" defaultValue="N/A" remarks="Номер телефона должника">
-        </column>
-    </createTable>
-    
-    <sql>
-        ALTER TABLE debtors
-        ADD CONSTRAINT chk_phone_number_format
-        CHECK (phone_number = 'N/A' OR phone_number ~ '^(\+7|7|8)?[0-9\s\-\(\)]{10,15}$');
-    </sql>
-    
     <createTable tableName="agreements">
         <column name="id" type="bigserial" remarks="Сгенерированный ID договора займа">
             <constraints primaryKey="true" unique="true"/>
@@ -169,31 +177,9 @@
                          referencedColumnNames="id"/>
         </column>
     </createTable>
-
-    <createTable tableName="debtors_addresses">
-        <column name="id" type="bigserial" remarks="Сгенерированный ID связи заемщиков и адвресов">
-            <constraints primaryKey="true" unique="true"/>
-        </column>
-        <column name="debtor_id" type="bigint" remarks="ID заемщика из таблицы заемщиков">
-            <constraints nullable="false"
-                         foreignKeyName="fk_debtors_addresses_debtor_id"
-                         referencedTableName="debtors"
-                         referencedColumnNames="id"/>
-        </column>
-        <column name="address_id" type="bigint" remarks="ID адреса из таблицы адресов">
-            <constraints nullable="false"
-                         foreignKeyName="fk_debtors_addresses_address_id"
-                         referencedTableName="addresses"
-                         referencedColumnNames="id"/>
-        </column>
-        <column name="address_status" type="varchar(20)" defaultValue="registration" remarks="Статус адреса для заемщика">
-            <constraints nullable="false" checkConstraint="address_status IN ('registration', 'residential')"/>
-        </column>
-    </createTable>
 </changeSet>
 
 <changeSet id="002" author="pozharov-an@activebt.ru">
-
     <createIndex tableName="debtors" indexName="i_debtors_firstname_lastname">
         <column name="firstname"/>
         <column name="lastname"/>
@@ -223,10 +209,9 @@
         <column name="documents_id"></column>
     </createIndex>
 
-    <createIndex tableName="debtors_addresses" indexName="i_debtors_addresses_debtor_id">
+    <createIndex tableName="addresses" indexName="i_addresses_debtor_id">
         <column name="debtor_id"></column>
     </createIndex>
-
 </changeSet>
 
 </databaseChangeLog>

@@ -8,6 +8,7 @@ import ru.pozhar.collector_api.model.Agreement;
 import ru.pozhar.collector_api.model.Debtor;
 import ru.pozhar.collector_api.model.DebtorAgreement;
 import ru.pozhar.collector_api.repository.DebtorAgreementRepository;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -17,7 +18,15 @@ public class SimpleDebtorAgreementService implements DebtorAgreementService {
 
     @Override
     public DebtorAgreement initDebtorAgreement(Debtor debtor, Agreement agreement, RequestDebtorDTO requestDebtorDTO) {
-        return debtorAgreementRepository
-                .save(debtorAgreementMapper.toDebtorAgreementEntity(debtor, agreement, requestDebtorDTO));
+        DebtorAgreement debtorAgreement = debtorAgreementMapper
+                .toDebtorAgreementEntity(debtor, agreement, requestDebtorDTO);
+        Optional<DebtorAgreement> debtorAgreementOptional = debtorAgreementRepository
+                .findByDebtorAndAgreement(debtor, agreement);
+        if (debtorAgreementOptional.isPresent()) {
+            debtorAgreement = debtorAgreementOptional.get();
+        } else {
+            debtorAgreement = debtorAgreementRepository.save(debtorAgreement);
+        }
+        return debtorAgreement;
     }
 }

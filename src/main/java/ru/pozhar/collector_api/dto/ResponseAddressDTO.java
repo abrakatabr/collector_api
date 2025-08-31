@@ -6,5 +6,4 @@ public record ResponseAddressDTO(
                                  String street,
                                  String house,
                                  String apartment,
-                                 String addressStatus) {
-}
+                                 String addressStatus) { }

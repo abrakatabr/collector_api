@@ -1,8 +1,20 @@
 package ru.pozhar.collector_api.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
-import lombok.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "addresses")
@@ -13,6 +25,11 @@ public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @NotNull(message = "ID заемщика обязателен")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "debtor_id", nullable = false)
+    private Debtor debtor;
 
     @NotBlank(message = "Страна обязательна для заполнения.")
     @Column(name = "country", nullable = false, length = 128)
@@ -32,4 +49,10 @@ public class Address {
 
     @Column(name = "apartment", length = 50)
     private String apartment = "N/A";
+
+    @NotBlank(message = "Статус обязателеню")
+    @Pattern(regexp = "registration|residential",
+            message = "Статус адреса должен быть 'registration' или 'residential'.")
+    @Column(name = "address_status", nullable = false)
+    private String addressStatus = "registration";
 }
