@@ -58,6 +58,16 @@ public class SimpleDebtorService implements DebtorService{
         return debtorMapper.toResponseUpdatePhoneDTO(debtor);
     }
 
+    @Transactional
+    @Override
+    public Debtor findDebtorById(Long debtorId) {
+        Optional<Debtor> debtorOptional = debtorRepository.findByDebtorId(debtorId);
+        if (debtorOptional.isEmpty()) {
+            throw new RuntimeException("Заемщик с таким ID не найден в базе данных");
+        }
+        return debtorOptional.get();
+    }
+
     private boolean validateDebtor(Debtor debtor, Documents documents, RequestDebtorDTO debtorDTO) {
         boolean isValidInn = true;
         boolean isValidSnils = true;

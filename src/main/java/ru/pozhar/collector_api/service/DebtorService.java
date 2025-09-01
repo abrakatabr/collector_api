@@ -10,4 +10,6 @@ public interface DebtorService {
     Debtor initDebtor(RequestDebtorDTO debtorDTO);
 
     ResponseUpdatePhoneDTO updateDebtorPhoneNumber(Long debtorId, String phoneNumber);
+
+    Debtor findDebtorById(Long debtorId);
 }

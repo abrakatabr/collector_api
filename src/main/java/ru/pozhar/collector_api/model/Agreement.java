@@ -1,11 +1,6 @@
 package ru.pozhar.collector_api.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -43,4 +38,8 @@ public class Agreement {
     @NotBlank(message = "Название банка-кредитора обязательно.")
     @Column(name = "transferor", nullable = false, length = 128)
     private String transferor;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", length = 20)
+    private AgreementStatus status = AgreementStatus.active;
 }

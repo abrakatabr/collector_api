@@ -3,28 +3,15 @@ package ru.pozhar.collector_api.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.pozhar.collector_api.dto.RequestAddressDTO;
-import ru.pozhar.collector_api.dto.RequestAgreementDTO;
-import ru.pozhar.collector_api.dto.RequestDebtorDTO;
-import ru.pozhar.collector_api.dto.ResponseAddressDTO;
-import ru.pozhar.collector_api.dto.ResponseAgreementDTO;
-import ru.pozhar.collector_api.dto.ResponseDebtorDTO;
-import ru.pozhar.collector_api.dto.ResponseDocumentsDTO;
+import ru.pozhar.collector_api.dto.*;
 import ru.pozhar.collector_api.mapper.AddressMapper;
 import ru.pozhar.collector_api.mapper.AgreementMapper;
 import ru.pozhar.collector_api.mapper.DebtorMapper;
 import ru.pozhar.collector_api.mapper.DocumentsMapper;
-import ru.pozhar.collector_api.model.Address;
-import ru.pozhar.collector_api.model.Agreement;
-import ru.pozhar.collector_api.model.Debtor;
-import ru.pozhar.collector_api.model.DebtorAgreement;
-import ru.pozhar.collector_api.model.DebtorDocuments;
-import ru.pozhar.collector_api.model.Documents;
+import ru.pozhar.collector_api.model.*;
 import ru.pozhar.collector_api.repository.*;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -91,5 +78,35 @@ public class SimpleAgreementService implements AgreementService {
           responseDebtorDTOList.add(responseDebtorDTO);
       }
       return agreementMapper.toResponseAgreementDTO(createdAgreement, responseDebtorDTOList);
+    }
+
+    @Transactional
+    @Override
+    public void deleteAgreement(Long agreementId) {
+        Agreement agreement = findAgreementById(agreementId);
+        agreement.setStatus(AgreementStatus.deleted);
+        agreementRepository.save(agreement);
+    }
+
+    @Override
+    public Agreement findAgreementById(Long agreementId) {
+        Optional<Agreement> agreementOptional = agreementRepository.findById(agreementId);
+        if (agreementOptional.isEmpty()) {
+            throw new RuntimeException("Договор с таким ID не найден");
+        }
+        return agreementOptional.get();
+    }
+
+    @Transactional
+    @Override
+    public ResponseUpdateStatusDTO updateAgreementStatus(Long agreementId, AgreementStatus agreementStatus) {
+        Agreement agreement = findAgreementById(agreementId);
+        if (agreement.getStatus() == AgreementStatus.deleted) {
+            throw new RuntimeException("Договор уже удален");
+        }
+        agreement.setStatus(agreementStatus);
+        agreement = agreementRepository.save(agreement);
+        ResponseUpdateStatusDTO updateStatusDTO = agreementMapper.toResponseUpdateStatusDTO(agreement);
+        return updateStatusDTO;
     }
 }
