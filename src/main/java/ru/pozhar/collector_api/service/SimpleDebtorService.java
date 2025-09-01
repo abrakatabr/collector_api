@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.pozhar.collector_api.dto.RequestDebtorDTO;
 import ru.pozhar.collector_api.dto.ResponseUpdatePhoneDTO;
 import ru.pozhar.collector_api.mapper.DebtorMapper;
+import ru.pozhar.collector_api.model.Agreement;
 import ru.pozhar.collector_api.model.Debtor;
 import ru.pozhar.collector_api.model.Documents;
 import ru.pozhar.collector_api.repository.DebtorRepository;
@@ -14,13 +15,15 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class SimpleDebtorService implements DebtorService{
+public class SimpleDebtorService implements DebtorService {
 
     private final DebtorMapper debtorMapper;
 
     private final DebtorRepository debtorRepository;
 
     private final DocumentsRepository documentsRepository;
+
+    private final DebtorAgreementService debtorAgreementService;
 
 
     @Transactional

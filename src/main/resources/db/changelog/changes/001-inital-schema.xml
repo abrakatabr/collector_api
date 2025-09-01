@@ -158,6 +158,11 @@
         </column>
     </createTable>
 
+    <addUniqueConstraint tableName="debtors_agreements"
+                         columnNames="debtor_id, agreement_id"
+                         constraintName="uq_debtor_agreement"
+                         deferrable="true"/>
+
     <createTable tableName="debtors_documents">
         <column name="id" type="bigserial" remarks="Сгенерированный ID связи заемщика и документов">
             <constraints primaryKey="true" unique="true"/>

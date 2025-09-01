@@ -84,8 +84,10 @@ public class SimpleAgreementService implements AgreementService {
     @Override
     public void deleteAgreement(Long agreementId) {
         Agreement agreement = findAgreementById(agreementId);
-        agreement.setStatus(AgreementStatus.deleted);
-        agreementRepository.save(agreement);
+        if(agreement.getStatus() != AgreementStatus.deleted) {
+            agreement.setStatus(AgreementStatus.deleted);
+            agreementRepository.save(agreement);
+        }
     }
 
     @Override

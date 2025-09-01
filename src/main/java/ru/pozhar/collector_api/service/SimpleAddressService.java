@@ -39,9 +39,6 @@ public class SimpleAddressService implements AddressService {
     @Override
     public List<Address> findAddressesByDebtorId(Long debtorId) {
         List<Address> addresses = addressRepository.findByDebtorId(debtorId);
-        if (addresses.size() == 0) {
-            throw new RuntimeException("Адреса заемщика не найдены в базе данных");
-        }
         return addresses;
     }
 

@@ -9,4 +9,8 @@ import ru.pozhar.collector_api.model.DebtorAgreement;
 @Service
 public interface DebtorAgreementService {
     DebtorAgreement initDebtorAgreement(Debtor debtor, Agreement agreement, RequestDebtorDTO requestDebtorDTO);
+
+    void deleteDebtorFromAgreement(Long debtorId, Long agreementId);
+
+    DebtorAgreement findByDebtorIdAndAgreementId(Long debtorId, Long agreementId);
 }

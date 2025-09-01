@@ -2,6 +2,7 @@ package ru.pozhar.collector_api.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.pozhar.collector_api.dto.RequestDebtorDTO;
 import ru.pozhar.collector_api.mapper.DebtorAgreementMapper;
 import ru.pozhar.collector_api.model.Agreement;
@@ -28,5 +29,22 @@ public class SimpleDebtorAgreementService implements DebtorAgreementService {
             debtorAgreement = debtorAgreementRepository.save(debtorAgreement);
         }
         return debtorAgreement;
+    }
+
+    @Transactional
+    @Override
+    public void deleteDebtorFromAgreement(Long debtorId, Long agreementId) {
+        DebtorAgreement debtorAgreement = findByDebtorIdAndAgreementId(debtorId, agreementId);
+        debtorAgreementRepository.delete(debtorAgreement);
+    }
+
+    @Override
+    public DebtorAgreement findByDebtorIdAndAgreementId(Long debtorId, Long agreementId) {
+        Optional<DebtorAgreement> debtorAgreementOptional = debtorAgreementRepository
+                .findByDebtorIdAndAgreementId(debtorId, agreementId);
+        if (debtorAgreementOptional.isEmpty()) {
+            throw new RuntimeException("Связь заемщика и договора не найдена в базе данных");
+        }
+        return debtorAgreementOptional.get();
     }
 }
