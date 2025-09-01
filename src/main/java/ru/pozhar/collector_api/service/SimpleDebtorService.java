@@ -6,7 +6,6 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.pozhar.collector_api.dto.RequestDebtorDTO;
 import ru.pozhar.collector_api.dto.ResponseUpdatePhoneDTO;
 import ru.pozhar.collector_api.mapper.DebtorMapper;
-import ru.pozhar.collector_api.model.Agreement;
 import ru.pozhar.collector_api.model.Debtor;
 import ru.pozhar.collector_api.model.Documents;
 import ru.pozhar.collector_api.repository.DebtorRepository;
