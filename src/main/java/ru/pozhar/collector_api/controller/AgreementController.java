@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import ru.pozhar.collector_api.dto.ResponseUpdateStatusDTO;
+import ru.pozhar.collector_api.exception.ValidationException;
 import ru.pozhar.collector_api.model.AgreementStatus;
 import ru.pozhar.collector_api.service.AgreementService;
 
@@ -45,7 +46,7 @@ public class AgreementController {
             @PathVariable Long agreementId,
             @RequestParam String status) {
         if (!StringUtils.hasText(status) || "deleted".equals(status)) {
-            throw new IllegalArgumentException("Статус должен содержать символы и может быть 'active' или 'paid'");
+            throw new ValidationException("Статус должен содержать символы и может быть 'active' или 'paid'");
         }
         AgreementStatus agreementStatus = AgreementStatus.valueOf(status);
         ResponseUpdateStatusDTO updateStatusDTO = agreementService.updateAgreementStatus(agreementId, agreementStatus);
