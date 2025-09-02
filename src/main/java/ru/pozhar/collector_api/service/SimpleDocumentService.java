@@ -4,9 +4,10 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.pozhar.collector_api.dto.RequestDocumentDTO;
-import ru.pozhar.collector_api.exception.*;
+import ru.pozhar.collector_api.exception.EntityNotFoundException;
 import ru.pozhar.collector_api.mapper.DocumentMapper;
-import ru.pozhar.collector_api.model.*;
+import ru.pozhar.collector_api.model.Debtor;
+import ru.pozhar.collector_api.model.Document;
 import ru.pozhar.collector_api.repository.DocumentRepository;
 
 import java.util.*;

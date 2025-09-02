@@ -11,7 +11,7 @@ import ru.pozhar.collector_api.dto.ResponseAgreementDTO;
 import ru.pozhar.collector_api.dto.ResponseDebtorDTO;
 import ru.pozhar.collector_api.dto.ResponseDocumentDTO;
 import ru.pozhar.collector_api.dto.ResponseUpdateStatusDTO;
-import ru.pozhar.collector_api.exception.*;
+import ru.pozhar.collector_api.exception.BusinessLogicException;
 import ru.pozhar.collector_api.mapper.AddressMapper;
 import ru.pozhar.collector_api.mapper.AgreementKeyMapper;
 import ru.pozhar.collector_api.mapper.AgreementMapper;

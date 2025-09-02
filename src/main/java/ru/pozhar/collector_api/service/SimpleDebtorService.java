@@ -3,15 +3,19 @@ package ru.pozhar.collector_api.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.pozhar.collector_api.dto.*;
-import ru.pozhar.collector_api.exception.*;
+import ru.pozhar.collector_api.dto.RequestDebtorDTO;
+import ru.pozhar.collector_api.dto.RequestDocumentDTO;
+import ru.pozhar.collector_api.dto.ResponseUpdatePhoneDTO;
+import ru.pozhar.collector_api.exception.BusinessLogicException;
 import ru.pozhar.collector_api.mapper.DebtorMapper;
 import ru.pozhar.collector_api.model.Debtor;
 import ru.pozhar.collector_api.model.Document;
 import ru.pozhar.collector_api.repository.DebtorRepository;
 import ru.pozhar.collector_api.repository.DocumentRepository;
 
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor

@@ -4,7 +4,8 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import ru.pozhar.collector_api.dto.RequestDocumentDTO;
 import ru.pozhar.collector_api.dto.ResponseDocumentDTO;
-import ru.pozhar.collector_api.model.*;
+import ru.pozhar.collector_api.model.Debtor;
+import ru.pozhar.collector_api.model.Document;
 
 @Mapper(componentModel = "spring")
 public interface DocumentMapper {
