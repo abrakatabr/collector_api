@@ -10,7 +10,7 @@ public record ResponseDebtorDTO(Long id,
                                 String patronymic,
                                 LocalDate birthday,
                                 Gender gender,
+                                String role,
                                 String phoneNumber,
                                 List<ResponseAddressDTO> addressDTOs,
-                                ResponseDocumentsDTO documentsDTO,
-                                String role) { }
+                                List<ResponseDocumentDTO> documentDTOs) { }

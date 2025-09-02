@@ -3,14 +3,15 @@ package ru.pozhar.collector_api.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.pozhar.collector_api.dto.RequestDebtorDTO;
-import ru.pozhar.collector_api.dto.ResponseUpdatePhoneDTO;
+import ru.pozhar.collector_api.dto.*;
+import ru.pozhar.collector_api.exception.*;
 import ru.pozhar.collector_api.mapper.DebtorMapper;
 import ru.pozhar.collector_api.model.Debtor;
-import ru.pozhar.collector_api.model.Documents;
+import ru.pozhar.collector_api.model.Document;
 import ru.pozhar.collector_api.repository.DebtorRepository;
-import ru.pozhar.collector_api.repository.DocumentsRepository;
-import java.util.Optional;
+import ru.pozhar.collector_api.repository.DocumentRepository;
+
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -20,7 +21,7 @@ public class SimpleDebtorService implements DebtorService {
 
     private final DebtorRepository debtorRepository;
 
-    private final DocumentsRepository documentsRepository;
+    private final DocumentRepository documentRepository;
 
     private final DebtorAgreementService debtorAgreementService;
 
@@ -29,19 +30,25 @@ public class SimpleDebtorService implements DebtorService {
     @Override
     public Debtor initDebtor(RequestDebtorDTO debtorDTO) {
         Debtor debtor = debtorMapper.toDebtorEntity(debtorDTO);
-        Optional<Documents> documentsOptional = documentsRepository
-                .findByPassportNumber(debtorDTO.documentsDTO().passportNumber());
-        if (documentsOptional.isPresent()) {
-            Optional<Debtor> debtorOptional = debtorRepository.findByDocumentsId(documentsOptional.get().getId());
-            if (debtorOptional.isPresent()) {
-                debtor = debtorOptional.get();
-                if (!validateDebtor(debtor, documentsOptional.get(), debtorDTO)) {
-                    throw new RuntimeException("В базе данных есть другой заемщик с такими документами");
+        List<RequestDocumentDTO> documentDTOs = debtorDTO.documentDTOs();
+        List<Document> documents = new LinkedList<>();
+        for (RequestDocumentDTO documentDTO : documentDTOs) {
+            Optional<Document> documentOptional = documentRepository
+                    .findByDocumentTypeAndDocumentNumber(documentDTO.documentType(), documentDTO.documentNumber());
+            if (documentOptional.isPresent()) {
+                Document document = documentOptional.get();
+                Optional<Debtor> debtorOptional = debtorRepository.findByDebtorId(document.getDebtor().getId());
+                if (debtorOptional.isPresent()) {
+                    Debtor findDebtor = debtorOptional.get();
+                    validateDebtor(findDebtor, debtorDTO);
+                    List<Document> findDocuments = documentRepository.findByDebtor(findDebtor);
+                    validateDocuments(findDocuments, documentDTOs);
                 }
-            } else {
-                throw new RuntimeException("По паспортным данным не найден заемщик в базе даных");
+                debtor = debtorOptional.get();
+                documents.add(document);
             }
-        } else {
+        }
+        if(documents.size() == 0) {
             debtor = debtorRepository.save(debtor);
         }
        return debtor;
@@ -69,24 +76,28 @@ public class SimpleDebtorService implements DebtorService {
         return debtorOptional.get();
     }
 
-    private boolean validateDebtor(Debtor debtor, Documents documents, RequestDebtorDTO debtorDTO) {
-        boolean isValidInn = true;
-        boolean isValidSnils = true;
-        if (!documents.getInn().isBlank() && documents.getInn() != null) {
-            if (!debtorDTO.documentsDTO().inn().isBlank() && debtorDTO.documentsDTO().inn() != null) {
-                isValidInn = documents.getInn().equals(debtorDTO.documentsDTO().inn());
-            }
-        }
-        if (!documents.getSnils().isBlank() && documents.getSnils() != null) {
-            if (!debtorDTO.documentsDTO().snils().isBlank() && debtorDTO.documentsDTO().snils() != null) {
-                isValidSnils = documents.getSnils().equals(debtorDTO.documentsDTO().snils());
-            }
-        }
-        return debtor.getFirstname().equals(debtorDTO.firstname())
+    private void validateDebtor(Debtor debtor, RequestDebtorDTO debtorDTO) {
+        boolean isValid = debtor.getFirstname().equals(debtorDTO.firstname())
                 && debtor.getLastname().equals(debtorDTO.lastname())
                 && debtor.getPatronymic().equals((debtorDTO.patronymic()))
-                && debtor.getBirthday().isEqual(debtorDTO.birthday())
-                && documents.getPassportNumber().equals(debtorDTO.documentsDTO().passportNumber())
-                &&  isValidInn && isValidSnils;
+                && debtor.getBirthday().isEqual(debtorDTO.birthday());
+        if (!isValid) {
+            throw new BusinessLogicException("В базе данных есть другой заемщик с такими документами");
+        }
+    }
+
+    private void validateDocuments(List<Document> documents, List<RequestDocumentDTO> documentDTOs) {
+        boolean isValid = true;
+        for (RequestDocumentDTO documentDTO : documentDTOs) {
+            Optional<Document> documentOptional = documents.stream()
+                    .filter(d -> d.getDocumentType() == documentDTO.documentType())
+                    .findFirst();
+            if (documentOptional.isPresent()) {
+                isValid = documentOptional.get().getDocumentNumber().equals(documentDTO.documentNumber());
+            }
+            if (!isValid) {
+               throw new BusinessLogicException("Документы заемщика в базе данных имеют другой номер");
+            }
+        }
     }
 }

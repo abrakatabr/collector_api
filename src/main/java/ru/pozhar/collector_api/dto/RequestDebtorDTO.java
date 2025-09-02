@@ -13,4 +13,4 @@ public record RequestDebtorDTO(String firstname,
                                String role,
                                String phoneNumber,
                                List<RequestAddressDTO> addressDTOs,
-                               RequestDocumentsDTO documentsDTO) { }
+                               List<RequestDocumentDTO> documentDTOs) { }

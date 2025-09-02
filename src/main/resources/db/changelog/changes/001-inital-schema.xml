@@ -107,34 +107,29 @@
         <column name="id" type="bigserial" remarks="Сгенерированный ID набора документов">
             <constraints primaryKey="true" unique="true"/>
         </column>
-        <column name="passport_number" type="varchar(20)" remarks="Серия и номер паспорта">
-            <constraints nullable="false" unique="true"/>
+        <column name="debtor_id" type="bigint" remarks="ID заемщика">
+            <constraints nullable="false"
+                         foreignKeyName="fk_documents_debtor_id"
+                         referencedTableName="debtors"
+                         referencedColumnNames="id"/>
         </column>
-        <column name="inn" type="varchar(20)" remarks="Номер ИНН">
-            <constraints nullable="true" unique="true"/>
+        <column name="type" type="varchar(50)" remarks="Тип документа">
+            <constraints nullable="false"
+                         checkConstraint="type IN ('NATIONAL_PASSPORT', 'INTERNATIONAL_PASSPORT', 'DRIVER_LICENSE',
+                         'INN', 'SNILS')"/>
         </column>
-        <column name="snils" type="varchar(20)" remarks="Номер СНИЛС">
-            <constraints nullable="true" unique="true"/>
+        <column name="document_number" type="varchar(50)" remarks="Номер документа">
+            <constraints nullable="true"/>
+        </column>
+        <column name="issue_date" type="date" remarks="Дата выдачи документа">
+            <constraints nullable="true"/>
         </column>
     </createTable>
 
-    <sql>
-        ALTER TABLE documents
-        ADD CONSTRAINT chk_passport_number
-        CHECK (passport_number ~ '^\d{10}$');
-    </sql>
-
-    <sql>
-        ALTER TABLE documents
-        ADD CONSTRAINT chk_inn
-        CHECK (inn ~ '^\d{12}$');
-    </sql>
-
-    <sql>
-        ALTER TABLE documents
-        ADD CONSTRAINT chk_snils
-        CHECK (snils ~ '^\d{11}$');
-    </sql>
+    <addUniqueConstraint tableName="documents"
+                         columnNames="type, document_number"
+                         constraintName="uq_document"
+                         deferrable="true"/>
 
     <createTable tableName="debtors_agreements">
         <column name="id" type="bigserial" remarks="Сгенерированный ID связи заемщика и договора">
@@ -162,26 +157,6 @@
                          columnNames="debtor_id, agreement_id"
                          constraintName="uq_debtor_agreement"
                          deferrable="true"/>
-
-    <createTable tableName="debtors_documents">
-        <column name="id" type="bigserial" remarks="Сгенерированный ID связи заемщика и документов">
-            <constraints primaryKey="true" unique="true"/>
-        </column>
-        <column name="debtor_id" type="bigint" remarks="ID заемщика из таблицы заемщиков">
-            <constraints nullable="false"
-                         unique="true"
-                         foreignKeyName="fk_debtors_documents_debtor_id"
-                         referencedTableName="debtors"
-                         referencedColumnNames="id"/>
-        </column>
-        <column name="documents_id" type="bigint" remarks="ID набора документов из таблицы наборов документов">
-            <constraints nullable="false"
-                         unique="true"
-                         foreignKeyName="fk_debtors_documents_documents_id"
-                         referencedTableName="documents"
-                         referencedColumnNames="id"/>
-        </column>
-    </createTable>
 
     <createTable tableName="agreements_keys">
         <column name="id" type="bigserial" remarks="Сгенерированный ID связи ключа идемпотентности и договора">
@@ -217,8 +192,12 @@
         <column name="transferor"/>
     </createIndex>
 
-    <createIndex tableName="documents" indexName="i_documents_passport_number">
-        <column name="passport_number"/>
+    <createIndex tableName="documents" indexName="i_documents_debtor_id">
+        <column name="debtor_id"/>
+    </createIndex>
+
+    <createIndex tableName="documents" indexName="i_documents_document_number">
+        <column name="document_number"/>
     </createIndex>
 
     <createIndex tableName="debtors_agreements" indexName="i_debtors_agreements_debtor_id">
@@ -227,14 +206,6 @@
 
     <createIndex tableName="debtors_agreements" indexName="i_debtors_agreements_agreement_id">
         <column name="agreement_id"/>
-    </createIndex>
-
-    <createIndex tableName="debtors_documents" indexName="i_debtors_documents_debtor_id">
-        <column name="debtor_id"></column>
-    </createIndex>
-
-    <createIndex tableName="debtors_documents" indexName="i_debtors_documents_documents_id">
-        <column name="documents_id"></column>
     </createIndex>
 
     <createIndex tableName="addresses" indexName="i_addresses_debtor_id">

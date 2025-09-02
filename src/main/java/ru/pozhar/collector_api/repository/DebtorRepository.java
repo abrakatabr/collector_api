@@ -12,7 +12,7 @@ import java.util.Optional;
 public interface DebtorRepository extends JpaRepository<Debtor, Long> {
     @Query(value = """
     SELECT d.* FROM debtors d 
-    JOIN debtors_documents dd ON d.id = dd.debtor_id 
+    JOIN documents dd ON d.id = dd.debtor_id 
     WHERE dd.documents_id = :documentId
     """, nativeQuery = true)
     Optional<Debtor> findByDocumentsId(@Param("documentId") Long documentId);

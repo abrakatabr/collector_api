@@ -9,21 +9,21 @@ import ru.pozhar.collector_api.dto.RequestDebtorDTO;
 import ru.pozhar.collector_api.dto.ResponseAddressDTO;
 import ru.pozhar.collector_api.dto.ResponseAgreementDTO;
 import ru.pozhar.collector_api.dto.ResponseDebtorDTO;
-import ru.pozhar.collector_api.dto.ResponseDocumentsDTO;
+import ru.pozhar.collector_api.dto.ResponseDocumentDTO;
 import ru.pozhar.collector_api.dto.ResponseUpdateStatusDTO;
+import ru.pozhar.collector_api.exception.*;
 import ru.pozhar.collector_api.mapper.AddressMapper;
 import ru.pozhar.collector_api.mapper.AgreementKeyMapper;
 import ru.pozhar.collector_api.mapper.AgreementMapper;
 import ru.pozhar.collector_api.mapper.DebtorMapper;
-import ru.pozhar.collector_api.mapper.DocumentsMapper;
+import ru.pozhar.collector_api.mapper.DocumentMapper;
 import ru.pozhar.collector_api.model.Address;
 import ru.pozhar.collector_api.model.Agreement;
 import ru.pozhar.collector_api.model.AgreementKey;
 import ru.pozhar.collector_api.model.AgreementStatus;
 import ru.pozhar.collector_api.model.Debtor;
 import ru.pozhar.collector_api.model.DebtorAgreement;
-import ru.pozhar.collector_api.model.DebtorDocuments;
-import ru.pozhar.collector_api.model.Documents;
+import ru.pozhar.collector_api.model.Document;
 import ru.pozhar.collector_api.repository.AgreementKeyRepository;
 import ru.pozhar.collector_api.repository.AgreementRepository;
 import ru.pozhar.collector_api.repository.DebtorAgreementRepository;
@@ -41,7 +41,7 @@ public class SimpleAgreementService implements AgreementService {
 
     private final AddressMapper addressMapper;
 
-    private final DocumentsMapper documentsMapper;
+    private final DocumentMapper documentMapper;
 
     private final DebtorMapper debtorMapper;
 
@@ -51,9 +51,7 @@ public class SimpleAgreementService implements AgreementService {
 
     private final DebtorAgreementService debtorAgreementService;
 
-    private final DocumentsService documentsService;
-
-    private final DebtorDocumentsService debtorDocumentsService;
+    private final DocumentService documentService;
 
     private final AddressService addressService;
 
@@ -67,11 +65,10 @@ public class SimpleAgreementService implements AgreementService {
     @Override
     @Transactional
     public ResponseAgreementDTO createAgreement(RequestAgreementDTO requestAgreementDTO, Long key) {
-      List<DebtorDocuments> createdDebtorDocuments = new LinkedList<>();
       List<DebtorAgreement> createdDebtorAgreements = new LinkedList<>();
       List<Debtor> createdDebtors = new LinkedList<>();
       Map<Long, List<Address>> createdAddresses = new HashMap<>();
-      Map<Long,Documents> createdDocuments = new HashMap<>();
+      Map<Long, List<Document>> createdDocuments = new HashMap<>();
       Agreement createdAgreement;
       Optional<AgreementKey> agreementKeyOptional = agreementKeyRepository.findByKey(key);
       if (agreementKeyOptional.isPresent()
@@ -82,9 +79,7 @@ public class SimpleAgreementService implements AgreementService {
               Debtor debtor = debtorService.findDebtorById(debtorAgreement.getDebtor().getId());
               createdDebtors.add(debtor);
               createdDebtorAgreements.add(debtorAgreement);
-              DebtorDocuments debtorDocuments = debtorDocumentsService.findByDebtorId(debtor.getId());
-              createdDebtorDocuments.add(debtorDocuments);
-              Documents documents = documentsService.findDocumentsById(debtorDocuments.getDocuments().getId());
+              List<Document> documents = documentService.findDocumentsByDebtor(debtor);
               createdDocuments.put(debtor.getId(), documents);
               List<Address> createdAddressesList = addressService.findAddressesByDebtorId(debtor.getId());
               createdAddresses.put(debtor.getId(), createdAddressesList);
@@ -98,10 +93,8 @@ public class SimpleAgreementService implements AgreementService {
               DebtorAgreement debtorAgreement = debtorAgreementService
                       .initDebtorAgreement(debtor, createdAgreement, debtorDTO);
               createdDebtorAgreements.add(debtorAgreement);
-              Documents documents = documentsService.initDocuments(debtorDTO.documentsDTO());
+              List<Document> documents = documentService.initDocuments(debtorDTO.documentDTOs(), debtor);
               createdDocuments.put(debtor.getId(), documents);
-              DebtorDocuments debtorDocuments = debtorDocumentsService.initDebtorDocuments(debtor, documents);
-              createdDebtorDocuments.add(debtorDocuments);
               List<Address> createdAddressesList = new LinkedList<>();
               for (RequestAddressDTO addressDTO : debtorDTO.addressDTOs()) {
                   Address address = addressService.initAddress(debtor, addressDTO);
@@ -118,10 +111,12 @@ public class SimpleAgreementService implements AgreementService {
           for (Address address : createdAddresses.get(debtor.getId())) {
               responseAddressDTOList.add(addressMapper.toResponseAddressDTO(address));
           }
-          ResponseDocumentsDTO responseDocumentsDTO = documentsMapper
-                  .toResponseDocumentDTO(createdDocuments.get(debtor.getId()));
+          List<ResponseDocumentDTO> responseDocumentDTOList = new LinkedList<>();
+          for (Document document : createdDocuments.get(debtor.getId())) {
+              responseDocumentDTOList.add(documentMapper.toResponseDocumentDTO(document));
+          }
           ResponseDebtorDTO responseDebtorDTO = debtorMapper
-                  .toResponseDebtorDTO(debtor, debtorAgreement, responseAddressDTOList, responseDocumentsDTO);
+                  .toResponseDebtorDTO(debtor, debtorAgreement, responseAddressDTOList, responseDocumentDTOList);
           responseDebtorDTOList.add(responseDebtorDTO);
       }
       return agreementMapper.toResponseAgreementDTO(createdAgreement, responseDebtorDTOList);
@@ -160,9 +155,13 @@ public class SimpleAgreementService implements AgreementService {
     }
 
     private boolean isEqualsAgreements(Agreement agreement, RequestAgreementDTO agreementDTO) {
-        return agreement.getOriginalDebtSum().compareTo(agreementDTO.originalDebtSum()) == 0
+        boolean isEquals = agreement.getOriginalDebtSum().compareTo(agreementDTO.originalDebtSum()) == 0
                 && agreement.getActualDebtSum().compareTo(agreementDTO.actualDebtSum()) == 0
                 && agreement.getAgreementStartDate().isEqual(agreementDTO.agreementStartDate())
                 && agreement.getTransferor().equals(agreementDTO.transferor());
+        if (!isEquals) {
+            throw new BusinessLogicException("Такой ключ идемпотентности уже привязан к другому договору");
+        }
+        return isEquals;
     }
 }
