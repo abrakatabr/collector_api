@@ -1,5 +1,6 @@
 package ru.pozhar.collector_api.service;
 
+import jakarta.transaction.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.pozhar.collector_api.dto.RequestDocumentsDTO;
@@ -13,6 +14,8 @@ import java.util.Optional;
 public class SimpleDocumentsService implements DocumentsService{
     private final DocumentsMapper documentsMapper;
     private final DocumentsRepository documentsRepository;
+
+    @Transactional
     @Override
     public Documents initDocuments(RequestDocumentsDTO documentsDTO) {
         Documents documents = documentsMapper.toDocumentsEntity(documentsDTO);

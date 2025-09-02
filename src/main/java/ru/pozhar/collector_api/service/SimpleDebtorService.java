@@ -60,7 +60,6 @@ public class SimpleDebtorService implements DebtorService {
         return debtorMapper.toResponseUpdatePhoneDTO(debtor);
     }
 
-    @Transactional
     @Override
     public Debtor findDebtorById(Long debtorId) {
         Optional<Debtor> debtorOptional = debtorRepository.findByDebtorId(debtorId);

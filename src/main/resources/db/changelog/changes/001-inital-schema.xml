@@ -182,6 +182,29 @@
                          referencedColumnNames="id"/>
         </column>
     </createTable>
+
+    <createTable tableName="agreements_keys">
+        <column name="id" type="bigserial" remarks="Сгенерированный ID связи ключа идемпотентности и договора">
+            <constraints primaryKey="true" unique="true"/>
+        </column>
+        <column name="agreement_id" type="bigint" remarks="ID договора займа">
+            <constraints nullable="false"
+                         unique="true"
+                         foreignKeyName="fk_agreements_keys_agreement_id"
+                         referencedTableName="agreements"
+                         referencedColumnNames="id"/>
+        </column>
+        <column name="key" type="bigint" remarks="Ключ идемпотентности из запроса">
+            <constraints nullable="false" unique="true" checkConstraint="key BETWEEN 1 AND 9223372036854775807"/>
+        </column>
+    </createTable>
+
+    <sql>
+        ALTER TABLE agreements_keys
+        ADD CONSTRAINT chk_key
+        CHECK (key BETWEEN 1 AND 9223372036854775807);
+    </sql>
+
 </changeSet>
 
 <changeSet id="002" author="pozharov-an@activebt.ru">
@@ -217,6 +240,15 @@
     <createIndex tableName="addresses" indexName="i_addresses_debtor_id">
         <column name="debtor_id"></column>
     </createIndex>
+
+    <createIndex tableName="agreements_keys" indexName="i_agreements_keys_agreement_id">
+        <column name="agreement_id"></column>
+    </createIndex>
+
+    <createIndex tableName="agreements_keys" indexName="i_agreements_keys_key">
+        <column name="key"></column>
+    </createIndex>
+
 </changeSet>
 
 </databaseChangeLog>

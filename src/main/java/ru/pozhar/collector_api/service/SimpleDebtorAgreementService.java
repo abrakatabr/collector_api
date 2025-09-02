@@ -17,6 +17,7 @@ public class SimpleDebtorAgreementService implements DebtorAgreementService {
     private final DebtorAgreementRepository debtorAgreementRepository;
     private final DebtorAgreementMapper debtorAgreementMapper;
 
+    @Transactional
     @Override
     public DebtorAgreement initDebtorAgreement(Debtor debtor, Agreement agreement, RequestDebtorDTO requestDebtorDTO) {
         DebtorAgreement debtorAgreement = debtorAgreementMapper

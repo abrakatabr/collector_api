@@ -2,6 +2,7 @@ package ru.pozhar.collector_api.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.*;
 import ru.pozhar.collector_api.mapper.DebtorDocumentsMapper;
 import ru.pozhar.collector_api.model.Debtor;
 import ru.pozhar.collector_api.model.DebtorDocuments;
@@ -15,6 +16,7 @@ public class SimpleDebtorDocumentsService implements DebtorDocumentsService {
     private final DebtorDocumentsRepository debtorDocumentsRepository;
     private final DebtorDocumentsMapper debtorDocumentsMapper;
 
+    @Transactional
     @Override
     public DebtorDocuments initDebtorDocuments(Debtor debtor, Documents documents) {
         DebtorDocuments debtorDocuments = debtorDocumentsMapper.toDebtorDocumentsEntity(debtor, documents);

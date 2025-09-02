@@ -9,7 +9,7 @@ import ru.pozhar.collector_api.model.AgreementStatus;
 
 @Service
 public interface AgreementService {
-    ResponseAgreementDTO createAgreement(RequestAgreementDTO requestAgreementDTO);
+    ResponseAgreementDTO createAgreement(RequestAgreementDTO requestAgreementDTO, Long key);
 
     void deleteAgreement(Long agreementId);
 

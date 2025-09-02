@@ -28,8 +28,10 @@ public class AgreementController {
 
     @PostMapping
     public ResponseEntity<ResponseAgreementDTO> createAgreement(
+            @RequestParam String key,
             @RequestBody RequestAgreementDTO requestAgreementDTO) {
-        ResponseAgreementDTO responseAgreementDTO = agreementService.createAgreement(requestAgreementDTO);
+        Long agreementKey = validateKey(key);
+        ResponseAgreementDTO responseAgreementDTO = agreementService.createAgreement(requestAgreementDTO, agreementKey);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .header("Location", "api/agreements/create/" + responseAgreementDTO.id())
                 .body(responseAgreementDTO);
@@ -53,5 +55,21 @@ public class AgreementController {
         return ResponseEntity.status(HttpStatus.OK)
                 .header("Location", "/api/agreements" + updateStatusDTO.agreementId())
                 .body(updateStatusDTO);
+    }
+
+    private Long validateKey(String key) {
+        if (!StringUtils.hasText(key)) {
+            throw new ValidationException("Ключ идемпотентности должен содержать символы");
+        }
+        Long agreementKey;
+        try {
+            agreementKey = Long.valueOf(key);
+        } catch (NumberFormatException exception) {
+            throw new ValidationException("Ключ идемпотентности должен быть числом");
+        }
+        if (agreementKey < 1 || agreementKey > 9223372036854775807L) {
+            throw new ValidationException("Ключ идемпотентности должен быть от 1 до 9223372036854775807");
+        }
+        return agreementKey;
     }
 }
