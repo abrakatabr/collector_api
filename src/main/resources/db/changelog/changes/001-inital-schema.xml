@@ -131,6 +131,11 @@
                          constraintName="uq_document"
                          deferrable="true"/>
 
+    <addUniqueConstraint tableName="documents"
+                         columnNames="debtor_id, type"
+                         constraintName="uq_debtor_document"
+                         deferrable="true"/>
+
     <createTable tableName="debtors_agreements">
         <column name="id" type="bigserial" remarks="Сгенерированный ID связи заемщика и договора">
             <constraints primaryKey="true" unique="true"/>

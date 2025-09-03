@@ -27,9 +27,6 @@ public class SimpleDebtorService implements DebtorService {
 
     private final DocumentRepository documentRepository;
 
-    private final DebtorAgreementService debtorAgreementService;
-
-
     @Transactional
     @Override
     public Debtor initDebtor(RequestDebtorDTO debtorDTO) {
@@ -45,12 +42,14 @@ public class SimpleDebtorService implements DebtorService {
                 if (debtorOptional.isPresent()) {
                     Debtor findDebtor = debtorOptional.get();
                     validateDebtor(findDebtor, debtorDTO);
-                    List<Document> findDocuments = documentRepository.findByDebtor(findDebtor);
-                    validateDocuments(findDocuments, documentDTOs);
                 }
                 debtor = debtorOptional.get();
                 documents.add(document);
             }
+        }
+        if(documents.size() > 0) {
+            List<Document> findDocuments = documentRepository.findByDebtor(debtor);
+            validateDocuments(findDocuments, documentDTOs);
         }
         if(documents.size() == 0) {
             debtor = debtorRepository.save(debtor);
