@@ -1,5 +1,6 @@
 package ru.pozhar.collector_api.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -29,7 +30,7 @@ public class AgreementController {
     @PostMapping
     public ResponseEntity<ResponseAgreementDTO> createAgreement(
             @RequestParam String key,
-            @RequestBody RequestAgreementDTO requestAgreementDTO) {
+            @RequestBody @Valid RequestAgreementDTO requestAgreementDTO) {
         Long agreementKey = validateKey(key);
         ResponseAgreementDTO responseAgreementDTO = agreementService.createAgreement(requestAgreementDTO, agreementKey);
         return ResponseEntity.status(HttpStatus.CREATED)

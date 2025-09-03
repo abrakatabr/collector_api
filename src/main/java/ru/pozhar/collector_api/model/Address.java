@@ -50,7 +50,7 @@ public class Address {
     @Column(name = "apartment", length = 50)
     private String apartment = "N/A";
 
-    @NotBlank(message = "Статус обязателеню")
+    @NotBlank(message = "Статус обязателен")
     @Pattern(regexp = "registration|residential",
             message = "Статус адреса должен быть 'registration' или 'residential'.")
     @Column(name = "address_status", nullable = false)

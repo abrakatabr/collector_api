@@ -35,8 +35,7 @@ public class Debtor {
     @Column(name = "lastname", nullable = false, length = 128)
     private String lastname;
 
-    @NotBlank(message = "Отчество обязательно.")
-    @Column(name = "patronymic", nullable = false, length = 128)
+    @Column(name = "patronymic", nullable = true, length = 128)
     private String patronymic;
 
     @NotNull(message = "Дата рождения обязательна.")

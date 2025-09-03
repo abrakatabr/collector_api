@@ -1,5 +1,6 @@
 package ru.pozhar.collector_api.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +22,7 @@ public class AddressController {
     @PutMapping("/address")
     public ResponseEntity<ResponseUpdateAddressDTO> updateDebtorAddress(
             @PathVariable Long debtorId,
-            @RequestBody RequestAddressDTO requestAddressDTO
+            @RequestBody @Valid RequestAddressDTO requestAddressDTO
             ) {
         ResponseUpdateAddressDTO responseAddressDTO = addressService
                 .updateAddress(debtorId, requestAddressDTO);
