@@ -12,6 +12,7 @@ import ru.pozhar.collector_api.dto.ResponseDebtorDTO;
 import ru.pozhar.collector_api.dto.ResponseDocumentDTO;
 import ru.pozhar.collector_api.dto.ResponseUpdateStatusDTO;
 import ru.pozhar.collector_api.exception.BusinessLogicException;
+import ru.pozhar.collector_api.exception.EntityNotFoundException;
 import ru.pozhar.collector_api.mapper.AddressMapper;
 import ru.pozhar.collector_api.mapper.AgreementKeyMapper;
 import ru.pozhar.collector_api.mapper.AgreementMapper;
@@ -136,7 +137,7 @@ public class SimpleAgreementService implements AgreementService {
     public Agreement findAgreementById(Long agreementId) {
         Optional<Agreement> agreementOptional = agreementRepository.findById(agreementId);
         if (agreementOptional.isEmpty()) {
-            throw new RuntimeException("Договор с таким ID не найден");
+            throw new EntityNotFoundException("Договор с таким ID не найден");
         }
         return agreementOptional.get();
     }
@@ -146,7 +147,7 @@ public class SimpleAgreementService implements AgreementService {
     public ResponseUpdateStatusDTO updateAgreementStatus(Long agreementId, AgreementStatus agreementStatus) {
         Agreement agreement = findAgreementById(agreementId);
         if (agreement.getStatus() == AgreementStatus.deleted) {
-            throw new RuntimeException("Договор уже удален");
+            throw new BusinessLogicException("Договор уже удален");
         }
         agreement.setStatus(agreementStatus);
         agreement = agreementRepository.save(agreement);

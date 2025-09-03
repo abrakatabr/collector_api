@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.pozhar.collector_api.dto.RequestDebtorDTO;
+import ru.pozhar.collector_api.exception.EntityNotFoundException;
 import ru.pozhar.collector_api.mapper.DebtorAgreementMapper;
 import ru.pozhar.collector_api.model.Agreement;
 import ru.pozhar.collector_api.model.Debtor;
@@ -44,7 +45,7 @@ public class SimpleDebtorAgreementService implements DebtorAgreementService {
         Optional<DebtorAgreement> debtorAgreementOptional = debtorAgreementRepository
                 .findByDebtorIdAndAgreementId(debtorId, agreementId);
         if (debtorAgreementOptional.isEmpty()) {
-            throw new RuntimeException("Связь заемщика и договора не найдена в базе данных");
+            throw new EntityNotFoundException("Связь заемщика и договора не найдена в базе данных");
         }
         return debtorAgreementOptional.get();
     }

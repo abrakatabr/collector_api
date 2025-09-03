@@ -7,6 +7,7 @@ import ru.pozhar.collector_api.dto.RequestDebtorDTO;
 import ru.pozhar.collector_api.dto.RequestDocumentDTO;
 import ru.pozhar.collector_api.dto.ResponseUpdatePhoneDTO;
 import ru.pozhar.collector_api.exception.BusinessLogicException;
+import ru.pozhar.collector_api.exception.EntityNotFoundException;
 import ru.pozhar.collector_api.mapper.DebtorMapper;
 import ru.pozhar.collector_api.model.Debtor;
 import ru.pozhar.collector_api.model.Document;
@@ -62,7 +63,7 @@ public class SimpleDebtorService implements DebtorService {
     public ResponseUpdatePhoneDTO updateDebtorPhoneNumber(Long debtorId, String phoneNumber) {
         Optional<Debtor> debtorOptional = debtorRepository.findByDebtorId(debtorId);
         if (debtorOptional.isEmpty()) {
-            throw new RuntimeException("Заемщик не найден в базе данных");
+            throw new EntityNotFoundException("Заемщик не найден в базе данных");
         }
         Debtor debtor = debtorOptional.get();
         debtor.setPhoneNumber(phoneNumber);
@@ -74,7 +75,7 @@ public class SimpleDebtorService implements DebtorService {
     public Debtor findDebtorById(Long debtorId) {
         Optional<Debtor> debtorOptional = debtorRepository.findByDebtorId(debtorId);
         if (debtorOptional.isEmpty()) {
-            throw new RuntimeException("Заемщик с таким ID не найден в базе данных");
+            throw new EntityNotFoundException("Заемщик с таким ID не найден в базе данных");
         }
         return debtorOptional.get();
     }

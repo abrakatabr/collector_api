@@ -19,7 +19,6 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: validate
-    show-sql: true
     properties:
       hibernate:
         format_sql: true
@@ -35,7 +34,17 @@ logging:
     org.springframework: DEBUG
     org.hibernate:
       SQL: DEBUG
-      type: DEBUG
+      orm.jdbc.bind: TRACE
     org.liquibase: INFO
     controller: TRACE
     ru.pozhar.collector_api: DEBUG
+    ru.pozhar.collector_api.aspect: DEBUG
+
+  file:
+    name: logs/collector-api.log
+    max-size: 10MB
+    max-history: 30
+
+  pattern:
+      console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %highlight(%-5level) %cyan(%logger{36}) - %msg%n"
+      file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
