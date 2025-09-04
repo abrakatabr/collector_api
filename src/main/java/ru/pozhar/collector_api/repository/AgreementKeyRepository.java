@@ -8,5 +8,5 @@ import java.util.Optional;
 
 @Repository
 public interface AgreementKeyRepository extends JpaRepository<AgreementKey, Long> {
-    Optional<AgreementKey> findByKey(Long key);
+    AgreementKey findByKey(Long key);
 }

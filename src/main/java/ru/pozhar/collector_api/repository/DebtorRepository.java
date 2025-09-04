@@ -15,11 +15,11 @@ public interface DebtorRepository extends JpaRepository<Debtor, Long> {
     JOIN documents dd ON d.id = dd.debtor_id 
     WHERE dd.documents_id = :documentId
     """, nativeQuery = true)
-    Optional<Debtor> findByDocumentsId(@Param("documentId") Long documentId);
+    Debtor findByDocumentsId(@Param("documentId") Long documentId);
 
     @Query(value = """
             SELECT * FROM debtors
             WHERE id = :debtorId
             """, nativeQuery = true)
-    Optional<Debtor> findByDebtorId(@Param("debtorId") Long debtorId);
+    Debtor findByDebtorId(@Param("debtorId") Long debtorId);
 }
