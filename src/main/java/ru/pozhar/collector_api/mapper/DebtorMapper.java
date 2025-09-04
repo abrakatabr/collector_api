@@ -6,7 +6,7 @@ import ru.pozhar.collector_api.dto.RequestDebtorDTO;
 import ru.pozhar.collector_api.dto.ResponseAddressDTO;
 import ru.pozhar.collector_api.dto.ResponseDebtorDTO;
 import ru.pozhar.collector_api.dto.ResponseDocumentDTO;
-import ru.pozhar.collector_api.dto.ResponseUpdatePhoneDTO;
+import ru.pozhar.collector_api.dto.ResponseUpdateDebtorDTO;
 import ru.pozhar.collector_api.model.Debtor;
 import ru.pozhar.collector_api.model.DebtorAgreement;
 import java.util.List;
@@ -25,6 +25,5 @@ public interface DebtorMapper {
                                           List<ResponseAddressDTO> addressDTOList,
                                           List<ResponseDocumentDTO> documentDTOList);
 
-    @Mapping(target = "debtorId", source = "debtor.id")
-    ResponseUpdatePhoneDTO toResponseUpdatePhoneDTO(Debtor debtor);
+    ResponseUpdateDebtorDTO toResponseUpdateDebtorDTO(Debtor debtor);
 }

@@ -48,13 +48,14 @@ public class AgreementController {
     public ResponseEntity<ResponseUpdateStatusDTO> updateAgreementStatus(
             @PathVariable Long agreementId,
             @RequestParam String status) {
-        if (!StringUtils.hasText(status) || "deleted".equals(status)) {
+        if (!StringUtils.hasText(status)
+                || (!status.equals(AgreementStatus.paid.name()) && !status.equals(AgreementStatus.active.name()))) {
             throw new ValidationException("Статус должен содержать символы и может быть 'active' или 'paid'");
         }
         AgreementStatus agreementStatus = AgreementStatus.valueOf(status);
         ResponseUpdateStatusDTO updateStatusDTO = agreementService.updateAgreementStatus(agreementId, agreementStatus);
         return ResponseEntity.status(HttpStatus.OK)
-                .header("Location", "/api/agreements" + updateStatusDTO.agreementId())
+                .header("Location", "/api/agreements/" + updateStatusDTO.agreementId())
                 .body(updateStatusDTO);
     }
 

@@ -31,14 +31,13 @@ spring:
 
 logging:
   level:
-    org.springframework: DEBUG
+    org.springframework: TRACE
     org.hibernate:
-      SQL: DEBUG
+      SQL: TRACE
       orm.jdbc.bind: TRACE
     org.liquibase: INFO
     controller: TRACE
-    ru.pozhar.collector_api: DEBUG
-    ru.pozhar.collector_api.aspect: DEBUG
+    ru.pozhar.collector_api: TRACE
 
   file:
     name: logs/collector-api.log

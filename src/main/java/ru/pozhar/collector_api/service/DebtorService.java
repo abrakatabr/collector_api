@@ -5,7 +5,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.pozhar.collector_api.dto.RequestDebtorDTO;
 import ru.pozhar.collector_api.dto.RequestDocumentDTO;
-import ru.pozhar.collector_api.dto.ResponseUpdatePhoneDTO;
+import ru.pozhar.collector_api.dto.RequestUpdateDebtorDTO;
+import ru.pozhar.collector_api.dto.ResponseUpdateDebtorDTO;
 import ru.pozhar.collector_api.exception.BusinessLogicException;
 import ru.pozhar.collector_api.exception.EntityNotFoundException;
 import ru.pozhar.collector_api.mapper.DebtorMapper;
@@ -56,14 +57,31 @@ public class DebtorService {
     }
 
     @Transactional
-    public ResponseUpdatePhoneDTO updateDebtorPhoneNumber(Long debtorId, String phoneNumber) {
+    public ResponseUpdateDebtorDTO updateDebtor(Long debtorId, RequestUpdateDebtorDTO debtorDTO) {
         Debtor debtor = debtorRepository.findByDebtorId(debtorId);
         if (debtor == null) {
             throw new EntityNotFoundException("Заемщик не найден в базе данных");
         }
-        debtor.setPhoneNumber(phoneNumber);
+        if (debtorDTO.firstname() != null) {
+            debtor.setFirstname(debtorDTO.firstname());
+        }
+        if (debtorDTO.lastname() != null) {
+            debtor.setLastname(debtorDTO.lastname());
+        }
+        if (debtorDTO.patronymic() != null) {
+            debtor.setPatronymic(debtorDTO.patronymic());
+        }
+        if (debtorDTO.birthday() != null) {
+            debtor.setBirthday(debtorDTO.birthday());
+        }
+        if (debtorDTO.gender() != null) {
+            debtor.setGender(debtorDTO.gender());
+        }
+        if (debtorDTO.phoneNumber() != null) {
+            debtor.setPhoneNumber(debtorDTO.phoneNumber());
+        }
         debtor = debtorRepository.save(debtor);
-        return debtorMapper.toResponseUpdatePhoneDTO(debtor);
+        return debtorMapper.toResponseUpdateDebtorDTO(debtor);
     }
 
     public Debtor findDebtorById(Long debtorId) {
