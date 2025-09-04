@@ -34,7 +34,7 @@ public class AgreementController {
         Long agreementKey = validateKey(key);
         ResponseAgreementDTO responseAgreementDTO = agreementService.createAgreement(requestAgreementDTO, agreementKey);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .header("Location", "api/agreements/create/" + responseAgreementDTO.id())
+                .header("Location", "api/agreements" + responseAgreementDTO.id())
                 .body(responseAgreementDTO);
     }
 
@@ -55,7 +55,8 @@ public class AgreementController {
         AgreementStatus agreementStatus = AgreementStatus.valueOf(status);
         ResponseUpdateStatusDTO updateStatusDTO = agreementService.updateAgreementStatus(agreementId, agreementStatus);
         return ResponseEntity.status(HttpStatus.OK)
-                .header("Location", "/api/agreements/" + updateStatusDTO.agreementId())
+                .header("Location", "/api/agreements/"
+                        + updateStatusDTO.agreementId() + "status")
                 .body(updateStatusDTO);
     }
 

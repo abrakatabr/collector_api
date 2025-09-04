@@ -12,7 +12,7 @@ import ru.pozhar.collector_api.model.Debtor;
 public interface AddressMapper {
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "debtor", ignore = true)
+    @Mapping(target = "debtor", source = "debtor")
     Address toAddressEntity(Debtor debtor, RequestAddressDTO addressDTO);
 
     ResponseAddressDTO toResponseAddressDTO(Address address);

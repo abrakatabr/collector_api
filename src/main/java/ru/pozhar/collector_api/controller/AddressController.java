@@ -31,13 +31,18 @@ public class AddressController {
         ResponseUpdateAddressDTO responseAddressDTO = addressService
                 .updateAddress(debtorId, requestAddressDTO);
         return ResponseEntity.status(HttpStatus.OK)
-                .header("Location", "api/debtors/" + responseAddressDTO.debtorId())
+                .header("Location", "api/debtors/"
+                        + responseAddressDTO.debtorId() + "/address")
                 .body(responseAddressDTO);
     }
 
- /*   @GetMapping
+    @GetMapping
     public ResponseEntity<List<ResponseAddressDTO>> getDebtorAddresses(
             @PathVariable Long debtorId) {
-
-    } */
+        List<ResponseAddressDTO> responseAddressDTOs = addressService.getDebtorAddresses(debtorId);
+        return ResponseEntity.status(HttpStatus.OK)
+                .header("Location", "api/debtors/"
+                        + debtorId + "/address")
+                .body(responseAddressDTOs);
+    }
 }

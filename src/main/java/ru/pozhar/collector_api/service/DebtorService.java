@@ -46,7 +46,7 @@ public class DebtorService {
             }
         }
         if(documents.size() > 0 && debtor != null) {
-            List<Document> findDocuments = documentRepository.findByDebtor(debtor);
+            List<Document> findDocuments = documentRepository.findByDebtorId(debtor.getId());
             validateDocuments(findDocuments, documentDTOs);
         }
         if(documents.size() == 0) {

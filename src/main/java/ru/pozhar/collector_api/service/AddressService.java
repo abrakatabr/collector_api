@@ -4,13 +4,16 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.pozhar.collector_api.dto.RequestAddressDTO;
+import ru.pozhar.collector_api.dto.ResponseAddressDTO;
 import ru.pozhar.collector_api.dto.ResponseUpdateAddressDTO;
+import ru.pozhar.collector_api.exception.EntityNotFoundException;
 import ru.pozhar.collector_api.mapper.AddressMapper;
 import ru.pozhar.collector_api.model.Address;
 import ru.pozhar.collector_api.model.Debtor;
 import ru.pozhar.collector_api.repository.AddressRepository;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -23,15 +26,22 @@ public class AddressService {
 
     @Transactional
     public Address initAddress(Debtor debtor, RequestAddressDTO addressDTO) {
-        Address address = addressMapper.toAddressEntity(debtor, addressDTO);
-        address.setDebtor(debtor);
-        List<Address> addresses = findAddressesByDebtorId(debtor.getId());
-            Optional<Address> addressOptional = addressFilter(addresses, addressDTO);
-            if (addressOptional.isPresent()) {
-                address = addressOptional.get();
-            } else {
-                address = addressRepository.save(address);
-            }
+        List<Address> addresses = addressRepository.findByFilters(
+                debtor.getId(),
+                null,
+                null,
+                null,
+                null,
+                null,
+                addressDTO.addressStatus()
+        );
+        Address address;
+        if (addresses.size() != 0) {
+            address = addresses.stream().findFirst().get();
+        } else {
+            address = addressMapper.toAddressEntity(debtor, addressDTO);
+            address = addressRepository.save(address);
+        }
         return address;
     }
 
@@ -42,14 +52,21 @@ public class AddressService {
 
     @Transactional
     public ResponseUpdateAddressDTO updateAddress (Long debtorId, RequestAddressDTO addressDTO) {
-        List<Address> addresses = findAddressesByDebtorId(debtorId);
-        Optional<Address> addressOptional = addressFilter(addresses, addressDTO);
+        List<Address> addresses = addressRepository.findByFilters(
+                debtorId,
+                null,
+                null,
+                null,
+                null,
+                null,
+                addressDTO.addressStatus()
+        );
         Address address;
-        if (addressOptional.isEmpty()) {
+        if (addresses.size() == 0) {
             Debtor debtor = debtorService.findDebtorById(debtorId);
             address = addressMapper.toAddressEntity(debtor, addressDTO);
         } else {
-            address = addressOptional.get();
+            address = addresses.stream().findFirst().get();
             address.setCountry(addressDTO.country());
             address.setCity(addressDTO.city());
             address.setStreet(addressDTO.street());
@@ -60,9 +77,15 @@ public class AddressService {
         return addressMapper.toResponseUpdateAddressDTO(address);
     }
 
-    private Optional<Address> addressFilter (List<Address> addresses, RequestAddressDTO addressDTO) {
-        return addresses.stream()
-                .filter(a -> addressDTO.addressStatus().equals(a.getAddressStatus()))
-                .findFirst();
+    @Transactional
+    public List<ResponseAddressDTO> getDebtorAddresses(Long debtorId) {
+        List<Address> addresses = addressRepository.findByDebtorId(debtorId);
+        if (addresses.size() == 0) {
+            throw new EntityNotFoundException("Адреса не найдены в базе данных");
+        }
+        List<ResponseAddressDTO> addressDTOList = addresses.stream()
+                .map(a -> addressMapper.toResponseAddressDTO(a))
+                .collect(Collectors.toList());
+        return addressDTOList;
     }
 }
