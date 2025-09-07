@@ -61,7 +61,7 @@
     </createTable>
 
     <addUniqueConstraint tableName="addresses"
-                         columnNames="country, city, street, house, apartment, address_status"
+                         columnNames="debtor_id, address_status"
                          constraintName="uq_address"
                          deferrable="true"/>
 
