@@ -1,0 +1,69 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: collector-api
+  labels:
+    app: collector-api
+spec:
+  selector:
+    app: collector-api
+  ports:
+    - protocol: TCP
+      port: 8080
+      nodePort: 30004  # новый свободный порт
+  type: NodePort
+---
+apiVersion: apps/v1
+kind: Deployment  # Используем Deployment вместо StatefulSet
+metadata:
+  name: collector-api
+  labels:
+    app: collector-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: collector-api
+  template:
+    metadata:
+      labels:
+        app: collector-api
+    spec:
+      containers:
+        - name: collector-api
+          image: collector-api  # образ который соберет Tilt
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:postgresql://postgres:5432/Collector%20DB"
+            - name: SPRING_DATASOURCE_USERNAME
+              value: "user"
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: "password"
+            - name: SPRING_REDIS_HOST
+              value: "redis"
+            - name: SPRING_REDIS_PASSWORD
+              value: "redis"
+            - name: SPRING_RABBITMQ_HOST
+              value: "rabbitmq"
+            - name: SPRING_MINIO_URL
+              value: "http://minio:9000"
+            - name: SPRING_MINIO_ACCESS_KEY
+              value: "minioadmin"
+            - name: SPRING_MINIO_SECRET_KEY
+              value: "minioadmin"
+            - name: SPRING_MINIO_BUCKET
+              value: "collector-bucket"
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 45
+            periodSeconds: 15

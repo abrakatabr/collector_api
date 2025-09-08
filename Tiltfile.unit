@@ -1,0 +1,17 @@
+docker_build('collector-api',
+    context='.',
+    dockerfile='Dockerfile',
+    live_update=[
+        sync('./target', '/app'),
+        sync('./src', '/app/src'),
+        run('mvn compile -DskipTests', trigger=['./pom.xml']),
+    ]
+)
+
+k8s_yaml('collector-api.yml')
+
+k8s_resource('collector-api',
+    labels=['api'],
+    port_forwards=30004,  # Порт для доступа к API
+    resource_deps=['postgres', 'redis', 'rabbitmq', 'minIO']  # Зависимости
+)
