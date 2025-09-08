@@ -9,7 +9,7 @@
 		<relativePath/>
 	</parent>
 	<groupId>ru.pozhar</groupId>
-	<artifactId>collector_api</artifactId>
+	<artifactId>collector-api</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>REST API для коллеторов</name>
 	<description>Demo project for Spring Boot</description>
