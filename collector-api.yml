@@ -10,11 +10,11 @@ spec:
   ports:
     - protocol: TCP
       port: 8080
-      nodePort: 30004  # новый свободный порт
+      nodePort: 30004
   type: NodePort
 ---
 apiVersion: apps/v1
-kind: Deployment  # Используем Deployment вместо StatefulSet
+kind: Deployment
 metadata:
   name: collector-api
   labels:
@@ -31,7 +31,7 @@ spec:
     spec:
       containers:
         - name: collector-api
-          image: collector-api  # образ который соберет Tilt
+          image: collector-api
           ports:
             - containerPort: 8080
           env:
@@ -41,9 +41,9 @@ spec:
               value: "user"
             - name: SPRING_DATASOURCE_PASSWORD
               value: "password"
-            - name: SPRING_REDIS_HOST
+            - name: SPRING_DATA_REDIS_HOST
               value: "redis"
-            - name: SPRING_REDIS_PASSWORD
+            - name: SPRING_DATA_REDIS_PASSWORD
               value: "redis"
             - name: SPRING_RABBITMQ_HOST
               value: "rabbitmq"

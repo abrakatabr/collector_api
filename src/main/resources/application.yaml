@@ -26,9 +26,16 @@ spring:
     liquibase-schema: collector
 
   redis:
-    host: ${SPRING_REDIS_HOST}
+    host: ${SPRING_DATA_REDIS_HOST}
     port: 6379
-    password: ${SPRING_REDIS_PASSWORD}
+    password: ${SPRING_DATA_REDIS_PASSWORD}
+    timeout: 7000ms
+    lettuce:
+      pool:
+        max-active: 5
+        max-idle: 4
+        min-idle: 0
+        max-wait: 5000ms
 
   rabbitmq:
     host: ${SPRING_RABBITMQ_HOST}
@@ -44,13 +51,13 @@ spring:
 
 logging:
   level:
-    org.springframework: TRACE
+    org.springframework: DEBUG
     org.hibernate:
-      SQL: TRACE
-      orm.jdbc.bind: TRACE
+      SQL: DEBUG
+      orm.jdbc.bind: DEBUG
     org.liquibase: INFO
-    controller: TRACE
-    ru.pozhar.collector_api: TRACE
+    controller: DEBUG
+    ru.pozhar.collector_api: DEBUG
 
   file:
     name: logs/collector-api.log

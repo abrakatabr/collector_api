@@ -2,14 +2,15 @@ package ru.pozhar.collector_api.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import ru.pozhar.collector_api.dto.ErrorResponse;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 
-@ControllerAdvice
+@RestControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(ValidationException.class)
@@ -49,6 +50,19 @@ public class GlobalExceptionHandler {
                 request.getDescription(false).replace("uri=", "")
         );
         return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ErrorResponse> handleIOException(
+            IOException exception, WebRequest request) {
+     ErrorResponse response = new ErrorResponse(
+             LocalDateTime.now(),
+             HttpStatus.INTERNAL_SERVER_ERROR.value(),
+             HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
+             exception.getMessage(),
+             request.getDescription(false).replace("uri=", "")
+     );
+     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
 
     @ExceptionHandler(Exception.class)

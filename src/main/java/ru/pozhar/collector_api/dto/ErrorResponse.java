@@ -1,7 +1,5 @@
 package ru.pozhar.collector_api.dto;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-
 import java.time.LocalDateTime;
 
 public record ErrorResponse(

@@ -12,7 +12,6 @@ import ru.pozhar.collector_api.model.Address;
 import ru.pozhar.collector_api.model.Debtor;
 import ru.pozhar.collector_api.repository.AddressRepository;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service

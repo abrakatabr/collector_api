@@ -1,0 +1,9 @@
+Кому: {lastName} {firstName} {patronymic}
+Адрес: {country} {city} {street} {house} {apartment}
+                 Уведомление.
+Уважаемый(ая) {lastName} {firstName} {patronymic}!
+Уведомляем Вас о наличии задолженност по договору займа денежных средств,
+заключенного {agreementStartDate} c {transferor}.
+Сумма непогашенной задолженности по договору {actualDebtSum}.
+Просим Вас погасить задолженность, или Вы будете гореть в аду.
+С глубоким уважунием ООО ПКО "АБК".
