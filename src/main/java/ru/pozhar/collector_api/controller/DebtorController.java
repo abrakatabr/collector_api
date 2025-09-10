@@ -2,6 +2,8 @@ package ru.pozhar.collector_api.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,15 +12,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.context.request.WebRequest;
-import ru.pozhar.collector_api.dto.ErrorResponse;
 import ru.pozhar.collector_api.dto.RequestUpdateDebtorDTO;
 import ru.pozhar.collector_api.dto.ResponseUpdateDebtorDTO;
 import ru.pozhar.collector_api.service.DebtorService;
 import ru.pozhar.collector_api.service.NotificationService;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/api/debtors")
@@ -39,25 +38,18 @@ public class DebtorController {
     }
 
     @GetMapping("/{debtorId}/notification/{agreementId}")
-    public ResponseEntity<String> getNotification(
+    public ResponseEntity<ByteArrayResource> getNotification(
             @PathVariable Long debtorId,
-            @PathVariable Long agreementId,
-            WebRequest request) {
-        try {
-            String response = notificationService.getNotification(debtorId, agreementId);
+            @PathVariable Long agreementId) throws IOException {
+            ByteArrayResource response = notificationService.getNotification(debtorId, agreementId);
+            String filename = "notification_" + debtorId + "_" + agreementId + ".txt";
             return ResponseEntity.status(HttpStatus.OK)
+                    .header(HttpHeaders.CONTENT_DISPOSITION,
+                            "attachment; filename=\"" + filename + "\"")
+                    .header(HttpHeaders.CONTENT_TYPE, "text/plain;charset=UTF-8")
+                    .header(HttpHeaders.CONTENT_LENGTH, String.valueOf(response.getByteArray().length))
                     .header("Location", "/api/debtors/"
                             + debtorId + "/notification/" + agreementId)
                     .body(response);
-        } catch (IOException exception) {
-                ErrorResponse response = new ErrorResponse(
-                        LocalDateTime.now(),
-                        HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                        HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
-                        exception.getMessage(),
-                        request.getDescription(false).replace("uri=", "")
-                );
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response.toString());
-        }
     }
 }

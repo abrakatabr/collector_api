@@ -52,17 +52,16 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
     }
 
-    @ExceptionHandler
-    public ResponseEntity<ErrorResponse> handleIOException(
-            IOException exception, WebRequest request) {
-     ErrorResponse response = new ErrorResponse(
-             LocalDateTime.now(),
-             HttpStatus.INTERNAL_SERVER_ERROR.value(),
-             HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
-             exception.getMessage(),
-             request.getDescription(false).replace("uri=", "")
-     );
-     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+    @ExceptionHandler(IOException.class)
+    public ResponseEntity<ErrorResponse> handleIOException(IOException exception, WebRequest request) {
+        ErrorResponse response = new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
+                exception.getMessage(),
+                request.getDescription(false).replace("uri=", "")
+        );
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
 
     @ExceptionHandler(Exception.class)

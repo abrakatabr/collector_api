@@ -1,6 +1,7 @@
 package ru.pozhar.collector_api.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
@@ -18,8 +19,11 @@ public class NotificationService {
     private final NotificationCacheService notificationCacheService;
     private final ResourceLoader resourceLoader;
 
-    public String getNotification(Long debtorId, Long agreementId) throws IOException{
+    public ByteArrayResource getNotification(Long debtorId, Long agreementId) throws IOException{
         String notification;
+        NotificationData notificationData = notificationDataRepository.findByDebtorIdAndAgreementId(
+                debtorId, agreementId
+        );
         if (notificationCacheService.hasNotification(debtorId, agreementId)) {
             notification = notificationCacheService.getNotification(debtorId, agreementId);
         } else {
@@ -29,14 +33,15 @@ public class NotificationService {
             } catch (IOException ex) {
                 throw new IOException("Не удеалось загрузить шаблон");
             }
-            NotificationData notificationData = notificationDataRepository.findByDebtorIdAndAgreementId(
-                    debtorId, agreementId
-            );
             notification = formatNotification(notification, notificationData);
             notificationCacheService.cacheNotification(debtorId, agreementId, notification);
         }
-        return notification;
+        ByteArrayResource byteContent = new ByteArrayResource(
+                notification.getBytes(StandardCharsets.UTF_8));
+        return byteContent;
     }
+
+
 
     private String formatNotification(String notification, NotificationData notificationData) {
         notification = StringUtils.replace(notification, "{lastName}", notificationData.getDebtor().getLastname());
