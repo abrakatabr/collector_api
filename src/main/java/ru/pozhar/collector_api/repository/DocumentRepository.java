@@ -12,4 +12,6 @@ public interface DocumentRepository extends JpaRepository<Document, Long> {
     Document findByDocumentTypeAndDocumentNumber(DocumentType documentType, String documentNumber);
 
     List<Document> findByDebtorId(Long debtorId);
+
+    Document findByDebtorIdAndDocumentType(Long debtorId, DocumentType documentType);
 }
