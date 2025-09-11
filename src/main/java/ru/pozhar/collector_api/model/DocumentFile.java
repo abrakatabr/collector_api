@@ -1,4 +1,4 @@
-﻿package ru.pozhar.collector_api.model;
+package ru.pozhar.collector_api.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

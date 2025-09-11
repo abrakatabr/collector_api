@@ -1,4 +1,4 @@
-﻿package ru.pozhar.collector_api.service;
+package ru.pozhar.collector_api.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

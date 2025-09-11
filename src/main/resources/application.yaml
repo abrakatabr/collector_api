@@ -5,6 +5,11 @@ spring:
   application:
     name: REST API FOR COLLECTORS
 
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+
   datasource:
     url: ${SPRING_DATASOURCE_URL}
     username: ${SPRING_DATASOURCE_USERNAME}
@@ -52,10 +57,12 @@ spring:
 logging:
   level:
     org.springframework: DEBUG
+    org.springframework.web: DEBUG
     org.hibernate:
       SQL: DEBUG
       orm.jdbc.bind: DEBUG
     org.liquibase: INFO
+    io.minio: DEBUG
     controller: DEBUG
     ru.pozhar.collector_api: DEBUG
 

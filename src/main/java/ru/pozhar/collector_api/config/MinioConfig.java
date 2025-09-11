@@ -1,4 +1,4 @@
-﻿package ru.pozhar.collector_api.config;
+package ru.pozhar.collector_api.config;
 
 import io.minio.MinioClient;
 import org.springframework.beans.factory.annotation.Value;
