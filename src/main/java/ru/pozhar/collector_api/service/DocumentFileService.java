@@ -1,9 +1,14 @@
 package ru.pozhar.collector_api.service;
 
+import io.minio.StatObjectArgs;
+import io.minio.StatObjectResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import ru.pozhar.collector_api.dto.FileDownloadDTO;
 import ru.pozhar.collector_api.exception.EntityNotFoundException;
 import ru.pozhar.collector_api.exception.ValidationException;
 import ru.pozhar.collector_api.model.Document;
@@ -45,6 +50,24 @@ public class DocumentFileService {
         documentFileRepository.save(documentFile);
         minioService.uploadFile(file, path, fileName);
         return "Файл " + path + "/" + fileName + " загружен";
+    }
+
+    @Transactional(readOnly = true)
+    public FileDownloadDTO downloadDocumentFile(Long debtorId, String type) {
+        DocumentType documentType = DocumentType.valueOf(type.replace("-", "_").toUpperCase());
+        Document document = documentRepository.findByDebtorIdAndDocumentType(debtorId, documentType);
+        if (document == null) {
+            throw new EntityNotFoundException("Данные документов заемщика не найдены");
+        }
+        DocumentFile documentFile = documentFileRepository.findByDocumentId(document.getId());
+        if (documentFile == null) {
+            throw new EntityNotFoundException("Данные файла документа не найдены");
+        }
+        String path = documentFile.getPath();
+        String fileName = documentFile.getFileName();
+        StatObjectResponse metadata = minioService.downloadMetadata(path, fileName);
+        ByteArrayResource resource = minioService.downloadFile(path, fileName);
+        return new FileDownloadDTO(resource, fileName, metadata.contentType(), metadata.size());
     }
 
     private void validateFile(MultipartFile file) {

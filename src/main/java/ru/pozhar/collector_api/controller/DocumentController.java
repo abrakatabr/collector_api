@@ -2,6 +2,7 @@ package ru.pozhar.collector_api.controller;
 
 import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import ru.pozhar.collector_api.dto.FileDownloadDTO;
 import ru.pozhar.collector_api.dto.ResponseDocumentDTO;
 import ru.pozhar.collector_api.service.DocumentFileService;
 import ru.pozhar.collector_api.service.DocumentService;
@@ -49,5 +51,20 @@ public class DocumentController {
                 .header(HttpHeaders.LOCATION, "api/debtors/"
                         + debtorId + "/document/file")
                 .body(fullPath);
+    }
+
+    @GetMapping(value = "/file", params = "type")
+    public ResponseEntity<ByteArrayResource> downloadDocumentFile(
+            @PathVariable Long debtorId,
+            @Pattern(regexp = "national-passport|international-passport|driver-license|inn|snils",
+                    message = "Неверный тип документа в запросе")
+            @RequestParam("type") String type) {
+        FileDownloadDTO file = documentFileService.downloadDocumentFile(debtorId, type);
+        return ResponseEntity.status(HttpStatus.OK)
+                .header(HttpHeaders.CONTENT_TYPE, file.contentType())
+                .header(HttpHeaders.CONTENT_LENGTH, String.valueOf(file.size()))
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=\"" + file.filename() + "\"")
+                .body(file.resource());
     }
 }
