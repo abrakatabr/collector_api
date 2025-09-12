@@ -1,8 +1,10 @@
 package ru.pozhar.collector_api.controller;
 
 import jakarta.validation.Valid;
+import org.springframework.http.HttpHeaders;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -58,6 +60,15 @@ public class AgreementController {
                 .header("Location", "/api/agreements/"
                         + updateStatusDTO.agreementId() + "status")
                 .body(updateStatusDTO);
+    }
+
+    @GetMapping("/{agreementId}")
+    public ResponseEntity<ResponseAgreementDTO> getAgreement(@PathVariable Long agreementId) {
+        ResponseAgreementDTO response = agreementService.getAgreement(agreementId);
+        return ResponseEntity.status(HttpStatus.OK)
+                .header(HttpHeaders.LOCATION, "/api/agreements/"
+                        + response.id())
+                .body(response);
     }
 
     private Long validateKey(String key) {

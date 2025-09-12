@@ -87,4 +87,20 @@ public class AddressService {
                 .collect(Collectors.toList());
         return addressDTOList;
     }
+
+    public void deleteAddress(Long debtorId, String addressStatus) {
+        List<Address> addresses = addressRepository.findByFilters(
+                debtorId,
+                null,
+                null,
+                null,
+                null,
+                null,
+                addressStatus
+        );
+        if(addresses.size() > 0) {
+            Address address = addresses.stream().findFirst().get();
+            addressRepository.delete(address);
+        }
+    }
 }

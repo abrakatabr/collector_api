@@ -149,6 +149,24 @@ public class AgreementService {
         return updateStatusDTO;
     }
 
+    @Transactional(readOnly = true)
+    public ResponseAgreementDTO getAgreement(Long agreementId) {
+        Agreement agreement = agreementRepository.findById(agreementId)
+                .orElseThrow(() -> new EntityNotFoundException("Договор с таким ID не найден"));
+        List<DebtorAgreement> debtorAgreements = debtorAgreementRepository.findByAgreement(agreement);
+        List<ResponseDebtorDTO> responseDebtorDTOs = new LinkedList<>();
+        for (DebtorAgreement debtorAgreement : debtorAgreements) {
+            Debtor debtor = debtorAgreement.getDebtor();
+            List<ResponseAddressDTO> responseAddressDTOs = addressService.getDebtorAddresses(debtor.getId());
+            List<ResponseDocumentDTO> responseDocumentDTOs = documentService.getDebtorDocuments(debtor.getId());
+            responseDebtorDTOs.add(debtorMapper.toResponseDebtorDTO(
+                    debtor, debtorAgreement, responseAddressDTOs, responseDocumentDTOs));
+        }
+        ResponseAgreementDTO responseAgreementDTO = agreementMapper.toResponseAgreementDTO(agreement,
+                responseDebtorDTOs);
+        return responseAgreementDTO;
+    }
+
     private boolean isEqualsAgreements(Agreement agreement, RequestAgreementDTO agreementDTO) {
         boolean isEquals = agreement.getOriginalDebtSum().compareTo(agreementDTO.originalDebtSum()) == 0
                 && agreement.getActualDebtSum().compareTo(agreementDTO.actualDebtSum()) == 0
