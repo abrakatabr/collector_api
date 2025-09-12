@@ -153,6 +153,9 @@ public class AgreementService {
     public ResponseAgreementDTO getAgreement(Long agreementId) {
         Agreement agreement = agreementRepository.findById(agreementId)
                 .orElseThrow(() -> new EntityNotFoundException("Договор с таким ID не найден"));
+        if (agreement.getStatus() == AgreementStatus.deleted) {
+            throw new BusinessLogicException("Договор удален");
+        }
         List<DebtorAgreement> debtorAgreements = debtorAgreementRepository.findByAgreement(agreement);
         List<ResponseDebtorDTO> responseDebtorDTOs = new LinkedList<>();
         for (DebtorAgreement debtorAgreement : debtorAgreements) {

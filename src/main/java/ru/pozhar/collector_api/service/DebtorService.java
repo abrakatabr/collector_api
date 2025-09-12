@@ -6,6 +6,10 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.pozhar.collector_api.dto.RequestDebtorDTO;
 import ru.pozhar.collector_api.dto.RequestDocumentDTO;
 import ru.pozhar.collector_api.dto.RequestUpdateDebtorDTO;
+import ru.pozhar.collector_api.dto.ResponseAddressDTO;
+import ru.pozhar.collector_api.dto.ResponseDebtorDTO;
+import ru.pozhar.collector_api.dto.ResponseDocumentDTO;
+import ru.pozhar.collector_api.dto.ResponseGetDebtorDTO;
 import ru.pozhar.collector_api.dto.ResponseUpdateDebtorDTO;
 import ru.pozhar.collector_api.exception.BusinessLogicException;
 import ru.pozhar.collector_api.exception.EntityNotFoundException;
@@ -28,6 +32,10 @@ public class DebtorService {
     private final DebtorRepository debtorRepository;
 
     private final DocumentRepository documentRepository;
+
+    private final AddressService addressService;
+
+    private final DocumentService documentService;
 
     @Transactional
     public Debtor initDebtor(RequestDebtorDTO debtorDTO) {
@@ -90,6 +98,14 @@ public class DebtorService {
             throw new EntityNotFoundException("Заемщик с таким ID не найден в базе данных");
         }
         return debtor;
+    }
+
+    @Transactional(readOnly = true)
+    public ResponseGetDebtorDTO getDebtor(Long debtorId) {
+        Debtor debtor = debtorRepository.findByDebtorId(debtorId);
+        List<ResponseAddressDTO> responseAddressDTOs = addressService.getDebtorAddresses(debtor.getId());
+        List<ResponseDocumentDTO> responseDocumentDTOs = documentService.getDebtorDocuments(debtor.getId());
+        return debtorMapper.toResponseGetDebtorDTO(debtor, responseAddressDTOs, responseDocumentDTOs);
     }
 
     private void validateDebtor(Debtor debtor, RequestDebtorDTO debtorDTO) {

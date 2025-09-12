@@ -11,13 +11,15 @@ import ru.pozhar.collector_api.mapper.AddressMapper;
 import ru.pozhar.collector_api.model.Address;
 import ru.pozhar.collector_api.model.Debtor;
 import ru.pozhar.collector_api.repository.AddressRepository;
+import ru.pozhar.collector_api.repository.DebtorRepository;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class AddressService {
-    private final DebtorService debtorService;
+    private final DebtorRepository debtorRepository;
 
     private final AddressRepository addressRepository;
 
@@ -62,7 +64,10 @@ public class AddressService {
         );
         Address address;
         if (addresses.size() == 0) {
-            Debtor debtor = debtorService.findDebtorById(debtorId);
+            Debtor debtor = debtorRepository.findByDebtorId(debtorId);
+            if (debtor == null) {
+                throw new EntityNotFoundException("Заемщик с таким ID не найден");
+            }
             address = addressMapper.toAddressEntity(debtor, addressDTO);
         } else {
             address = addresses.stream().findFirst().get();

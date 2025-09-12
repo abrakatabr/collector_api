@@ -81,9 +81,6 @@ public class AgreementController {
         } catch (NumberFormatException exception) {
             throw new ValidationException("Ключ идемпотентности должен быть числом");
         }
-        if (agreementKey < 1 || agreementKey > 9223372036854775807L) {
-            throw new ValidationException("Ключ идемпотентности должен быть от 1 до 9223372036854775807");
-        }
         return agreementKey;
     }
 }
