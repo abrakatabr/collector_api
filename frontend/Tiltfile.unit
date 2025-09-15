@@ -1,0 +1,17 @@
+docker_build(
+    'frontend',
+    context='.',
+    dockerfile='Dockerfile',
+    live_update=[
+        sync('./src', '/usr/share/nginx/html'),
+        run('nginx -s reload', trigger='./src')
+    ]
+)
+
+k8s_yaml('frontend.yaml')
+
+k8s_resource(
+    'frontend',
+    port_forwards=30006,
+    resource_deps=['postgres', 'redis', 'rabbitmq', 'minIO', 'collector-api']
+)

@@ -7,7 +7,6 @@ import ru.pozhar.collector_api.dto.RequestDebtorDTO;
 import ru.pozhar.collector_api.dto.RequestDocumentDTO;
 import ru.pozhar.collector_api.dto.RequestUpdateDebtorDTO;
 import ru.pozhar.collector_api.dto.ResponseAddressDTO;
-import ru.pozhar.collector_api.dto.ResponseDebtorDTO;
 import ru.pozhar.collector_api.dto.ResponseDocumentDTO;
 import ru.pozhar.collector_api.dto.ResponseGetDebtorDTO;
 import ru.pozhar.collector_api.dto.ResponseUpdateDebtorDTO;

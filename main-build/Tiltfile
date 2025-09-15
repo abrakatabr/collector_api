@@ -1,0 +1,12 @@
+docker_prune_settings(num_builds=2, max_age_mins=1440, keep_recent=2)
+
+include('./Tiltfile.service')
+
+if os.path.exists('./../collector-api/Tiltfile.unit'):
+  include('./../collector-api/Tiltfile.unit')
+
+if os.path.exists('./../notification/Tiltfile.unit'):
+  include('./../notification/Tiltfile.unit')
+
+if os.path.exists('./../frontend/Tiltfile.unit'):
+  include('./../frontend/Tiltfile.unit')
