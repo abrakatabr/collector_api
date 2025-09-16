@@ -66,27 +66,7 @@ public class DebtorService {
     @Transactional
     public ResponseUpdateDebtorDTO updateDebtor(Long debtorId, RequestUpdateDebtorDTO debtorDTO) {
         Debtor debtor = debtorRepository.findByDebtorId(debtorId);
-        if (debtor == null) {
-            throw new EntityNotFoundException("Заемщик не найден в базе данных");
-        }
-        if (debtorDTO.firstname() != null) {
-            debtor.setFirstname(debtorDTO.firstname());
-        }
-        if (debtorDTO.lastname() != null) {
-            debtor.setLastname(debtorDTO.lastname());
-        }
-        if (debtorDTO.patronymic() != null) {
-            debtor.setPatronymic(debtorDTO.patronymic());
-        }
-        if (debtorDTO.birthday() != null) {
-            debtor.setBirthday(debtorDTO.birthday());
-        }
-        if (debtorDTO.gender() != null) {
-            debtor.setGender(debtorDTO.gender());
-        }
-        if (debtorDTO.phoneNumber() != null) {
-            debtor.setPhoneNumber(debtorDTO.phoneNumber());
-        }
+        debtor = debtorMapper.toUpdateDebtorEntity(debtor, debtorDTO);
         debtor = debtorRepository.save(debtor);
         return debtorMapper.toResponseUpdateDebtorDTO(debtor);
     }

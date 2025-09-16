@@ -2,14 +2,10 @@ package ru.pozhar.collector_api.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import ru.pozhar.collector_api.model.NotificationData;
 import ru.pozhar.collector_api.repository.NotificationDataRepository;
-
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 @Service
@@ -17,9 +13,9 @@ import java.nio.charset.StandardCharsets;
 public class NotificationService {
     private final NotificationDataRepository notificationDataRepository;
     private final NotificationCacheService notificationCacheService;
-    private final ResourceLoader resourceLoader;
+    private final String notificationTemplate;
 
-    public ByteArrayResource getNotification(Long debtorId, Long agreementId) throws IOException{
+    public ByteArrayResource getNotification(Long debtorId, Long agreementId){
         String notification;
         NotificationData notificationData = notificationDataRepository.findByDebtorIdAndAgreementId(
                 debtorId, agreementId
@@ -27,13 +23,7 @@ public class NotificationService {
         if (notificationCacheService.hasNotification(debtorId, agreementId)) {
             notification = notificationCacheService.getNotification(debtorId, agreementId);
         } else {
-            try {
-                Resource resource = resourceLoader.getResource("file:notification_template.txt");
-                notification = new String(resource.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
-            } catch (IOException ex) {
-                throw new IOException("Не удеалось загрузить шаблон");
-            }
-            notification = formatNotification(notification, notificationData);
+            notification = formatNotification(notificationTemplate, notificationData);
             notificationCacheService.cacheNotification(debtorId, agreementId, notification);
         }
         ByteArrayResource byteContent = new ByteArrayResource(

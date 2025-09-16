@@ -1,5 +1,6 @@
 package ru.pozhar.collector_api.mapper;
 
+import org.mapstruct.ReportingPolicy;
 import ru.pozhar.collector_api.dto.RequestAddressDTO;
 import ru.pozhar.collector_api.dto.ResponseAddressDTO;
 import ru.pozhar.collector_api.dto.ResponseUpdateAddressDTO;
@@ -8,7 +9,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import ru.pozhar.collector_api.model.Debtor;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.ERROR)
 public interface AddressMapper {
 
     @Mapping(target = "id", ignore = true)

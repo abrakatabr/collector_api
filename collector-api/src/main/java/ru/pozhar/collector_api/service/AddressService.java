@@ -63,19 +63,16 @@ public class AddressService {
                 addressDTO.addressStatus()
         );
         Address address;
+        Debtor debtor = debtorRepository.findByDebtorId(debtorId);
         if (addresses.size() == 0) {
-            Debtor debtor = debtorRepository.findByDebtorId(debtorId);
             if (debtor == null) {
                 throw new EntityNotFoundException("Заемщик с таким ID не найден");
             }
             address = addressMapper.toAddressEntity(debtor, addressDTO);
         } else {
             address = addresses.stream().findFirst().get();
-            address.setCountry(addressDTO.country());
-            address.setCity(addressDTO.city());
-            address.setStreet(addressDTO.street());
-            address.setHouse(addressDTO.house());
-            address.setApartment(addressDTO.apartment());
+            Address newAddress = addressMapper.toAddressEntity(debtor, addressDTO);
+            newAddress.setId(address.getId());
         }
         address = addressRepository.save(address);
         return addressMapper.toResponseUpdateAddressDTO(address);

@@ -35,6 +35,8 @@ spec:
           ports:
             - containerPort: 8080
           env:
+            - name: SERVER_PORT
+              value: "8080"
             - name: SPRING_DATASOURCE_URL
               value: "jdbc:postgresql://postgres:5432/Collector%20DB"
             - name: SPRING_DATASOURCE_USERNAME
@@ -43,10 +45,14 @@ spec:
               value: "password"
             - name: SPRING_DATA_REDIS_HOST
               value: "redis"
+            - name: SPRING_REDIS_PORT
+              value: "6379"
             - name: SPRING_DATA_REDIS_PASSWORD
               value: "redis"
             - name: SPRING_RABBITMQ_HOST
               value: "rabbitmq"
+            - name: SPRING_RABBITMQ_PORT
+              value: "5672"
             - name: SPRING_MINIO_URL
               value: "http://minio:9000"
             - name: SPRING_MINIO_ACCESS_KEY
@@ -55,6 +61,28 @@ spec:
               value: "minioadmin"
             - name: SPRING_MINIO_BUCKET
               value: "collector-bucket"
+            - name: LOGGING_LEVEL_ROOT
+              value: "INFO"
+            - name: LOGGING_LEVEL_SPRING
+              value: "DEBUG"
+            - name: LOGGING_LEVEL_HIBERNATE_SQL
+              value: "DEBUG"
+            - name: LOGGING_LEVEL_HIBERNATE_BIND
+              value: "DEBUG"
+            - name: LOGGING_LEVEL_LIQUIBASE
+              value: "INFO"
+            - name: LOGGING_LEVEL_MINIO
+              value: "DEBUG"
+            - name: LOGGING_LEVEL_CONTROLLER
+              value: "DEBUG"
+            - name: LOGGING_LEVEL_APP
+              value: "DEBUG"
+            - name: LOGGING_FILE_NAME
+              value: "logs/collector-api.log"
+            - name: LOGGING_FILE_MAX_SIZE
+              value: "10MB"
+            - name: LOGGING_FILE_MAX_HISTORY
+              value: "30"
           readinessProbe:
             httpGet:
               path: /actuator/health

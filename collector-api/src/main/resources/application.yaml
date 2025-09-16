@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: ${SERVER_PORT}
 
 spring:
   application:
@@ -32,7 +32,7 @@ spring:
 
   redis:
     host: ${SPRING_DATA_REDIS_HOST}
-    port: 6379
+    port: ${SPRING_REDIS_PORT}
     password: ${SPRING_DATA_REDIS_PASSWORD}
     timeout: 7000ms
     lettuce:
@@ -44,7 +44,7 @@ spring:
 
   rabbitmq:
     host: ${SPRING_RABBITMQ_HOST}
-    port: 5672
+    port: ${SPRING_RABBITMQ_PORT}
     username: ${RABBITMQ_USER}
     password: ${RABBITMQ_PASSWORD}
 
@@ -56,20 +56,21 @@ spring:
 
 logging:
   level:
-    org.springframework: DEBUG
-    org.springframework.web: DEBUG
+    root: ${LOGGING_LEVEL_ROOT:INFO}
+    org.springframework: ${LOGGING_LEVEL_SPRING:DEBUG}
+    org.springframework.web: ${LOGGING_LEVEL_SPRING:DEBUG}
     org.hibernate:
-      SQL: DEBUG
-      orm.jdbc.bind: DEBUG
-    org.liquibase: INFO
-    io.minio: DEBUG
-    controller: DEBUG
-    ru.pozhar.collector_api: DEBUG
+      SQL: ${LOGGING_LEVEL_HIBERNATE_SQL:DEBUG}
+      orm.jdbc.bind: ${LOGGING_LEVEL_HIBERNATE_BIND:DEBUG}
+    org.liquibase: ${LOGGING_LEVEL_LIQUIBASE:INFO}
+    io.minio: ${LOGGING_LEVEL_MINIO:DEBUG}
+    controller: ${LOGGING_LEVEL_CONTROLLER:DEBUG}
+    ru.pozhar.collector_api: ${LOGGING_LEVEL_APP:DEBUG}
 
   file:
-    name: logs/collector-api.log
-    max-size: 10MB
-    max-history: 30
+    name: ${LOGGING_FILE_NAME}
+    max-size: ${LOGGING_FILE_MAX_SIZE}
+    max-history: ${LOGGING_FILE_MAX_HISTORY}
 
   pattern:
       console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %highlight(%-5level) %cyan(%logger{36}) - %msg%n"
