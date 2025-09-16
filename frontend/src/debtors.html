@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Управление должниками</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="container">
+    <h1>Управление должниками</h1>
+    <button onclick="location.href='index.html'">← Назад</button>
+
+    <!-- Получение информации о должнике -->
+    <div class="form-section">
+        <h2>Получить информацию о должнике</h2>
+        <form id="getDebtorForm">
+            <div class="form-group">
+                <label>ID должника:</label>
+                <input type="number" name="debtorId" required>
+            </div>
+            <button type="button" onclick="getDebtor()">Получить информацию</button>
+        </form>
+    </div>
+
+    <!-- Обновление информации о должнике -->
+    <div class="form-section">
+        <h2>Обновить информацию о должнике</h2>
+        <form id="updateDebtorForm">
+            <div class="form-group">
+                <label>ID должника:</label>
+                <input type="number" name="debtorId" required>
+            </div>
+            <div class="form-group">
+                <label>Имя:</label>
+                <input type="text" name="firstname">
+            </div>
+            <div class="form-group">
+                <label>Фамилия:</label>
+                <input type="text" name="lastname">
+            </div>
+            <div class="form-group">
+                <label>Отчество:</label>
+                <input type="text" name="patronymic">
+            </div>
+            <div class="form-group">
+                <label>Дата рождения:</label>
+                <input type="date" name="birthday">
+            </div>
+            <div class="form-group">
+                <label>Пол:</label>
+                <select name="gender">
+                    <option value="">Не изменять</option>
+                    <option value="MALE">Мужской</option>
+                    <option value="FEMALE">Женский</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Роль:</label>
+                <select name="role">
+                    <option value="">Не изменять</option>
+                    <option value="co-debtor">Созаемщик</option>
+                    <option value="single debtor">Единственный заемщик</option>
+                    <option value="guarantor">Поручитель</option>
+                    <option value="charger">Залогодатель</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Телефон:</label>
+                <input type="tel" name="phoneNumber">
+            </div>
+            <button type="button" onclick="updateDebtor()">Обновить информацию</button>
+        </form>
+    </div>
+
+    <!-- Удаление должника из договора -->
+    <div class="form-section">
+        <h2>Удалить должника из договора</h2>
+        <form id="removeDebtorFromAgreementForm">
+            <div class="form-group">
+                <label>ID должника:</label>
+                <input type="number" name="debtorId" required>
+            </div>
+            <div class="form-group">
+                <label>ID договора:</label>
+                <input type="number" name="agreementId" required>
+            </div>
+            <button type="button" onclick="removeDebtorFromAgreement()">Удалить из договора</button>
+        </form>
+    </div>
+
+    <div id="debtorResult" class="result"></div>
+</div>
+
+<script src="js/api.js"></script>
+<script src="js/debtors.js"></script>
+</body>
+</html>

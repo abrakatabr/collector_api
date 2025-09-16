@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Управление адресами</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="container">
+    <h1>Управление адресами</h1>
+    <button onclick="location.href='index.html'">← Назад</button>
+
+    <!-- Получение адресов должника -->
+    <div class="form-section">
+        <h2>Получить адреса должника</h2>
+        <form id="getAddressesForm">
+            <div class="form-group">
+                <label>ID должника:</label>
+                <input type="number" name="debtorId" required>
+            </div>
+            <button type="button" onclick="getAddresses()">Получить адреса</button>
+        </form>
+    </div>
+
+    <!-- Обновление адреса должника -->
+    <div class="form-section">
+        <h2>Обновить адрес должника</h2>
+        <form id="updateAddressForm">
+            <div class="form-group">
+                <label>ID должника:</label>
+                <input type="number" name="debtorId" required>
+            </div>
+            <div class="form-group">
+                <label>Тип адреса:</label>
+                <select name="addressStatus" required>
+                    <option value="registration">Прописка</option>
+                    <option value="residential">Проживание</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Страна:</label>
+                <input type="text" name="country" required>
+            </div>
+            <div class="form-group">
+                <label>Город:</label>
+                <input type="text" name="city" required>
+            </div>
+            <div class="form-group">
+                <label>Улица:</label>
+                <input type="text" name="street" required>
+            </div>
+            <div class="form-group">
+                <label>Дом:</label>
+                <input type="text" name="house" required>
+            </div>
+            <div class="form-group">
+                <label>Квартира:</label>
+                <input type="text" name="apartment">
+            </div>
+            <button type="button" onclick="updateAddress()">Обновить адрес</button>
+        </form>
+    </div>
+
+    <!-- Удаление адреса -->
+    <div class="form-section">
+        <h2>Удалить адрес</h2>
+        <form id="deleteAddressForm">
+            <div class="form-group">
+                <label>ID должника:</label>
+                <input type="number" name="debtorId" required>
+            </div>
+            <div class="form-group">
+                <label>Тип адреса:</label>
+                <select name="status" required>
+                    <option value="registration">Прописка</option>
+                    <option value="residential">Проживание</option>
+                </select>
+            </div>
+            <button type="button" onclick="deleteAddress()">Удалить адрес</button>
+        </form>
+    </div>
+
+    <div id="addressResult" class="result"></div>
+</div>
+
+<script src="js/api.js"></script>
+<script src="js/addresses.js"></script>
+</body>
+</html>

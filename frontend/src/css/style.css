@@ -5,6 +5,11 @@ body {
     background-color: #f5f5f5;
 }
 
+.centered-title {
+    text-align: center;
+    margin: 20px 0;
+}
+
 .container {
     max-width: 1200px;
     margin: 0 auto;
@@ -126,4 +131,126 @@ input, select, textarea {
     border-radius: 3px;
     margin-bottom: 10px;
     font-weight: bold;
+}
+
+.address-form, .document-form {
+    background: #f8f9fa;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 4px;
+    border: 1px solid #dee2e6;
+    position: relative;
+}
+
+.address-form button, .document-form button {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    padding: 2px 8px;
+    font-size: 12px;
+}
+
+.debtor-form {
+    position: relative;
+    padding: 15px;
+    margin: 10px 0;
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 4px;
+}
+
+.debtor-form > button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 5px 10px;
+    font-size: 12px;
+}
+
+.info-section {
+    background: #e7f3ff;
+    padding: 20px;
+    border-radius: 8px;
+    margin: 20px 0;
+    border: 1px solid #b3d9ff;
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.feature-card {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.feature-card h3 {
+    margin-top: 0;
+    color: #007bff;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 5px;
+}
+
+.feature-card ul {
+    margin: 10px 0;
+    padding-left: 20px;
+}
+
+.feature-card li {
+    margin: 5px 0;
+    color: #555;
+}
+
+.file-upload {
+    border: 2px dashed #007bff;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    background: #f8f9ff;
+    margin: 10px 0;
+}
+
+.file-upload:hover {
+    background: #e7f3ff;
+    border-color: #0056b3;
+}
+
+.file-upload input[type="file"] {
+    margin: 10px 0;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: white;
+}
+
+.download-section {
+    background: #d4edda;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #c3e6cb;
+    margin: 10px 0;
+}
+
+.download-section h4 {
+    margin-top: 0;
+    color: #155724;
+}
+
+.upload-section {
+    background: #fff3cd;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #ffeaa7;
+    margin: 10px 0;
+}
+
+.upload-section h4 {
+    margin-top: 0;
+    color: #856404;
 }
