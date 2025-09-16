@@ -14,6 +14,7 @@ public interface AddressMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "debtor", source = "debtor")
+    @Mapping(target = "apartment", source = "addressDTO.apartment", defaultValue = "N/A")
     Address toAddressEntity(Debtor debtor, RequestAddressDTO addressDTO);
 
     ResponseAddressDTO toResponseAddressDTO(Address address);

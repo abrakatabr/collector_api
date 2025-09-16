@@ -73,6 +73,7 @@ public class AddressService {
             address = addresses.stream().findFirst().get();
             Address newAddress = addressMapper.toAddressEntity(debtor, addressDTO);
             newAddress.setId(address.getId());
+            address = newAddress;
         }
         address = addressRepository.save(address);
         return addressMapper.toResponseUpdateAddressDTO(address);
