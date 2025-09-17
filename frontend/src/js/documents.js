@@ -7,9 +7,12 @@ async function getDocuments() {
 async function uploadDocument() {
     const form = document.getElementById('uploadDocumentForm');
     const formData = new FormData(form);
+    const debtorId = formData.get('debtorId');
+    const type = formData.get('type');
+    formData.delete('type');
     
     try {
-        const response = await fetch(`${API_BASE}/debtors/${formData.get('debtorId')}/document/file?type=${formData.get('type')}`, {
+        const response = await fetch(`${API_BASE}/debtors/${formData.get('debtorId')}/document/file?type=${type}`, {
             method: 'POST',
             body: formData
         });

@@ -97,9 +97,11 @@ function addDebtor() {
                     <div class="form-group">
                         <label>Тип документа:</label>
                         <select name="debtors[${debtorIndex}].documentDTOs[0].documentType" required>
-                            <option value="PASSPORT">Паспорт</option>
+                            <option value="NATIONAL_PASSPORT">Паспорт РФ</option>
+                            <option value="INTERNATIONAL_PASSPORT">Заграничный паспорт</option>
                             <option value="DRIVER_LICENSE">Водительское удостоверение</option>
-                            <option value="OTHER">Другой документ</option>
+                            <option value="INN">ИНН</option>
+                            <option value="SNILS">СНИЛС</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -185,9 +187,11 @@ function addDocument(debtorIndex) {
         <div class="form-group">
             <label>Тип документа:</label>
             <select name="debtors[${debtorIndex}].documentDTOs[${documentIndex}].documentType" required>
-                <option value="PASSPORT">Паспорт</option>
+                <option value="NATIONAL_PASSPORT">Паспорт РФ</option>
+                <option value="INTERNATIONAL_PASSPORT">Заграничный паспорт</option>
                 <option value="DRIVER_LICENSE">Водительское удостоверение</option>
-                <option value="OTHER">Другой документ</option>
+                <option value="INN">ИНН</option>
+                <option value="SNILS">СНИЛС</option>
             </select>
         </div>
         <div class="form-group">
