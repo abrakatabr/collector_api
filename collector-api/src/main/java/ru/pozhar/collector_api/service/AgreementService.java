@@ -1,6 +1,8 @@
 package ru.pozhar.collector_api.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.pozhar.collector_api.dto.RequestAddressDTO;
@@ -10,6 +12,7 @@ import ru.pozhar.collector_api.dto.ResponseAddressDTO;
 import ru.pozhar.collector_api.dto.ResponseAgreementDTO;
 import ru.pozhar.collector_api.dto.ResponseDebtorDTO;
 import ru.pozhar.collector_api.dto.ResponseDocumentDTO;
+import ru.pozhar.collector_api.dto.ResponsePage;
 import ru.pozhar.collector_api.dto.ResponseUpdateStatusDTO;
 import ru.pozhar.collector_api.exception.BusinessLogicException;
 import ru.pozhar.collector_api.exception.EntityNotFoundException;
@@ -118,6 +121,12 @@ public class AgreementService {
           responseDebtorDTOList.add(responseDebtorDTO);
       }
       return agreementMapper.toResponseAgreementDTO(createdAgreement, responseDebtorDTOList);
+    }
+
+    public ResponsePage<Agreement> getAllAgreements(Pageable pageable, String transferor, AgreementStatus status) {
+        Page<Agreement> agreementsPage = agreementRepository.findAllAgreements(transferor, status, pageable);
+        ResponsePage<Agreement> responsePage = new ResponsePage<>(agreementsPage);
+        return responsePage;
     }
 
     @Transactional
