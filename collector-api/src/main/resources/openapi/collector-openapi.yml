@@ -1,0 +1,113 @@
+openapi: 3.0.3
+info:
+  title: API для управления коллекторской информацией
+  version: 1.0.0
+servers:
+  - url: http://localhost:30004/api
+tags:
+  - name: agreement
+    description: Операции над договорами
+  - name: debtor
+    description: Операции над заемщиками и участниками договоров
+  - name: address
+    description: Операции над адресами заемщиков и участников договоров
+  - name: document
+    description: Операции над документами заемщиков и участников договоров
+  - name: notification
+    description: Операции над текстовомы уведомлениями заемщиков и участников договоров
+paths: {}
+components:
+  parameters: {}
+  schemas:
+    ErrorResponse:
+      type: object
+      description: 'Модель ошибки'
+      properties:
+        timestamp:
+          type: string
+          description: 'Дата и время создания ответа с ошибкой'
+          format: local-datetime
+          example: "2025-09-18T16:43:19.973103766"
+        status:
+          type: integer
+          description: 'Код ответа'
+          example: '409'
+        error:
+          type: string
+          description: 'Расшифровка кода ответа'
+          example: 'Conflict'
+        message:
+          type: string
+          description: 'Информационное сообщение ошибки'
+          example: 'В базе данных есть другой заемщик с такими документами'
+        path:
+          type: string
+          description: 'Путь по которому был отправлен запрос'
+          example: '/api/agreements'
+    RequestAddressDTO:
+      type: object
+      description: 'Модель данных для POST запроса, создания адресов'
+      properties:
+        country:
+          allOf:
+            - $ref: '#/components/schemas/Country'
+            - x-field-extra-annotation: "@jakarta.validation.constraints.NotBlank(message = \"Страна обязательна\")"
+        city:
+          allOf:
+            - $ref: '#/components/schemas/City'
+            - x-field-extra-annotation: "@jakarta.validation.constraints.NotBlank(message = \"Название города обязательно\")"
+        street:
+          allOf:
+            - $ref: '#/components/schemas/Street'
+            - x-field-extra-annotation: "@jakarta.validation.constraints.NotBlank(message = \"Название улицы обязательно\")"
+        house:
+          allOf:
+            - $ref: '#/components/schemas/House'
+            - x-field-extra-annotation: "@jakarta.validation.constraints.NotBlank(message = \"Дом обязателен\")"
+        apartment:
+          $ref: '#/components/schemas/Apartment'
+        addressStatus:
+          allOf:
+            - $ref: '#/components/schemas/AddressStatus'
+            - x-field-extra-annotation: |
+                @jakarta.validation.constraints.NotBlank(message = "Статус обязателен")
+                @jakarta.validation.constraints.Pattern(regexp = "registration|residential", message = "Статус адреса должен быть 'registration' или 'residential'")
+      required:
+        - country
+        - city
+        - street
+        - house
+        - addressStatus
+    Country:
+      type: string
+      description: 'Страна'
+      example: 'Россия'
+      minLength: 1
+    City:
+      type: string
+      description: 'Город'
+      example: 'Москва'
+      minLength: 1
+    Street:
+      type: string
+      description: 'Улица'
+      example: 'Тверская'
+      minLength: 1
+    House:
+      type: string
+      description: 'Номер дома'
+      example: '22'
+      minLength: 1
+    Apartment:
+      type: string
+      description: 'Номер квартиры'
+      example: '22'
+      nullable: true
+    AddressStatus:
+      type: string
+      description: 'Статус адреса заемщика (прописка или проживание)'
+      example: 'registration'
+      enum:
+        - 'registration'
+        - 'residental'
+      minLength: 1

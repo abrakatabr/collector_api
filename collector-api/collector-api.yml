@@ -8,10 +8,13 @@ spec:
   selector:
     app: collector-api
   ports:
-    - protocol: TCP
+    - name: "8080"
+      protocol: TCP
       port: 8080
-      nodePort: 30004
-  type: NodePort
+    - name: "5005"
+      protocol: TCP
+      port: 5005
+  type: ClusterIP
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -34,6 +37,7 @@ spec:
           image: collector-api
           ports:
             - containerPort: 8080
+            - containerPort: 5005
           env:
             - name: SERVER_PORT
               value: "8080"

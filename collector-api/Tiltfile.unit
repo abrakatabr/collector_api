@@ -12,6 +12,6 @@ k8s_yaml('collector-api.yml')
 
 k8s_resource('collector-api',
     labels=['api'],
-    port_forwards=30004,
+    port_forwards=['30004:8080', '5005:5005'],
     resource_deps=['postgres', 'redis', 'rabbitmq', 'minIO']
 )
