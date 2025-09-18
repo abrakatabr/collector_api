@@ -2,6 +2,8 @@ package ru.pozhar.collector_api.controller;
 
 import jakarta.validation.Valid;
 import org.springframework.http.HttpHeaders;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -69,6 +71,23 @@ public class AgreementController {
                 .header(HttpHeaders.LOCATION, "/api/agreements/"
                         + response.id())
                 .body(response);
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<ResponseAgreementDTO>> getAgreements(
+            @RequestParam(required = false) String status,
+            Pageable pageable) {
+        AgreementStatus statusFilter = null;
+        if (StringUtils.hasText(status)) {
+            if (!status.equals(AgreementStatus.paid.name())
+                    && !status.equals(AgreementStatus.active.name())
+                    && !status.equals(AgreementStatus.deleted.name())) {
+                throw new ValidationException("Статус должен быть 'active', 'paid' или 'deleted'");
+            }
+            statusFilter = AgreementStatus.valueOf(status);
+        }
+        Page<ResponseAgreementDTO> page = agreementService.getAgreements(pageable, statusFilter);
+        return ResponseEntity.ok(page);
     }
 
     private Long validateKey(String key) {

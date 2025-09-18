@@ -1,6 +1,8 @@
 package ru.pozhar.collector_api.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.pozhar.collector_api.dto.RequestAddressDTO;
@@ -29,6 +31,7 @@ import ru.pozhar.collector_api.repository.AgreementKeyRepository;
 import ru.pozhar.collector_api.repository.AgreementRepository;
 import ru.pozhar.collector_api.repository.DebtorAgreementRepository;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -168,6 +171,19 @@ public class AgreementService {
         ResponseAgreementDTO responseAgreementDTO = agreementMapper.toResponseAgreementDTO(agreement,
                 responseDebtorDTOs);
         return responseAgreementDTO;
+    }
+
+    @Transactional(readOnly = true)
+    public Page<ResponseAgreementDTO> getAgreements(Pageable pageable, AgreementStatus status) {
+        Page<Agreement> agreementsPage;
+        if (status != null) {
+            agreementsPage = agreementRepository.findAllByStatus(status, pageable);
+        } else {
+            agreementsPage = agreementRepository.findAllByStatusNot(AgreementStatus.deleted, pageable);
+        }
+        return agreementsPage.map(agreement ->
+                agreementMapper.toResponseAgreementDTO(agreement, Collections.emptyList())
+        );
     }
 
     private boolean isEqualsAgreements(Agreement agreement, RequestAgreementDTO agreementDTO) {
