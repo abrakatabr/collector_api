@@ -170,6 +170,72 @@ components:
         - role
         - addressDTOs
         - documentDTOs
+    RequestAgreementDTO:
+      type: object
+      description: 'Модель данных для POST запроса, создания договора'
+      properties:
+        originalDebtSum:
+          allOf:
+            - $ref: '#/components/schemas/OriginalDebtSum'
+            - x-field-extra-annotation: |
+                @jakarta.validation.constraints.NotNull(message = "Сумма долга по договору обязательна")
+                @jakarta.validation.constraints.DecimalMin(value = "0.0", message = "Сумма долга по договору не может быть отрицательной")
+        actualDebtSum:
+          allOf:
+            - $ref: '#/components/schemas/ActualDebtSum'
+            - x-field-extra-annotation: |
+                @jakarta.validation.constraints.NotNull(message = "Текущий остаток по договору обязателен")
+                @jakarta.validation.constraints.DecimalMin(value = "0.0", message = "Текущий остаток по договору не может быть отрицательным")
+        agreementStartDate:
+          allOf:
+            - $ref: '#/components/schemas/AgreementStartDate'
+            - x-field-extra-annotation: |
+                @jakarta.validation.constraints.NotNull(message = "Дата подписания договора обязательна")
+                @jakarta.validation.constraints.PastOrPresent(message = "Дата подписания договора должна быть текущей датой или ранее")
+        transferor:
+          allOf:
+            -  $ref: '#/components/schemas/Transferor'
+            - x-field-extra-annotation: "@jakarta.validation.constraints.NotBlank(message = \"Название банка-кредитора обязательно\")"
+        debtors:
+          type: array
+          description: 'Список заемщиков и других учатсников договора'
+          minItems: 1
+          items:
+            allOf:
+              - $ref: '#/components/schemas/RequestDebtorDTO'
+              - x-field-extra-annotation: "@jakarta.validation.Valid"
+          x-field-extra-annotation: "@jakarta.validation.Valid"
+      required:
+        - originalDebtSum
+        - actualDebtSum
+        - agreementStartDate
+        - transferor
+        - debtors
+    OriginalDebtSum:
+      type: number
+      format: double
+      description: 'Сумма долга по договору займа'
+      example: 5000000.00
+      minimum: 0.0
+      exclusiveMinimum: false
+    ActualDebtSum:
+      type: number
+      format: double
+      description: 'Текущий остаток долга по договору займа'
+      example: 3000000.00
+      minimum: 0.0
+      exclusiveMinimum: false
+    AgreementStartDate:
+      type: string
+      format: date
+      example: '2023-06-06'
+      nullable: false
+    Transferor:
+      type: string
+      description: 'Название банка-кредитора'
+      example: 'Сбербанк'
+      nullable: false
+      minLength: 1
     FirstName:
       type: string
       description: 'Имя заемщика'
