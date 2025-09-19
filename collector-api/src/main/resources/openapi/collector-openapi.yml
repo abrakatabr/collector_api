@@ -78,26 +78,192 @@ components:
         - street
         - house
         - addressStatus
+    RequestDocumentDTO:
+      type: object
+      description: 'Модель данных для POST запроса, создания документа заемщика'
+      properties:
+        documentType:
+          allOf:
+            - $ref: '#/components/schemas/DocumentType'
+            - x-field-extra-annotation: "@jakarta.validation.constraints.NotNull"
+        documentNumber:
+          allOf:
+            - $ref: '#/components/schemas/DocumentNumber'
+            - x-field-extra-annotation: "@jakarta.validation.constraints.NotBlank(message = \"Номер документа обязателен\")"
+        issueDate:
+          allOf:
+            - $ref: '#/components/schemas/IssueDate'
+            - x-field-extra-annotation: |
+                @jakarta.validation.constraints.NotNull(message = "Дата выдачи документа обязательна")
+                @jakarta.validation.constraints.PastOrPresent(message = "Дата выдачи документа должна быть текущей датой или ранее")
+      required:
+        - documentType
+        - documentNumber
+        - issueDate
+    RequestDebtorDTO:
+      type: object
+      description: 'Модель данных для POST запроса, создания заемщика'
+      properties:
+        firstName:
+          allOf:
+            - $ref: '#/components/schemas/FirstName'
+            - x-field-extra-annotation: |
+                @jakarta.validation.constraints.NotBlank(message = "Имя обязательно")
+                @jakarta.validation.constraints.Pattern(regexp = "^[а-яА-ЯёЁa-zA-Z-]+$", message = "Имя может содержать только буквы и дефис")
+        lastName:
+          allOf:
+            - $ref: '#/components/schemas/LastName'
+            - x-field-extra-annotation: |
+                @jakarta.validation.constraints.NotBlank(message = "Фамилия обязательна")
+                @jakarta.validation.constraints.Pattern(regexp = "^[а-яА-ЯёЁa-zA-Z-]+$", message = "Фамилия может содержать только буквы и дефис")
+        patronymic:
+          allOf:
+            - $ref: '#/components/schemas/Patronymic'
+            - x-field-extra-annotation: |
+                @jakarta.validation.constraints.Pattern(regexp = "^[а-яА-ЯёЁa-zA-Z-]+$", message = "Отчество может содержать только буквы и дефис")
+        birthday:
+          allOf:
+            - $ref: '#/components/schemas/Birthday'
+            - x-field-extra-annotation: |
+                @jakarta.validation.constraints.NotNull(message = "Дата рождения обязательна")
+                @jakarta.validation.constraints.Past(message = "Дата рождения должна быть в прошлом")
+        gender:
+          allOf:
+            - $ref: '#/components/schemas/Gender'
+            - x-field-extra-annotation: "@jakarta.validation.constraints.NotNull(message = \"Пол обязателен\")"
+        role:
+          allOf:
+            - $ref: '#/components/schemas/Role'
+            - x-field-extra-annotation: |
+                @jakarta.validation.constraints.NotBlank(message = "Роль заемщика в договоре обязательна")
+                @jakarta.validation.constraints.Pattern(regexp = "co-debtor|single debtor|guarantor|charger",
+                message = "Роль заемщика в договоре должна быть 'co-debtor', 'single debtor', 'guarantor' или 'charger'")
+        phoneNumber:
+          allOf:
+            - $ref: '#/components/schemas/PhoneNumber'
+            - x-field-extra-annotation: |
+                @jakarta.validation.constraints.Pattern(regexp = "^(\\+7|7|8)?[0-9\\s\\-\\(\\)]{10,15}$",
+                message = "Некорректный формат номера телефона")
+        addressDTOs:
+          type: array
+          description: 'Список адресов заемщика'
+          minItems: 1
+          items:
+            allOf:
+              - $ref: '#/components/schemas/RequestAddressDTO'
+              - x-field-extra-annotation: "@jakarta.validation.Valid"
+          x-field-extra-annotation: "@jakarta.validation.Valid"
+        documentDTOs:
+          type: array
+          description: 'Список документов заемщика'
+          minItems: 1
+          items:
+            allOf:
+              - $ref: '#/components/schemas/RequestDocumentDTO'
+              - x-field-extra-annotation: "@jakarta.validation.Valid"
+          x-field-extra-annotation: "@jakarta.validation.Valid"
+      required:
+        - firstname
+        - lastname
+        - birthday
+        - gender
+        - role
+        - addressDTOs
+        - documentDTOs
+    FirstName:
+      type: string
+      description: 'Имя заемщика'
+      example: 'Иван'
+      nullable: false
+      minLength: 1
+    LastName:
+      type: string
+      description: 'Фамилия заемщика'
+      example: 'Иванов'
+      nullable: false
+      minLength: 1
+    Patronymic:
+      type: string
+      description: 'Отчество заемщика'
+      example: 'Иванович'
+      nullable: true
+    Birthday:
+      type: string
+      description: 'Дата рождения заемщика'
+      format: date
+      example: '2000-01-01'
+      nullable: false
+    Gender:
+      type: string
+      description: 'Пол заемщика'
+      example: 'male'
+      enum:
+        - 'male'
+        - 'female'
+        - 'unknown'
+      nullable: false
+    Role:
+      type: string
+      description: 'Роль заемщика в договоре займа'
+      example: 'single debtor'
+      enum:
+        - co-debtor
+        - 'single debtor'
+        - guarantor
+        - charger
+      nullable: false
+    PhoneNumber:
+      type: string
+      description: 'Телефонный номер заемщика'
+      example: '+79261854567'
+      nullable: true
+    DocumentType:
+      type: string
+      description: 'Тип документа'
+      example: 'NATIONAL_PASSPORT'
+      enum:
+        - 'NATIONAL_PASSPORT'
+        - 'INTERNATIONAL_PASSPORT'
+        - 'DRIVER_LICENSE'
+        - 'INN'
+        - 'SNILS'
+      nullable: false
+    DocumentNumber:
+      type: string
+      description: 'Номер документа'
+      example: '4508731456'
+      minLength: 1
+      nullable: false
+    IssueDate:
+      type: string
+      description: 'Дата выдачи документа'
+      format: date
+      example: '2010-02-02'
+      nullable: false
     Country:
       type: string
       description: 'Страна'
       example: 'Россия'
       minLength: 1
+      nullable: false
     City:
       type: string
       description: 'Город'
       example: 'Москва'
       minLength: 1
+      nullable: false
     Street:
       type: string
       description: 'Улица'
       example: 'Тверская'
       minLength: 1
+      nullable: false
     House:
       type: string
       description: 'Номер дома'
       example: '22'
       minLength: 1
+      nullable: false
     Apartment:
       type: string
       description: 'Номер квартиры'
@@ -109,5 +275,6 @@ components:
       example: 'registration'
       enum:
         - 'registration'
-        - 'residental'
+        - 'residential'
       minLength: 1
+      nullable: false
