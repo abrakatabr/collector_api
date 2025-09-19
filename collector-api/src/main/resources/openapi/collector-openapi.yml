@@ -49,24 +49,35 @@ components:
       description: 'Модель данных для POST запроса, создания адресов'
       properties:
         country:
+          nullable: false
+          minLength: 1
           allOf:
             - $ref: '#/components/schemas/Country'
             - x-field-extra-annotation: "@jakarta.validation.constraints.NotBlank(message = \"Страна обязательна\")"
         city:
+          nullable: false
+          minLength: 1
           allOf:
             - $ref: '#/components/schemas/City'
             - x-field-extra-annotation: "@jakarta.validation.constraints.NotBlank(message = \"Название города обязательно\")"
         street:
+          minLength: 1
+          nullable: false
           allOf:
             - $ref: '#/components/schemas/Street'
             - x-field-extra-annotation: "@jakarta.validation.constraints.NotBlank(message = \"Название улицы обязательно\")"
         house:
+          minLength: 1
+          nullable: false
           allOf:
             - $ref: '#/components/schemas/House'
             - x-field-extra-annotation: "@jakarta.validation.constraints.NotBlank(message = \"Дом обязателен\")"
         apartment:
+          nullable: true
           $ref: '#/components/schemas/Apartment'
         addressStatus:
+          minLength: 1
+          nullable: false
           allOf:
             - $ref: '#/components/schemas/AddressStatus'
             - x-field-extra-annotation: |
@@ -83,14 +94,18 @@ components:
       description: 'Модель данных для POST запроса, создания документа заемщика'
       properties:
         documentType:
+          nullable: false
           allOf:
             - $ref: '#/components/schemas/DocumentType'
             - x-field-extra-annotation: "@jakarta.validation.constraints.NotNull"
         documentNumber:
+          minLength: 1
+          nullable: false
           allOf:
             - $ref: '#/components/schemas/DocumentNumber'
             - x-field-extra-annotation: "@jakarta.validation.constraints.NotBlank(message = \"Номер документа обязателен\")"
         issueDate:
+          nullable: false
           allOf:
             - $ref: '#/components/schemas/IssueDate'
             - x-field-extra-annotation: |
@@ -104,34 +119,42 @@ components:
       type: object
       description: 'Модель данных для POST запроса, создания заемщика'
       properties:
-        firstName:
+        firstname:
+          nullable: false
+          minLength: 1
           allOf:
             - $ref: '#/components/schemas/FirstName'
             - x-field-extra-annotation: |
                 @jakarta.validation.constraints.NotBlank(message = "Имя обязательно")
                 @jakarta.validation.constraints.Pattern(regexp = "^[а-яА-ЯёЁa-zA-Z-]+$", message = "Имя может содержать только буквы и дефис")
-        lastName:
+        lastname:
+          nullable: false
+          minLength: 1
           allOf:
             - $ref: '#/components/schemas/LastName'
             - x-field-extra-annotation: |
                 @jakarta.validation.constraints.NotBlank(message = "Фамилия обязательна")
                 @jakarta.validation.constraints.Pattern(regexp = "^[а-яА-ЯёЁa-zA-Z-]+$", message = "Фамилия может содержать только буквы и дефис")
         patronymic:
+          nullable: true
           allOf:
             - $ref: '#/components/schemas/Patronymic'
             - x-field-extra-annotation: |
                 @jakarta.validation.constraints.Pattern(regexp = "^[а-яА-ЯёЁa-zA-Z-]+$", message = "Отчество может содержать только буквы и дефис")
         birthday:
+          nullable: false
           allOf:
             - $ref: '#/components/schemas/Birthday'
             - x-field-extra-annotation: |
                 @jakarta.validation.constraints.NotNull(message = "Дата рождения обязательна")
                 @jakarta.validation.constraints.Past(message = "Дата рождения должна быть в прошлом")
         gender:
+          nullable: false
           allOf:
             - $ref: '#/components/schemas/Gender'
             - x-field-extra-annotation: "@jakarta.validation.constraints.NotNull(message = \"Пол обязателен\")"
         role:
+          nullable: false
           allOf:
             - $ref: '#/components/schemas/Role'
             - x-field-extra-annotation: |
@@ -139,6 +162,7 @@ components:
                 @jakarta.validation.constraints.Pattern(regexp = "co-debtor|single debtor|guarantor|charger",
                 message = "Роль заемщика в договоре должна быть 'co-debtor', 'single debtor', 'guarantor' или 'charger'")
         phoneNumber:
+          nullable: true
           allOf:
             - $ref: '#/components/schemas/PhoneNumber'
             - x-field-extra-annotation: |
@@ -175,24 +199,29 @@ components:
       description: 'Модель данных для POST запроса, создания договора'
       properties:
         originalDebtSum:
+          nullable: false
           allOf:
             - $ref: '#/components/schemas/OriginalDebtSum'
             - x-field-extra-annotation: |
                 @jakarta.validation.constraints.NotNull(message = "Сумма долга по договору обязательна")
                 @jakarta.validation.constraints.DecimalMin(value = "0.0", message = "Сумма долга по договору не может быть отрицательной")
         actualDebtSum:
+          nullable: false
           allOf:
             - $ref: '#/components/schemas/ActualDebtSum'
             - x-field-extra-annotation: |
                 @jakarta.validation.constraints.NotNull(message = "Текущий остаток по договору обязателен")
                 @jakarta.validation.constraints.DecimalMin(value = "0.0", message = "Текущий остаток по договору не может быть отрицательным")
         agreementStartDate:
+          nullable: false
           allOf:
             - $ref: '#/components/schemas/AgreementStartDate'
             - x-field-extra-annotation: |
                 @jakarta.validation.constraints.NotNull(message = "Дата подписания договора обязательна")
                 @jakarta.validation.constraints.PastOrPresent(message = "Дата подписания договора должна быть текущей датой или ранее")
         transferor:
+          nullable: false
+          minLength: 1
           allOf:
             -  $ref: '#/components/schemas/Transferor'
             - x-field-extra-annotation: "@jakarta.validation.constraints.NotBlank(message = \"Название банка-кредитора обязательно\")"
@@ -211,6 +240,134 @@ components:
         - agreementStartDate
         - transferor
         - debtors
+    RequestUpdateDebtorDTO:
+      type: object
+      description: 'Модель данных для PATCH запроса, изменения данных заемщика'
+      properties:
+        firstname:
+          nullable: true
+          allOf:
+            - $ref: '#/components/schemas/FirstName'
+            - x-field-extra-annotation: |
+                @jakarta.validation.constraints.Pattern(regexp = "^[а-яА-ЯёЁa-zA-Z-]+$", message = "Имя может содержать только буквы и дефис")
+        lastname:
+          nullable: true
+          allOf:
+            - $ref: '#/components/schemas/LastName'
+            - x-field-extra-annotation: |
+                @jakarta.validation.constraints.Pattern(regexp = "^[а-яА-ЯёЁa-zA-Z-]+$", message = "Фамилия может содержать только буквы и дефис")
+        patronymic:
+          nullable: true
+          allOf:
+            - $ref: '#/components/schemas/Patronymic'
+            - x-field-extra-annotation: |
+                @jakarta.validation.constraints.Pattern(regexp = "^[а-яА-ЯёЁa-zA-Z-]+$", message = "Отчество может содержать только буквы и дефис")
+        birthday:
+          nullable: true
+          allOf:
+            - $ref: '#/components/schemas/Birthday'
+            - x-field-extra-annotation: |
+                @jakarta.validation.constraints.Past(message = "Дата рождения должна быть в прошлом")
+        gender:
+          nullable: true
+          $ref: '#/components/schemas/Gender'
+        phoneNumber:
+          nullable: true
+          allOf:
+            - $ref: '#/components/schemas/PhoneNumber'
+            - x-field-extra-annotation: |
+                @jakarta.validation.constraints.Pattern(regexp = "^(\\+7|7|8)?[0-9\\s\\-\\(\\)]{10,15}$",
+                message = "Некорректный формат номера телефона")
+    ResponseAddressDTO:
+      type: object
+      description: 'Модель данных для ответа на GET запрос, возвращаемый адрес'
+      properties:
+        country:
+          $ref: '#/components/schemas/Country'
+        city:
+          $ref: '#/components/schemas/City'
+        street:
+          $ref: '#/components/schemas/Street'
+        house:
+          $ref: '#/components/schemas/House'
+        apartment:
+          $ref: '#/components/schemas/Apartment'
+        addressStatus:
+          $ref: '#/components/schemas/AddressStatus'
+    ResponseDocumentDTO:
+      type: object
+      description: 'Модуль данных для ответа на GET запрос, возвращаемый документ'
+      properties:
+        documentType:
+          $ref: '#/components/schemas/DocumentType'
+        documentNumber:
+          $ref: '#/components/schemas/DocumentNumber'
+        issueDate:
+          $ref: '#/components/schemas/IssueDate'
+    ResponseDebtorDTO:
+      type: object
+      description: 'Модель данных для ответа на POST запрос загрузки данных договора'
+      properties:
+        id:
+          $ref: '#/components/schemas/Id'
+        firstname:
+          $ref: '#/components/schemas/FirstName'
+        lastname:
+          $ref: '#/components/schemas/LastName'
+        patronymic:
+          $ref: '#/components/schemas/Patronymic'
+        birthday:
+          $ref: '#/components/schemas/Birthday'
+        gender:
+          $ref: '#/components/schemas/Gender'
+        role:
+          $ref: '#/components/schemas/Role'
+        phoneNumber:
+          $ref: '#/components/schemas/PhoneNumber'
+        addressDTOs:
+          type: array
+          description: 'Список загруженных адресов'
+          items:
+            $ref: '#/components/schemas/ResponseAddressDTO'
+        documentDTOs:
+          type: array
+          description: 'Список загруженных документов'
+          items:
+            $ref: '#/components/schemas/ResponseDocumentDTO'
+    ResponseAgreementDTO:
+      type: object
+      description: 'Модель данных для ответа на POST запрос загрузки данных договора'
+      properties:
+        id:
+          $ref: '#/components/schemas/Id'
+        originalDebtSum:
+          $ref: '#/components/schemas/OriginalDebtSum'
+        actualDebtSum:
+          $ref: '#/components/schemas/ActualDebtSum'
+        agreementStartDate:
+          $ref: '#/components/schemas/AgreementStartDate'
+        transferor:
+          $ref: '#/components/schemas/Transferor'
+        status:
+          $ref: '#/components/schemas/AgreementStatus'
+        debtorDTOs:
+          type: array
+          description: 'Список загруженных заемщиков'
+          items:
+            $ref: '#/components/schemas/ResponseDebtorDTO'
+    AgreementStatus:
+      type: string
+      description: 'Статус договора (дуйствует, долг выплачен, удален)'
+      example: 'active'
+      enum:
+        - 'active'
+        - 'paid'
+        - 'deleted'
+    Id:
+      type: integer
+      format: int64
+      description: 'ID число-идентификатор (64 бит)'
+      example: 1
     OriginalDebtSum:
       type: number
       format: double
@@ -229,36 +386,27 @@ components:
       type: string
       format: date
       example: '2023-06-06'
-      nullable: false
     Transferor:
       type: string
       description: 'Название банка-кредитора'
       example: 'Сбербанк'
-      nullable: false
-      minLength: 1
     FirstName:
       type: string
       description: 'Имя заемщика'
       example: 'Иван'
-      nullable: false
-      minLength: 1
     LastName:
       type: string
       description: 'Фамилия заемщика'
       example: 'Иванов'
-      nullable: false
-      minLength: 1
     Patronymic:
       type: string
       description: 'Отчество заемщика'
       example: 'Иванович'
-      nullable: true
     Birthday:
       type: string
       description: 'Дата рождения заемщика'
       format: date
       example: '2000-01-01'
-      nullable: false
     Gender:
       type: string
       description: 'Пол заемщика'
@@ -267,7 +415,6 @@ components:
         - 'male'
         - 'female'
         - 'unknown'
-      nullable: false
     Role:
       type: string
       description: 'Роль заемщика в договоре займа'
@@ -277,12 +424,10 @@ components:
         - 'single debtor'
         - guarantor
         - charger
-      nullable: false
     PhoneNumber:
       type: string
       description: 'Телефонный номер заемщика'
       example: '+79261854567'
-      nullable: true
     DocumentType:
       type: string
       description: 'Тип документа'
@@ -293,48 +438,35 @@ components:
         - 'DRIVER_LICENSE'
         - 'INN'
         - 'SNILS'
-      nullable: false
     DocumentNumber:
       type: string
       description: 'Номер документа'
       example: '4508731456'
-      minLength: 1
-      nullable: false
     IssueDate:
       type: string
       description: 'Дата выдачи документа'
       format: date
       example: '2010-02-02'
-      nullable: false
     Country:
       type: string
       description: 'Страна'
       example: 'Россия'
-      minLength: 1
-      nullable: false
     City:
       type: string
       description: 'Город'
       example: 'Москва'
-      minLength: 1
-      nullable: false
     Street:
       type: string
       description: 'Улица'
       example: 'Тверская'
-      minLength: 1
-      nullable: false
     House:
       type: string
       description: 'Номер дома'
       example: '22'
-      minLength: 1
-      nullable: false
     Apartment:
       type: string
       description: 'Номер квартиры'
       example: '22'
-      nullable: true
     AddressStatus:
       type: string
       description: 'Статус адреса заемщика (прописка или проживание)'
@@ -342,5 +474,3 @@ components:
       enum:
         - 'registration'
         - 'residential'
-      minLength: 1
-      nullable: false
