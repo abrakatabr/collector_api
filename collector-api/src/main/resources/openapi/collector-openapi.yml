@@ -74,7 +74,8 @@ components:
             - x-field-extra-annotation: "@jakarta.validation.constraints.NotBlank(message = \"Дом обязателен\")"
         apartment:
           nullable: true
-          $ref: '#/components/schemas/Apartment'
+          allOf:
+            - $ref: '#/components/schemas/Apartment'
         addressStatus:
           minLength: 1
           nullable: false
@@ -270,7 +271,8 @@ components:
                 @jakarta.validation.constraints.Past(message = "Дата рождения должна быть в прошлом")
         gender:
           nullable: true
-          $ref: '#/components/schemas/Gender'
+          allOf:
+            - $ref: '#/components/schemas/Gender'
         phoneNumber:
           nullable: true
           allOf:
