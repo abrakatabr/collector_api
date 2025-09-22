@@ -13,11 +13,361 @@ tags:
     description: Операции над адресами заемщиков и участников договоров
   - name: document
     description: Операции над документами заемщиков и участников договоров
-  - name: notification
-    description: Операции над текстовомы уведомлениями заемщиков и участников договоров
-paths: {}
+paths:
+  /agreements:
+    get:
+      tags:
+        - agreement
+      summary: 'Получение списка договоров с пагинацией'
+      operationId: getAllAgreements
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Size'
+        - $ref: '#/components/parameters/SortBy'
+        - $ref: '#/components/parameters/SortDirection'
+        - $ref: '#/components/parameters/Transferor'
+        - $ref: '#/components/parameters/GetAllAgreementStatus'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application\json:
+              schema:
+                $ref: '#/components/schemas/ResponsePageAgreement'
+        '400':
+          description: Bad Request
+          content:
+            application\json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application\json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    post:
+      tags:
+        - agreement
+      summary: 'Создание договора'
+      operationId: createAgreement
+      parameters:
+        - $ref: '#/components/parameters/Key'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestAgreementDTO'
+        required: true
+      responses:
+        '201':
+          description: Agreement created
+          content:
+            application\json:
+              schema:
+                $ref: '#/components/schemas/ResponseAgreementDTO'
+        '409':
+          description: Conflict
+          content:
+            application\json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '400':
+          description: Bad Request
+          content:
+            application\json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application\json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /agreement/{agreementId}:
+    get:
+      tags:
+        - agreement
+      summary: Получение информации о договоре по ID
+      operationId: getAgreement
+      parameters:
+        - $ref: '#/components/parameters/AgreementId'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application\json:
+              schema:
+                $ref: '#/components/schemas/ResponseAgreementDTO'
+        '404':
+          description: Not Found
+          content:
+            application\json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application\json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      tags:
+        - agreement
+      summary: Удаление договора по ID
+      operationId: deleteAgreement
+      parameters:
+        - $ref: '#/components/parameters/AgreementId'
+      responses:
+        '200':
+          description: Agreement removed
+        '404':
+          description: Not Found
+          content:
+            application\json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application\json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /agreements/{agreementId}/status:
+    patch:
+      tags:
+        - agreement
+      summary: Изменение статуса договора по ID
+      operationId: updateAgreementStatus
+      parameters:
+        - $ref: '#/components/parameters/AgreementId'
+        - $ref: '#/components/parameters/AgreementStatus'
+      responses:
+        '200':
+          description: Agreement status updated
+          content:
+            application\json:
+              schema:
+                $ref: '#/components/schemas/ResponseUpdateStatusDTO'
+        '404':
+          description: Not Found
+          content:
+            application\json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Conflict
+          content:
+            application\json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application\json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /debtors/{debtorId}:
+    get:
+      tags:
+        - debtor
+      summary: Получение информации о заемщике по ID
+      operationId: getDebtor
+      parameters:
+        - $ref: '#/components/parameters/DebtorId'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application\json:
+              schema:
+                $ref: '#/components/schemas/ResponseGetDebtorDTO'
+        '404':
+          description: Not Found
+          content:
+            application\json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application\json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    patch:
+      tags:
+        - debtor
+      summary: Изменение данных заемщика по ID
+      operationId: updateDebtor
+      parameters:
+        - $ref: '#/components/parameters/DebtorId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestUpdateDebtorDTO'
+        required: true
+      responses:
+        '200':
+          description: Debtor updated
+          content:
+            application\json:
+              schema:
+                $ref: '#/components/schemas/ResponseUpdateDebtorDTO'
+        '404':
+          description: Not Found
+          content:
+            application\json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application\json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /debtors/{debtorId}/{agreementId}:
+    delete:
+      tags:
+        - debtor
+      summary: Удаление заемщика из договора по ID договора и ID заемщика
+      operationId: deleteDebtorFromAgreement
+      parameters:
+        - $ref: '#/components/parameters/DebtorId'
+        - $ref: '#/components/parameters/AgreementId'
+      responses:
+        '200':
+          description: Debtor removed
+        '404':
+          description: Not Found
+          content:
+            application\json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application\json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 components:
-  parameters: {}
+  parameters:
+    DebtorId:
+      in: path
+      name: debtorId
+      description: 'ID заемщика'
+      required: true
+      schema:
+        $ref: '#/components/schemas/Id'
+    AgreementId:
+      in: path
+      name: agreementId
+      description: 'ID договора займа'
+      required: true
+      schema:
+        $ref: '#/components/schemas/Id'
+    AddressStatus:
+      in: query
+      name: status
+      required: true
+      schema:
+        allOf:
+          - $ref: '#/components/schemas/AddressStatus'
+          - x-field-extra-annotation: |
+              @jakarta.validation.constraints.Pattern(regexp = "registration|residential", message = "Неверный статус адреса в запросе")
+    Key:
+      in: query
+      name: key
+      required: true
+      description: 'Ключ идемпотентности (64 бит)'
+      schema:
+        type: string
+        example: '123456'
+    AgreementStatus:
+      in: query
+      name: status
+      required: true
+      description: 'Новый статус договора (paid или active)'
+      schema:
+        type: string
+        example: 'paid'
+        enum:
+          - paid
+          - active
+    Page:
+      in: query
+      name: page
+      required: true
+      description: 'Номер страницы из запрашиваемой выборки'
+      schema:
+        type: integer
+        format: int32
+        example: 2
+    Size:
+      in: query
+      name: size
+      required: true
+      description: 'Количество элементов на странице в запрашиваемой выборке'
+      schema:
+        type: integer
+        format: int32
+        example: 12
+    SortBy:
+      in: query
+      name: sortBy
+      required: true
+      description: 'Параметр, по которому будет производиться сортировка'
+      schema:
+        type: string
+        example: 'transferor'
+        enum:
+          - originalDebtSum
+          - actualDebtSum
+          - agreementStartDate
+          - transferor
+          - status
+    SortDirection:
+      in: query
+      name: sortDirection
+      required: false
+      description: 'Направление сортировки (возрастание или убывание)'
+      schema:
+        type: string
+        example: 'desc'
+        enum:
+          - asc
+          - desc
+        default: 'asc'
+    Transferor:
+      in: query
+      name: transferor
+      description: 'Название банка-кредитора для фильтрации'
+      required: false
+      schema:
+        $ref: '#/components/schemas/Transferor'
+    GetAllAgreementStatus:
+      in: query
+      name: status
+      description: 'Статус договора для фильтрации'
+      required: false
+      schema:
+        $ref: '#/components/schemas/AgreementStatus'
+    DocumentType:
+      in: query
+      name: type
+      required: true
+      description: 'Тип документа заемщика для загрузки файла'
+      schema:
+        type: string
+        example: 'national-passport'
+        enum:
+          - national-passport
+          - international-passport
+          - driver-license
+          - inn
+          - snils
+        x-field-extra-annotation: |
+          @jakarta.validation.constraints.Pattern(regexp = "registration|residential", message = "Неверный статус адреса в запросе")
   schemas:
     ErrorResponse:
       type: object
@@ -357,6 +707,123 @@ components:
           description: 'Список загруженных заемщиков'
           items:
             $ref: '#/components/schemas/ResponseDebtorDTO'
+    ResponseGetDebtorDTO:
+      type: object
+      description: 'Модель данных для ответа на GET запрос получения информации о заемщике'
+      properties:
+        id:
+          $ref: '#/components/schemas/Id'
+        firstname:
+          $ref: '#/components/schemas/FirstName'
+        lastname:
+          $ref: '#/components/schemas/LastName'
+        patronymic:
+          $ref: '#/components/schemas/Patronymic'
+        birthday:
+          $ref: '#/components/schemas/Birthday'
+        gender:
+          $ref: '#/components/schemas/Gender'
+        phoneNumber:
+          $ref: '#/components/schemas/PhoneNumber'
+        addressDTOs:
+          type: array
+          description: 'Список адресов запрашиваемого заемщика'
+          items:
+            $ref: '#/components/schemas/ResponseAddressDTO'
+        documentDTOs:
+          type: array
+          description: 'Список документов запрашиваемого заемщика'
+          items:
+            $ref: '#/components/schemas/ResponseDocumentDTO'
+    ResponsePageAgreement:
+      type: object
+      description: 'Модель данных для страницы данных договоров с пагинацией'
+      properties:
+        content:
+          type: array
+          description: 'Список отфильтрованных договоров'
+          items:
+            $ref: '#/components/schemas/Agreement'
+        currentPage:
+          type: integer
+          format: int32
+          description: 'Номер текущей страницы (начиная с 0)'
+          example: 0
+        totalPages:
+          type: integer
+          format: int32
+          description: 'Общее количестов страниц'
+          example: 5
+        totalElements:
+          type: integer
+          format: int64
+          description: 'Суммарное количество элементов со всех страниц'
+          example: 132
+        size:
+          type: integer
+          format: int32
+          description: 'Размер страницы (количество элеметнов)'
+          example: 10
+    ResponseUpdateAddressDTO:
+      type: object
+      description: 'Модель данных для ответа на UPDATE запросы изменения адресов'
+      properties:
+        debtorId:
+          $ref: '#/components/schemas/Id'
+        country:
+          $ref: '#/components/schemas/Country'
+        city:
+          $ref: '#/components/schemas/City'
+        street:
+          $ref: '#/components/schemas/Street'
+        house:
+          $ref: '#/components/schemas/House'
+        apartment:
+          $ref: '#/components/schemas/Apartment'
+        addressStatus:
+          $ref: '#/components/schemas/AddressStatus'
+    ResponseUpdateDebtorDTO:
+      type: object
+      description: 'Модель данных для ответа на UPDATE запросы изменения данных заемщиков'
+      properties:
+        id:
+          $ref: '#/components/schemas/Id'
+        firstname:
+          $ref: '#/components/schemas/FirstName'
+        lastname:
+          $ref: '#/components/schemas/LastName'
+        patronymic:
+          $ref: '#/components/schemas/Patronymic'
+        birthday:
+          $ref: '#/components/schemas/Birthday'
+        gender:
+          $ref: '#/components/schemas/Gender'
+        phoneNumber:
+          $ref: '#/components/schemas/PhoneNumber'
+    ResponseUpdateStatusDTO:
+      type: object
+      description: 'Модель данных для ответа на UPDATE запросы изменения статуса договора'
+      properties:
+        agreementId:
+          $ref: '#/components/schemas/Id'
+        status:
+          $ref: '#/components/schemas/AgreementStatus'
+    Agreement:
+      type: object
+      description: 'Модель данных договоров без привязки заемщиков'
+      properties:
+        id:
+          $ref: '#/components/schemas/Id'
+        originalDebtSum:
+          $ref: '#/components/schemas/OriginalDebtSum'
+        actualDebtSum:
+          $ref: '#/components/schemas/ActualDebtSum'
+        agreementStartDate:
+          $ref: '#/components/schemas/AgreementStartDate'
+        transferor:
+          $ref: '#/components/schemas/Transferor'
+        status:
+          $ref: '#/components/schemas/AgreementStatus'
     AgreementStatus:
       type: string
       description: 'Статус договора (дуйствует, долг выплачен, удален)'
