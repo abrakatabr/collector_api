@@ -250,6 +250,236 @@ paths:
             application\json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+  /debtors/{debtorId}/address:
+    get:
+      tags:
+        - address
+      summary: Получение информации о адресах заемщика по его ID
+      operationId: getDebtorAddresses
+      parameters:
+        - $ref: '#/components/parameters/DebtorId'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application\json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ResponseAddressDTO'
+        '404':
+          description: Not Found
+          content:
+            application\json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application\json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    put:
+      tags:
+        - address
+      summary: Замена или добавление адреса заемщика по его ID
+      operationId: updateDebtorAddress
+      parameters:
+        - $ref: '#/components/parameters/DebtorId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestAddressDTO'
+        required: true
+      responses:
+        '200':
+          description: Address updated
+          content:
+            application\json:
+              schema:
+                $ref: '#/components/schemas/ResponseUpdateAddressDTO'
+        '404':
+          description: Not Found
+          content:
+            application\json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application\json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      tags:
+        - address
+      summary: Удаление адреса заемщика по его ID
+      operationId: deleteAddress
+      parameters:
+        - $ref: '#/components/parameters/DebtorId'
+        - $ref: '#/components/parameters/AddressStatus'
+      responses:
+        '200':
+          description: Address removed
+        '404':
+          description: Not Found
+          content:
+            application\json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application\json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /debtors/{debtorId}/document:
+    get:
+      tags:
+        - document
+      summary: Получение списка документов заемщика
+      operationId: getDebtorDocuments
+      parameters:
+        - $ref: '#/components/parameters/DebtorId'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ResponseDocumentDTO'
+        '404':
+          description: Not Found
+          content:
+            application\json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application\json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /debtors/{debtorId}/document/file:
+    post:
+      tags:
+        - document
+      summary: Загрузка файла документа
+      operationId: uploadDocumentFile
+      parameters:
+        - $ref: '#/components/parameters/DebtorId'
+        - $ref: '#/components/parameters/DocumentType'
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: Файл документа
+              required:
+                - file
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 'Файл debtors/15/documents/national-passport.pdf загружен'
+        '404':
+          description: Not Found
+          content:
+            application\json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application\json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    get:
+      tags:
+        - document
+      summary: Скачивание файла документа
+      operationId: downloadDocumentFile
+      parameters:
+        - $ref: '#/components/parameters/DebtorId'
+        - $ref: '#/components/parameters/DocumentType'
+      responses:
+        '200':
+          description: File is ready for download
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+          headers:
+            Content-Type:
+              schema:
+                type: string
+            Content-Length:
+              schema:
+                type: string
+            Content-Disposition:
+              schema:
+                type: string
+        '404':
+          description: Not Found
+          content:
+            application\json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application\json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /debtors/{debtorId}/notification/{agreementId}:
+    get:
+      tags:
+        - document
+      summary: Получение уведомления виде текстового файла
+      description: Генерирует и возвращает текстовый файл с уведомлением для указанного заемщика и договора
+      operationId: getNotification
+      parameters:
+        - $ref: '#/components/parameters/DebtorId'
+        - $ref: '#/components/parameters/AgreementId'
+      responses:
+        '200':
+          description: File is ready for download
+          headers:
+            Content-Disposition:
+              schema:
+                type: string
+            Content-Type:
+              schema:
+                type: string
+            Content-Length:
+              schema:
+                type: string
+            Location:
+              schema:
+                type: string
+          content:
+            text/plain:
+              schema:
+                type: string
+                format: binary
+        '500':
+          description: Internal Server Error
+          content:
+            application\json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 components:
   parameters:
     DebtorId:
@@ -376,7 +606,7 @@ components:
         timestamp:
           type: string
           description: 'Дата и время создания ответа с ошибкой'
-          format: local-datetime
+          format: date-time
           example: "2025-09-18T16:43:19.973103766"
         status:
           type: integer
