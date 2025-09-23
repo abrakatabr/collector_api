@@ -7,7 +7,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.pozhar.collector_api.openapi.api.AgreementApi;
 import ru.pozhar.collector_api.openapi.dto.AgreementStatus;
@@ -33,7 +32,7 @@ public class AgreementController implements AgreementApi {
             Integer page,
             Integer size,
             @Pattern(regexp = "originalDebtSum|actualDebtSum|agreementStartDate|transferor|status")
-            @RequestParam String sortBy,
+            String sortBy,
             @Pattern(regexp = "asc|desc")
             String sortDirection,
             String transferor,
