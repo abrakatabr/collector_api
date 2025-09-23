@@ -17,6 +17,7 @@ import jakarta.validation.constraints.PastOrPresent;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.pozhar.collector_api.openapi.dto.DocumentType;
 
 import java.time.LocalDate;
 

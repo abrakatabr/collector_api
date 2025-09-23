@@ -1,97 +1,88 @@
 package ru.pozhar.collector_api.controller;
 
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ru.pozhar.collector_api.dto.RequestAgreementDTO;
-import ru.pozhar.collector_api.dto.ResponseAgreementDTO;
+import ru.pozhar.collector_api.openapi.api.AgreementApi;
+import ru.pozhar.collector_api.openapi.dto.AgreementStatus;
+import ru.pozhar.collector_api.openapi.dto.ResponseUpdateStatusDTO;
+import ru.pozhar.collector_api.openapi.dto.RequestAgreementDTO;
+import ru.pozhar.collector_api.openapi.dto.ResponseAgreementDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import ru.pozhar.collector_api.dto.ResponsePage;
-import ru.pozhar.collector_api.dto.ResponseUpdateStatusDTO;
+import ru.pozhar.collector_api.openapi.dto.ResponsePageAgreement;
 import ru.pozhar.collector_api.exception.ValidationException;
-import ru.pozhar.collector_api.model.Agreement;
-import ru.pozhar.collector_api.model.AgreementStatus;
 import ru.pozhar.collector_api.service.AgreementService;
 
 @RestController
-@RequestMapping("/api/agreements")
+@RequestMapping("/api")
 @RequiredArgsConstructor
-public class AgreementController {
+public class AgreementController implements AgreementApi {
 
     private final AgreementService agreementService;
 
-    @GetMapping
-    public  ResponseEntity<ResponsePage<Agreement>> getAllAgreements(
-            @RequestParam int page,
-            @RequestParam int size,
+    @Override
+    public ResponseEntity<ResponsePageAgreement> getAllAgreements(
+            Integer page,
+            Integer size,
             @Pattern(regexp = "originalDebtSum|actualDebtSum|agreementStartDate|transferor|status")
             @RequestParam String sortBy,
             @Pattern(regexp = "asc|desc")
-            @RequestParam(required = false, defaultValue = "asc") String sortDirection,
-            @RequestParam(required = false) String transferor,
-            @RequestParam(required = false) AgreementStatus status) {
+            String sortDirection,
+            String transferor,
+            AgreementStatus status) {
         Sort.Direction direction = sortDirection.equals("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
         Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
-        ResponsePage<Agreement> response = agreementService.getAllAgreements(pageable, transferor, status);
+        ResponsePageAgreement response = agreementService.getAllAgreements(pageable, transferor, status);
         return ResponseEntity.status(HttpStatus.OK)
                 .header(HttpHeaders.LOCATION, "api/agreements")
                 .body(response);
     }
 
-    @PostMapping
+    @Override
     public ResponseEntity<ResponseAgreementDTO> createAgreement(
-            @RequestParam String key,
-            @RequestBody @Valid RequestAgreementDTO requestAgreementDTO) {
+            String key,
+            RequestAgreementDTO requestAgreementDTO) {
         Long agreementKey = validateKey(key);
         ResponseAgreementDTO responseAgreementDTO = agreementService.createAgreement(requestAgreementDTO, agreementKey);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .header("Location", "api/agreements" + responseAgreementDTO.id())
+                .header("Location", "api/agreements" + responseAgreementDTO.getId())
                 .body(responseAgreementDTO);
     }
 
-    @DeleteMapping("/{agreementId}")
-    public ResponseEntity<Void> deleteAgreement(@PathVariable Long agreementId) {
+    @Override
+    public ResponseEntity<Void> deleteAgreement(Long agreementId) {
         agreementService.deleteAgreement(agreementId);
         return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping("/{agreementId}/status")
-    public ResponseEntity<ResponseUpdateStatusDTO> updateAgreementStatus(
-            @PathVariable Long agreementId,
-            @RequestParam String status) {
+    @Override
+    public ResponseEntity<ResponseUpdateStatusDTO> updateAgreementStatus(Long agreementId, String status) {
         if (!StringUtils.hasText(status)
-                || (!status.equals(AgreementStatus.paid.name()) && !status.equals(AgreementStatus.active.name()))) {
+                || (!status.equals(AgreementStatus.PAID.getValue()) && !status.equals(AgreementStatus.ACTIVE.getValue()))) {
             throw new ValidationException("Статус должен содержать символы и может быть 'active' или 'paid'");
         }
         AgreementStatus agreementStatus = AgreementStatus.valueOf(status);
         ResponseUpdateStatusDTO updateStatusDTO = agreementService.updateAgreementStatus(agreementId, agreementStatus);
         return ResponseEntity.status(HttpStatus.OK)
                 .header("Location", "/api/agreements/"
-                        + updateStatusDTO.agreementId() + "status")
+                        + updateStatusDTO.getAgreementId() + "status")
                 .body(updateStatusDTO);
     }
 
-    @GetMapping("/{agreementId}")
-    public ResponseEntity<ResponseAgreementDTO> getAgreement(@PathVariable Long agreementId) {
+    @Override
+    public ResponseEntity<ResponseAgreementDTO> getAgreement(Long agreementId) {
         ResponseAgreementDTO response = agreementService.getAgreement(agreementId);
         return ResponseEntity.status(HttpStatus.OK)
                 .header(HttpHeaders.LOCATION, "/api/agreements/"
-                        + response.id())
+                        + response.getId())
                 .body(response);
     }
 

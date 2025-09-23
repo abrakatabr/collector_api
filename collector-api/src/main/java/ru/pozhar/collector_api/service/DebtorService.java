@@ -3,13 +3,13 @@ package ru.pozhar.collector_api.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.pozhar.collector_api.dto.RequestDebtorDTO;
-import ru.pozhar.collector_api.dto.RequestDocumentDTO;
-import ru.pozhar.collector_api.dto.RequestUpdateDebtorDTO;
-import ru.pozhar.collector_api.dto.ResponseAddressDTO;
-import ru.pozhar.collector_api.dto.ResponseDocumentDTO;
-import ru.pozhar.collector_api.dto.ResponseGetDebtorDTO;
-import ru.pozhar.collector_api.dto.ResponseUpdateDebtorDTO;
+import ru.pozhar.collector_api.openapi.dto.RequestDebtorDTO;
+import ru.pozhar.collector_api.openapi.dto.RequestDocumentDTO;
+import ru.pozhar.collector_api.openapi.dto.RequestUpdateDebtorDTO;
+import ru.pozhar.collector_api.openapi.dto.ResponseAddressDTO;
+import ru.pozhar.collector_api.openapi.dto.ResponseDocumentDTO;
+import ru.pozhar.collector_api.openapi.dto.ResponseGetDebtorDTO;
+import ru.pozhar.collector_api.openapi.dto.ResponseUpdateDebtorDTO;
 import ru.pozhar.collector_api.exception.BusinessLogicException;
 import ru.pozhar.collector_api.exception.EntityNotFoundException;
 import ru.pozhar.collector_api.mapper.DebtorMapper;
@@ -38,12 +38,12 @@ public class DebtorService {
 
     @Transactional
     public Debtor initDebtor(RequestDebtorDTO debtorDTO) {
-        List<RequestDocumentDTO> documentDTOs = debtorDTO.documentDTOs();
+        List<RequestDocumentDTO> documentDTOs = debtorDTO.getDocumentDTOs();
         List<Document> documents = new LinkedList<>();
         Debtor debtor = null;
         for (RequestDocumentDTO documentDTO : documentDTOs) {
             Document document= documentRepository
-                    .findByDocumentTypeAndDocumentNumber(documentDTO.documentType(), documentDTO.documentNumber());
+                    .findByDocumentTypeAndDocumentNumber(documentDTO.getDocumentType(), documentDTO.getDocumentNumber());
             if (document != null) {
                 debtor = debtorRepository.findByDebtorId(document.getDebtor().getId());
                 if (debtor != null) {
@@ -88,10 +88,10 @@ public class DebtorService {
     }
 
     private void validateDebtor(Debtor debtor, RequestDebtorDTO debtorDTO) {
-        boolean isValid = debtor.getFirstname().equals(debtorDTO.firstname())
-                && debtor.getLastname().equals(debtorDTO.lastname())
-                && debtor.getPatronymic().equals((debtorDTO.patronymic()))
-                && debtor.getBirthday().isEqual(debtorDTO.birthday());
+        boolean isValid = debtor.getFirstname().equals(debtorDTO.getFirstname())
+                && debtor.getLastname().equals(debtorDTO.getLastname())
+                && debtor.getPatronymic().equals((debtorDTO.getPatronymic()))
+                && debtor.getBirthday().isEqual(debtorDTO.getBirthday());
         if (!isValid) {
             throw new BusinessLogicException("В базе данных есть другой заемщик с такими документами");
         }
@@ -101,10 +101,10 @@ public class DebtorService {
         boolean isValid = true;
         for (RequestDocumentDTO documentDTO : documentDTOs) {
             Optional<Document> documentOptional = documents.stream()
-                    .filter(d -> d.getDocumentType() == documentDTO.documentType())
+                    .filter(d -> d.getDocumentType() == documentDTO.getDocumentType())
                     .findFirst();
             if (documentOptional.isPresent()) {
-                isValid = documentOptional.get().getDocumentNumber().equals(documentDTO.documentNumber());
+                isValid = documentOptional.get().getDocumentNumber().equals(documentDTO.getDocumentNumber());
             }
             if (!isValid) {
                throw new BusinessLogicException("Документы заемщика в базе данных имеют другой номер");

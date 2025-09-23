@@ -15,8 +15,10 @@ import jakarta.validation.constraints.PastOrPresent;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.pozhar.collector_api.openapi.dto.AgreementStatus;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+
 
 @Entity
 @Table(name = "agreements")
@@ -48,5 +50,5 @@ public class Agreement {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", length = 20)
-    private AgreementStatus status = AgreementStatus.active;
+    private AgreementStatus status = AgreementStatus.ACTIVE;
 }

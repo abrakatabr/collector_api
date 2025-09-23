@@ -1,9 +1,9 @@
 package ru.pozhar.collector_api.mapper;
 
 import org.mapstruct.ReportingPolicy;
-import ru.pozhar.collector_api.dto.RequestAddressDTO;
-import ru.pozhar.collector_api.dto.ResponseAddressDTO;
-import ru.pozhar.collector_api.dto.ResponseUpdateAddressDTO;
+import ru.pozhar.collector_api.openapi.dto.RequestAddressDTO;
+import ru.pozhar.collector_api.openapi.dto.ResponseAddressDTO;
+import ru.pozhar.collector_api.openapi.dto.ResponseUpdateAddressDTO;
 import ru.pozhar.collector_api.model.Address;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

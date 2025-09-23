@@ -15,6 +15,8 @@ import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
+import ru.pozhar.collector_api.openapi.dto.AddressStatus;
 
 @Entity
 @Table(name = "addresses")
@@ -54,5 +56,5 @@ public class Address {
     @Pattern(regexp = "registration|residential",
             message = "Статус адреса должен быть 'registration' или 'residential'.")
     @Column(name = "address_status", nullable = false)
-    private String addressStatus = "registration";
+    private AddressStatus addressStatus = AddressStatus.REGISTRATION;
 }

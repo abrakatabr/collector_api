@@ -13,7 +13,7 @@ import ru.pozhar.collector_api.exception.EntityNotFoundException;
 import ru.pozhar.collector_api.exception.ValidationException;
 import ru.pozhar.collector_api.model.Document;
 import ru.pozhar.collector_api.model.DocumentFile;
-import ru.pozhar.collector_api.model.DocumentType;
+import ru.pozhar.collector_api.openapi.dto.DocumentType;
 import ru.pozhar.collector_api.repository.DocumentFileRepository;
 import ru.pozhar.collector_api.repository.DocumentRepository;
 

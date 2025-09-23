@@ -3,7 +3,7 @@ package ru.pozhar.collector_api.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.pozhar.collector_api.dto.RequestDebtorDTO;
+import ru.pozhar.collector_api.openapi.dto.RequestDebtorDTO;
 import ru.pozhar.collector_api.exception.EntityNotFoundException;
 import ru.pozhar.collector_api.mapper.DebtorAgreementMapper;
 import ru.pozhar.collector_api.model.Agreement;

@@ -3,8 +3,8 @@ package ru.pozhar.collector_api.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
-import ru.pozhar.collector_api.dto.RequestDocumentDTO;
-import ru.pozhar.collector_api.dto.ResponseDocumentDTO;
+import ru.pozhar.collector_api.openapi.dto.RequestDocumentDTO;
+import ru.pozhar.collector_api.openapi.dto.ResponseDocumentDTO;
 import ru.pozhar.collector_api.model.Debtor;
 import ru.pozhar.collector_api.model.Document;
 

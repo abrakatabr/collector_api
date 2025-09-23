@@ -3,8 +3,8 @@ package ru.pozhar.collector_api.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.pozhar.collector_api.dto.RequestDocumentDTO;
-import ru.pozhar.collector_api.dto.ResponseDocumentDTO;
+import ru.pozhar.collector_api.openapi.dto.RequestDocumentDTO;
+import ru.pozhar.collector_api.openapi.dto.ResponseDocumentDTO;
 import ru.pozhar.collector_api.exception.EntityNotFoundException;
 import ru.pozhar.collector_api.mapper.DocumentMapper;
 import ru.pozhar.collector_api.model.Debtor;
@@ -26,7 +26,7 @@ public class DocumentService {
         List<Document> documents = new LinkedList<>();
         for (RequestDocumentDTO documentDTO : documentDTOs) {
             Document document = documentRepository
-                    .findByDocumentTypeAndDocumentNumber(documentDTO.documentType(), documentDTO.documentNumber());
+                    .findByDocumentTypeAndDocumentNumber(documentDTO.getDocumentType(), documentDTO.getDocumentNumber());
             if (document == null) {
                 document = documentMapper.toDocumentEntity(documentDTO, debtor);
                 document = documentRepository.save(document);

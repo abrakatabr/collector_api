@@ -15,7 +15,9 @@ import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.pozhar.collector_api.openapi.dto.Gender;
 import java.time.LocalDate;
+
 
 @Entity
 @Table(name = "debtors")
@@ -45,7 +47,7 @@ public class Debtor {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "gender", length = 10)
-    private Gender gender = Gender.unknown;
+    private Gender gender = Gender.UNKNOWN;
 
     @Pattern(regexp = "^(\\+7|7|8)?[0-9\\s\\-\\(\\)]{10,15}$",
             message = "Некорректный формат номера телефона")

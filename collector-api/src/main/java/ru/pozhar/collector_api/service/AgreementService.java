@@ -1,19 +1,22 @@
 package ru.pozhar.collector_api.service;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.pozhar.collector_api.dto.RequestAddressDTO;
-import ru.pozhar.collector_api.dto.RequestAgreementDTO;
-import ru.pozhar.collector_api.dto.RequestDebtorDTO;
-import ru.pozhar.collector_api.dto.ResponseAddressDTO;
-import ru.pozhar.collector_api.dto.ResponseAgreementDTO;
-import ru.pozhar.collector_api.dto.ResponseDebtorDTO;
-import ru.pozhar.collector_api.dto.ResponseDocumentDTO;
-import ru.pozhar.collector_api.dto.ResponsePage;
-import ru.pozhar.collector_api.dto.ResponseUpdateStatusDTO;
+import ru.pozhar.collector_api.openapi.dto.AgreementDTO;
+import ru.pozhar.collector_api.openapi.dto.AgreementStatus;
+import ru.pozhar.collector_api.openapi.dto.RequestAddressDTO;
+import ru.pozhar.collector_api.openapi.dto.RequestAgreementDTO;
+import ru.pozhar.collector_api.openapi.dto.RequestDebtorDTO;
+import ru.pozhar.collector_api.openapi.dto.ResponseAddressDTO;
+import ru.pozhar.collector_api.openapi.dto.ResponseAgreementDTO;
+import ru.pozhar.collector_api.openapi.dto.ResponseDebtorDTO;
+import ru.pozhar.collector_api.openapi.dto.ResponseDocumentDTO;
+import ru.pozhar.collector_api.openapi.dto.ResponsePageAgreement;
+import ru.pozhar.collector_api.openapi.dto.ResponseUpdateStatusDTO;
 import ru.pozhar.collector_api.exception.BusinessLogicException;
 import ru.pozhar.collector_api.exception.EntityNotFoundException;
 import ru.pozhar.collector_api.mapper.AddressMapper;
@@ -24,7 +27,6 @@ import ru.pozhar.collector_api.mapper.DocumentMapper;
 import ru.pozhar.collector_api.model.Address;
 import ru.pozhar.collector_api.model.Agreement;
 import ru.pozhar.collector_api.model.AgreementKey;
-import ru.pozhar.collector_api.model.AgreementStatus;
 import ru.pozhar.collector_api.model.Debtor;
 import ru.pozhar.collector_api.model.DebtorAgreement;
 import ru.pozhar.collector_api.model.Document;
@@ -37,6 +39,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -88,16 +91,16 @@ public class AgreementService {
       } else {
           createdAgreement = agreementRepository.save(agreementMapper.toAgreementEntity(requestAgreementDTO));
           agreementKeyRepository.save(agreementKeyMapper.toAgreementKeyEntity(createdAgreement, key));
-          for (RequestDebtorDTO debtorDTO : requestAgreementDTO.debtors()) {
+          for (RequestDebtorDTO debtorDTO : requestAgreementDTO.getDebtors()) {
               Debtor debtor = debtorService.initDebtor(debtorDTO);
               createdDebtors.add(debtor);
               DebtorAgreement debtorAgreement = debtorAgreementService
                       .initDebtorAgreement(debtor, createdAgreement, debtorDTO);
               createdDebtorAgreements.add(debtorAgreement);
-              List<Document> documents = documentService.initDocuments(debtorDTO.documentDTOs(), debtor);
+              List<Document> documents = documentService.initDocuments(debtorDTO.getDocumentDTOs(), debtor);
               createdDocuments.put(debtor.getId(), documents);
               List<Address> createdAddressesList = new LinkedList<>();
-              for (RequestAddressDTO addressDTO : debtorDTO.addressDTOs()) {
+              for (RequestAddressDTO addressDTO : debtorDTO.getAddressDTOs()) {
                   Address address = addressService.initAddress(debtor, addressDTO);
                   createdAddressesList.add(address);
               }
@@ -123,17 +126,24 @@ public class AgreementService {
       return agreementMapper.toResponseAgreementDTO(createdAgreement, responseDebtorDTOList);
     }
 
-    public ResponsePage<Agreement> getAllAgreements(Pageable pageable, String transferor, AgreementStatus status) {
+    public ResponsePageAgreement getAllAgreements(Pageable pageable, String transferor, AgreementStatus status) {
         Page<Agreement> agreementsPage = agreementRepository.findAllAgreements(transferor, status, pageable);
-        ResponsePage<Agreement> responsePage = new ResponsePage<>(agreementsPage);
+        List<AgreementDTO> content = agreementsPage.getContent()
+                .stream().map(a -> agreementMapper.toAgreementDTOFromAgreement(a)).collect(Collectors.toList());
+        ResponsePageAgreement responsePage = new ResponsePageAgreement();
+        responsePage.setContent(content);
+        responsePage.setCurrentPage(agreementsPage.getNumber());
+        responsePage.setTotalPages(agreementsPage.getTotalPages());
+        responsePage.setTotalElements(agreementsPage.getTotalElements());
+        responsePage.setSize(agreementsPage.getSize());
         return responsePage;
     }
 
     @Transactional
     public void deleteAgreement(Long agreementId) {
         Agreement agreement = findAgreementById(agreementId);
-        if(agreement.getStatus() != AgreementStatus.deleted) {
-            agreement.setStatus(AgreementStatus.deleted);
+        if(agreement.getStatus() != AgreementStatus.DELETED) {
+            agreement.setStatus(AgreementStatus.DELETED);
             agreementRepository.save(agreement);
         }
     }
@@ -149,7 +159,7 @@ public class AgreementService {
     @Transactional
     public ResponseUpdateStatusDTO updateAgreementStatus(Long agreementId, AgreementStatus agreementStatus) {
         Agreement agreement = findAgreementById(agreementId);
-        if (agreement.getStatus() == AgreementStatus.deleted) {
+        if (agreement.getStatus() == AgreementStatus.DELETED) {
             throw new BusinessLogicException("Договор уже удален");
         }
         agreement.setStatus(agreementStatus);
@@ -162,7 +172,7 @@ public class AgreementService {
     public ResponseAgreementDTO getAgreement(Long agreementId) {
         Agreement agreement = agreementRepository.findById(agreementId)
                 .orElseThrow(() -> new EntityNotFoundException("Договор с таким ID не найден"));
-        if (agreement.getStatus() == AgreementStatus.deleted) {
+        if (agreement.getStatus() == AgreementStatus.DELETED) {
             throw new BusinessLogicException("Договор удален");
         }
         List<DebtorAgreement> debtorAgreements = debtorAgreementRepository.findByAgreement(agreement);
@@ -180,10 +190,10 @@ public class AgreementService {
     }
 
     private boolean isEqualsAgreements(Agreement agreement, RequestAgreementDTO agreementDTO) {
-        boolean isEquals = agreement.getOriginalDebtSum().compareTo(agreementDTO.originalDebtSum()) == 0
-                && agreement.getActualDebtSum().compareTo(agreementDTO.actualDebtSum()) == 0
-                && agreement.getAgreementStartDate().isEqual(agreementDTO.agreementStartDate())
-                && agreement.getTransferor().equals(agreementDTO.transferor());
+        boolean isEquals = agreement.getOriginalDebtSum().compareTo(agreementDTO.getOriginalDebtSum()) == 0
+                && agreement.getActualDebtSum().compareTo(agreementDTO.getActualDebtSum()) == 0
+                && agreement.getAgreementStartDate().isEqual(agreementDTO.getAgreementStartDate())
+                && agreement.getTransferor().equals(agreementDTO.getTransferor());
         if (!isEquals) {
             throw new BusinessLogicException("Такой ключ идемпотентности уже привязан к другому договору");
         }

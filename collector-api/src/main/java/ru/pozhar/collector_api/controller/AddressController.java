@@ -13,20 +13,23 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ru.pozhar.collector_api.dto.RequestAddressDTO;
-import ru.pozhar.collector_api.dto.ResponseAddressDTO;
-import ru.pozhar.collector_api.dto.ResponseUpdateAddressDTO;
+import ru.pozhar.collector_api.openapi.api.AddressApi;
+import ru.pozhar.collector_api.openapi.dto.AddressStatus;
+import ru.pozhar.collector_api.openapi.dto.ResponseUpdateAddressDTO;
+import ru.pozhar.collector_api.openapi.dto.ResponseAddressDTO;
+import ru.pozhar.collector_api.openapi.dto.RequestAddressDTO;
 import ru.pozhar.collector_api.service.AddressService;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("api/debtors/{debtorId}/address")
+@RequestMapping("api")
 @RequiredArgsConstructor
-public class AddressController {
+public class AddressController implements AddressApi {
     private final AddressService addressService;
 
-    @PutMapping
+
+    @Override
     public ResponseEntity<ResponseUpdateAddressDTO> updateDebtorAddress(
             @PathVariable Long debtorId,
             @RequestBody @Valid RequestAddressDTO requestAddressDTO
@@ -35,11 +38,11 @@ public class AddressController {
                 .updateAddress(debtorId, requestAddressDTO);
         return ResponseEntity.status(HttpStatus.OK)
                 .header("Location", "api/debtors/"
-                        + responseAddressDTO.debtorId() + "/address")
+                        + responseAddressDTO.getDebtorId() + "/address")
                 .body(responseAddressDTO);
     }
 
-    @GetMapping
+    @Override
     public ResponseEntity<List<ResponseAddressDTO>> getDebtorAddresses(
             @PathVariable Long debtorId) {
         List<ResponseAddressDTO> responseAddressDTOs = addressService.getDebtorAddresses(debtorId);
@@ -49,11 +52,11 @@ public class AddressController {
                 .body(responseAddressDTOs);
     }
 
-    @DeleteMapping(params = "status")
+    @Override
     public ResponseEntity<Void> deleteAddress(
             @PathVariable Long debtorId,
             @Pattern(regexp = "registration|residential", message = "Неверный статус адреса в запросе")
-            @RequestParam(value = "status") String addressStatus) {
+            @RequestParam(value = "status")AddressStatus addressStatus) {
         addressService.deleteAddress(debtorId, addressStatus);
         return ResponseEntity.noContent().build();
     }

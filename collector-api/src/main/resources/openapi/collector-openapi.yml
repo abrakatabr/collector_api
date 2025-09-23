@@ -31,19 +31,19 @@ paths:
         '200':
           description: Successful operation
           content:
-            application\json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/ResponsePageAgreement'
         '400':
           description: Bad Request
           content:
-            application\json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '500':
           description: Internal Server Error
           content:
-            application\json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
     post:
@@ -63,25 +63,25 @@ paths:
         '201':
           description: Agreement created
           content:
-            application\json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/ResponseAgreementDTO'
         '409':
           description: Conflict
           content:
-            application\json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '400':
           description: Bad Request
           content:
-            application\json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '500':
           description: Internal Server Error
           content:
-            application\json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
   /agreement/{agreementId}:
@@ -96,19 +96,19 @@ paths:
         '200':
           description: Successful operation
           content:
-            application\json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/ResponseAgreementDTO'
         '404':
           description: Not Found
           content:
-            application\json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '500':
           description: Internal Server Error
           content:
-            application\json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
     delete:
@@ -124,13 +124,13 @@ paths:
         '404':
           description: Not Found
           content:
-            application\json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '500':
           description: Internal Server Error
           content:
-            application\json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
   /agreements/{agreementId}/status:
@@ -146,25 +146,25 @@ paths:
         '200':
           description: Agreement status updated
           content:
-            application\json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/ResponseUpdateStatusDTO'
         '404':
           description: Not Found
           content:
-            application\json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '409':
           description: Conflict
           content:
-            application\json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '500':
           description: Internal Server Error
           content:
-            application\json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
   /debtors/{debtorId}:
@@ -179,19 +179,19 @@ paths:
         '200':
           description: Successful operation
           content:
-            application\json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/ResponseGetDebtorDTO'
         '404':
           description: Not Found
           content:
-            application\json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '500':
           description: Internal Server Error
           content:
-            application\json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
     patch:
@@ -211,19 +211,19 @@ paths:
         '200':
           description: Debtor updated
           content:
-            application\json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/ResponseUpdateDebtorDTO'
         '404':
           description: Not Found
           content:
-            application\json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '500':
           description: Internal Server Error
           content:
-            application\json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
   /debtors/{debtorId}/{agreementId}:
@@ -241,13 +241,13 @@ paths:
         '404':
           description: Not Found
           content:
-            application\json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '500':
           description: Internal Server Error
           content:
-            application\json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
   /debtors/{debtorId}/address:
@@ -262,7 +262,7 @@ paths:
         '200':
           description: Successful operation
           content:
-            application\json:
+            application/json:
               schema:
                 type: array
                 items:
@@ -270,13 +270,13 @@ paths:
         '404':
           description: Not Found
           content:
-            application\json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '500':
           description: Internal Server Error
           content:
-            application\json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
     put:
@@ -296,19 +296,19 @@ paths:
         '200':
           description: Address updated
           content:
-            application\json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/ResponseUpdateAddressDTO'
         '404':
           description: Not Found
           content:
-            application\json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '500':
           description: Internal Server Error
           content:
-            application\json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
     delete:
@@ -325,13 +325,13 @@ paths:
         '404':
           description: Not Found
           content:
-            application\json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '500':
           description: Internal Server Error
           content:
-            application\json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
   /debtors/{debtorId}/document:
@@ -354,13 +354,13 @@ paths:
         '404':
           description: Not Found
           content:
-            application\json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '500':
           description: Internal Server Error
           content:
-            application\json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
   /debtors/{debtorId}/document/file:
@@ -396,13 +396,13 @@ paths:
         '404':
           description: Not Found
           content:
-            application\json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '500':
           description: Internal Server Error
           content:
-            application\json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
     get:
@@ -434,13 +434,13 @@ paths:
         '404':
           description: Not Found
           content:
-            application\json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '500':
           description: Internal Server Error
           content:
-            application\json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
   /debtors/{debtorId}/notification/{agreementId}:
@@ -477,7 +477,7 @@ paths:
         '500':
           description: Internal Server Error
           content:
-            application\json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
 components:
@@ -744,9 +744,8 @@ components:
                 message = "Роль заемщика в договоре должна быть 'co-debtor', 'single debtor', 'guarantor' или 'charger'")
         phoneNumber:
           nullable: true
-          allOf:
-            - $ref: '#/components/schemas/PhoneNumber'
-            - x-field-extra-annotation: |
+          $ref: '#/components/schemas/PhoneNumber'
+          x-field-extra-annotation: |
                 @jakarta.validation.constraints.Pattern(regexp = "^(\\+7|7|8)?[0-9\\s\\-\\(\\)]{10,15}$",
                 message = "Некорректный формат номера телефона")
         addressDTOs:
@@ -754,19 +753,15 @@ components:
           description: 'Список адресов заемщика'
           minItems: 1
           items:
-            allOf:
-              - $ref: '#/components/schemas/RequestAddressDTO'
-              - x-field-extra-annotation: "@jakarta.validation.Valid"
-          x-field-extra-annotation: "@jakarta.validation.Valid"
+            $ref: '#/components/schemas/RequestAddressDTO'
+            x-field-extra-annotation: "@jakarta.validation.Valid"
         documentDTOs:
           type: array
           description: 'Список документов заемщика'
           minItems: 1
           items:
-            allOf:
-              - $ref: '#/components/schemas/RequestDocumentDTO'
-              - x-field-extra-annotation: "@jakarta.validation.Valid"
-          x-field-extra-annotation: "@jakarta.validation.Valid"
+            $ref: '#/components/schemas/RequestDocumentDTO'
+            x-field-extra-annotation: "@jakarta.validation.Valid"
       required:
         - firstname
         - lastname
@@ -811,10 +806,8 @@ components:
           description: 'Список заемщиков и других учатсников договора'
           minItems: 1
           items:
-            allOf:
-              - $ref: '#/components/schemas/RequestDebtorDTO'
-              - x-field-extra-annotation: "@jakarta.validation.Valid"
-          x-field-extra-annotation: "@jakarta.validation.Valid"
+            $ref: '#/components/schemas/RequestDebtorDTO'
+            x-field-extra-annotation: "@jakarta.validation.Valid"
       required:
         - originalDebtSum
         - actualDebtSum
@@ -973,7 +966,7 @@ components:
           type: array
           description: 'Список отфильтрованных договоров'
           items:
-            $ref: '#/components/schemas/Agreement'
+            $ref: '#/components/schemas/AgreementDTO'
         currentPage:
           type: integer
           format: int32
@@ -1038,7 +1031,7 @@ components:
           $ref: '#/components/schemas/Id'
         status:
           $ref: '#/components/schemas/AgreementStatus'
-    Agreement:
+    AgreementDTO:
       type: object
       description: 'Модель данных договоров без привязки заемщиков'
       properties:
@@ -1069,14 +1062,14 @@ components:
       example: 1
     OriginalDebtSum:
       type: number
-      format: double
+      format: bigdecimal
       description: 'Сумма долга по договору займа'
       example: 5000000.00
       minimum: 0.0
       exclusiveMinimum: false
     ActualDebtSum:
       type: number
-      format: double
+      format: bigdecimal
       description: 'Текущий остаток долга по договору займа'
       example: 3000000.00
       minimum: 0.0
