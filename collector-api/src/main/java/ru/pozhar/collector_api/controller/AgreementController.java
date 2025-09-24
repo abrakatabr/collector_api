@@ -31,12 +31,10 @@ public class AgreementController implements AgreementApi {
     public ResponseEntity<ResponsePageAgreement> getAllAgreements(
             Integer page,
             Integer size,
-            @Pattern(regexp = "originalDebtSum|actualDebtSum|agreementStartDate|transferor|status")
             String sortBy,
-            @Pattern(regexp = "asc|desc")
             String sortDirection,
             String transferor,
-            AgreementStatus status) {
+            String status) {
         Sort.Direction direction = sortDirection.equals("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
         Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
         ResponsePageAgreement response = agreementService.getAllAgreements(pageable, transferor, status);
@@ -68,7 +66,7 @@ public class AgreementController implements AgreementApi {
                 || (!status.equals(AgreementStatus.PAID.getValue()) && !status.equals(AgreementStatus.ACTIVE.getValue()))) {
             throw new ValidationException("Статус должен содержать символы и может быть 'active' или 'paid'");
         }
-        AgreementStatus agreementStatus = AgreementStatus.valueOf(status);
+        AgreementStatus agreementStatus = AgreementStatus.fromValue(status);
         ResponseUpdateStatusDTO updateStatusDTO = agreementService.updateAgreementStatus(agreementId, agreementStatus);
         return ResponseEntity.status(HttpStatus.OK)
                 .header("Location", "/api/agreements/"

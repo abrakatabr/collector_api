@@ -126,8 +126,9 @@ public class AgreementService {
       return agreementMapper.toResponseAgreementDTO(createdAgreement, responseDebtorDTOList);
     }
 
-    public ResponsePageAgreement getAllAgreements(Pageable pageable, String transferor, AgreementStatus status) {
-        Page<Agreement> agreementsPage = agreementRepository.findAllAgreements(transferor, status, pageable);
+    public ResponsePageAgreement getAllAgreements(Pageable pageable, String transferor, String status) {
+        AgreementStatus agreementStatus = status == null ? null : AgreementStatus.fromValue(status);
+        Page<Agreement> agreementsPage = agreementRepository.findAllAgreements(transferor, agreementStatus, pageable);
         List<AgreementDTO> content = agreementsPage.getContent()
                 .stream().map(a -> agreementMapper.toAgreementDTOFromAgreement(a)).collect(Collectors.toList());
         ResponsePageAgreement responsePage = new ResponsePageAgreement();

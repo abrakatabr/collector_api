@@ -30,6 +30,10 @@
             ALTER TABLE debtors
             ADD CONSTRAINT chk_phone_number_format
             CHECK (phone_number = 'N/A' OR phone_number ~ '^(\+7|7|8)?[0-9\s\-\(\)]{10,15}$');
+
+            ALTER TABLE debtors
+            ADD CONSTRAINT chk_debtors_gender
+            CHECK (gender IN ('male', 'female', 'unknown'));
         </sql>
 
         <createTable tableName="addresses">
@@ -57,7 +61,7 @@
             <column name="apartment" type="varchar(50)" defaultValue="N/A" remarks="Номер квартиры"/>
             <column name="address_status" type="varchar(20)" defaultValue="registration"
                     remarks="Статус адреса для заемщика">
-                <constraints nullable="false" checkConstraint="address_status IN ('registration', 'residential')"/>
+                <constraints nullable="false"/>
             </column>
         </createTable>
 
@@ -65,6 +69,11 @@
                              columnNames="debtor_id, address_status"
                              constraintName="uq_address"
                              deferrable="true"/>
+        <sql>
+            ALTER TABLE addresses
+            ADD CONSTRAINT chk_addresses_address_status
+            CHECK (address_status IN ('registration', 'residential'));
+        </sql>
 
         <createTable tableName="agreements">
             <column name="id" type="bigserial" remarks="Сгенерированный ID договора займа">
@@ -83,8 +92,7 @@
                 <constraints nullable="false"/>
             </column>
             <column name="status" type="varchar(20)" defaultValue="active" remarks="Статус договора">
-                <constraints nullable="false"
-                             checkConstraint="status IN ('active', 'paid', 'deleted')"/>
+                <constraints nullable="false"/>
             </column>
         </createTable>
 
@@ -93,6 +101,10 @@
             ALTER TABLE agreements
             ADD CONSTRAINT chk_agreements_original_debt_sum
             CHECK (original_debt_sum >= 0);
+
+            ALTER TABLE agreements
+            ADD CONSTRAINT chk_agreements_status
+            CHECK (status IN ('active', 'paid', 'deleted'));
 
             ALTER TABLE agreements
             ADD CONSTRAINT chk_agreements_actual_debt_sum
@@ -115,9 +127,7 @@
                              referencedColumnNames="id"/>
             </column>
             <column name="type" type="varchar(50)" remarks="Тип документа">
-                <constraints nullable="false"
-                             checkConstraint="type IN ('NATIONAL_PASSPORT', 'INTERNATIONAL_PASSPORT', 'DRIVER_LICENSE',
-                         'INN', 'SNILS')"/>
+                <constraints nullable="false"/>
             </column>
             <column name="document_number" type="varchar(50)" remarks="Номер документа">
                 <constraints nullable="true"/>
@@ -126,6 +136,12 @@
                 <constraints nullable="true"/>
             </column>
         </createTable>
+
+        <sql>
+            ALTER TABLE documents
+            ADD CONSTRAINT chk_documents_type
+            CHECK (type IN ('NATIONAL_PASSPORT', 'INTERNATIONAL_PASSPORT', 'DRIVER_LICENSE', 'INN', 'SNILS'));
+        </sql>
 
         <addUniqueConstraint tableName="documents"
                              columnNames="type, document_number"
@@ -154,8 +170,7 @@
                              referencedColumnNames="id"/>
             </column>
             <column name="role" type="varchar(20)" remarks="Роль заемщика в договоре займа">
-                <constraints nullable="false"
-                             checkConstraint="debtor_type IN ('co-debtor', 'single debtor', 'guarantor', 'charger')"/>
+                <constraints nullable="false"/>
             </column>
         </createTable>
 
@@ -163,6 +178,12 @@
                              columnNames="debtor_id, agreement_id"
                              constraintName="uq_debtor_agreement"
                              deferrable="true"/>
+
+        <sql>
+            ALTER TABLE debtors_agreements
+            ADD CONSTRAINT chk_debtors_agreements_role
+            CHECK (role IN ('co-debtor', 'single debtor', 'guarantor', 'charger'));
+        </sql>
 
         <createTable tableName="agreements_keys">
             <column name="id" type="bigserial" remarks="Сгенерированный ID связи ключа идемпотентности и договора">

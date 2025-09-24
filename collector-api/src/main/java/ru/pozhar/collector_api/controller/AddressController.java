@@ -44,8 +44,7 @@ public class AddressController implements AddressApi {
     @Override
     public ResponseEntity<Void> deleteAddress(
             Long debtorId,
-            @Pattern(regexp = "registration|residential", message = "Неверный статус адреса в запросе")
-            AddressStatus addressStatus) {
+            String addressStatus) {
         addressService.deleteAddress(debtorId, addressStatus);
         return ResponseEntity.noContent().build();
     }

@@ -84,7 +84,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /agreement/{agreementId}:
+  /agreements/{agreementId}:
     get:
       tags:
         - agreement
@@ -501,10 +501,13 @@ components:
       name: status
       required: true
       schema:
-        allOf:
-          - $ref: '#/components/schemas/AddressStatus'
-          - x-field-extra-annotation: |
-              @jakarta.validation.constraints.Pattern(regexp = "registration|residential", message = "Неверный статус адреса в запросе")
+        type: string
+        nullable: false
+        example: 'registration'
+        enum:
+          - registration
+          - residential
+        pattern: '^(registration|residential)$'
     Key:
       in: query
       name: key
@@ -524,6 +527,7 @@ components:
         enum:
           - paid
           - active
+        pattern: '^(paid|active)$'
     Page:
       in: query
       name: page
@@ -556,6 +560,7 @@ components:
           - agreementStartDate
           - transferor
           - status
+        pattern: '^(originalDebtSum|actualDebtSum|agreementStartDate|transferor|status)$'
     SortDirection:
       in: query
       name: sortDirection
@@ -568,6 +573,7 @@ components:
           - asc
           - desc
         default: 'asc'
+        pattern: '^(asc|desc)$'
     Transferor:
       in: query
       name: transferor
@@ -581,7 +587,12 @@ components:
       description: 'Статус договора для фильтрации'
       required: false
       schema:
-        $ref: '#/components/schemas/AgreementStatus'
+        type: string
+        example: 'active'
+        enum:
+          - active
+          - paid
+          - deleted
     DocumentType:
       in: query
       name: type
@@ -596,8 +607,7 @@ components:
           - driver-license
           - inn
           - snils
-        x-field-extra-annotation: |
-          @jakarta.validation.constraints.Pattern(regexp = "registration|residential", message = "Неверный статус адреса в запросе")
+        pattern: '^(national-passport|international-passport|driver-license|inn|snils)$'
   schemas:
     ErrorResponse:
       type: object
@@ -630,40 +640,21 @@ components:
       properties:
         country:
           nullable: false
-          minLength: 1
-          allOf:
-            - $ref: '#/components/schemas/Country'
-            - x-field-extra-annotation: "@jakarta.validation.constraints.NotBlank(message = \"Страна обязательна\")"
+          $ref: '#/components/schemas/Country'
         city:
           nullable: false
-          minLength: 1
-          allOf:
-            - $ref: '#/components/schemas/City'
-            - x-field-extra-annotation: "@jakarta.validation.constraints.NotBlank(message = \"Название города обязательно\")"
+          $ref: '#/components/schemas/City'
         street:
-          minLength: 1
           nullable: false
-          allOf:
-            - $ref: '#/components/schemas/Street'
-            - x-field-extra-annotation: "@jakarta.validation.constraints.NotBlank(message = \"Название улицы обязательно\")"
+          $ref: '#/components/schemas/Street'
         house:
-          minLength: 1
           nullable: false
-          allOf:
-            - $ref: '#/components/schemas/House'
-            - x-field-extra-annotation: "@jakarta.validation.constraints.NotBlank(message = \"Дом обязателен\")"
+          $ref: '#/components/schemas/House'
         apartment:
-          nullable: true
-          allOf:
-            - $ref: '#/components/schemas/Apartment'
+          $ref: '#/components/schemas/Apartment'
         addressStatus:
-          minLength: 1
           nullable: false
-          allOf:
-            - $ref: '#/components/schemas/AddressStatus'
-            - x-field-extra-annotation: |
-                @jakarta.validation.constraints.NotBlank(message = "Статус обязателен")
-                @jakarta.validation.constraints.Pattern(regexp = "registration|residential", message = "Статус адреса должен быть 'registration' или 'residential'")
+          $ref: '#/components/schemas/AddressStatus'
       required:
         - country
         - city
@@ -676,22 +667,13 @@ components:
       properties:
         documentType:
           nullable: false
-          allOf:
-            - $ref: '#/components/schemas/DocumentType'
-            - x-field-extra-annotation: "@jakarta.validation.constraints.NotNull"
+          $ref: '#/components/schemas/DocumentType'
         documentNumber:
-          minLength: 1
           nullable: false
-          allOf:
-            - $ref: '#/components/schemas/DocumentNumber'
-            - x-field-extra-annotation: "@jakarta.validation.constraints.NotBlank(message = \"Номер документа обязателен\")"
+          $ref: '#/components/schemas/DocumentNumber'
         issueDate:
           nullable: false
-          allOf:
-            - $ref: '#/components/schemas/IssueDate'
-            - x-field-extra-annotation: |
-                @jakarta.validation.constraints.NotNull(message = "Дата выдачи документа обязательна")
-                @jakarta.validation.constraints.PastOrPresent(message = "Дата выдачи документа должна быть текущей датой или ранее")
+          $ref: '#/components/schemas/IssueDate'
       required:
         - documentType
         - documentNumber
@@ -702,52 +684,25 @@ components:
       properties:
         firstname:
           nullable: false
-          minLength: 1
-          allOf:
-            - $ref: '#/components/schemas/FirstName'
-            - x-field-extra-annotation: |
-                @jakarta.validation.constraints.NotBlank(message = "Имя обязательно")
-                @jakarta.validation.constraints.Pattern(regexp = "^[а-яА-ЯёЁa-zA-Z-]+$", message = "Имя может содержать только буквы и дефис")
+          $ref: '#/components/schemas/FirstName'
         lastname:
           nullable: false
-          minLength: 1
-          allOf:
-            - $ref: '#/components/schemas/LastName'
-            - x-field-extra-annotation: |
-                @jakarta.validation.constraints.NotBlank(message = "Фамилия обязательна")
-                @jakarta.validation.constraints.Pattern(regexp = "^[а-яА-ЯёЁa-zA-Z-]+$", message = "Фамилия может содержать только буквы и дефис")
+          $ref: '#/components/schemas/LastName'
         patronymic:
           nullable: true
-          allOf:
-            - $ref: '#/components/schemas/Patronymic'
-            - x-field-extra-annotation: |
-                @jakarta.validation.constraints.Pattern(regexp = "^[а-яА-ЯёЁa-zA-Z-]+$", message = "Отчество может содержать только буквы и дефис")
+          $ref: '#/components/schemas/Patronymic'
         birthday:
           nullable: false
-          allOf:
-            - $ref: '#/components/schemas/Birthday'
-            - x-field-extra-annotation: |
-                @jakarta.validation.constraints.NotNull(message = "Дата рождения обязательна")
-                @jakarta.validation.constraints.Past(message = "Дата рождения должна быть в прошлом")
+          $ref: '#/components/schemas/Birthday'
         gender:
           nullable: false
-          allOf:
-            - $ref: '#/components/schemas/Gender'
-            - x-field-extra-annotation: "@jakarta.validation.constraints.NotNull(message = \"Пол обязателен\")"
+          $ref: '#/components/schemas/Gender'
         role:
           nullable: false
-          allOf:
-            - $ref: '#/components/schemas/Role'
-            - x-field-extra-annotation: |
-                @jakarta.validation.constraints.NotBlank(message = "Роль заемщика в договоре обязательна")
-                @jakarta.validation.constraints.Pattern(regexp = "co-debtor|single debtor|guarantor|charger",
-                message = "Роль заемщика в договоре должна быть 'co-debtor', 'single debtor', 'guarantor' или 'charger'")
+          $ref: '#/components/schemas/Role'
         phoneNumber:
           nullable: true
           $ref: '#/components/schemas/PhoneNumber'
-          x-field-extra-annotation: |
-                @jakarta.validation.constraints.Pattern(regexp = "^(\\+7|7|8)?[0-9\\s\\-\\(\\)]{10,15}$",
-                message = "Некорректный формат номера телефона")
         addressDTOs:
           type: array
           description: 'Список адресов заемщика'
@@ -776,31 +731,16 @@ components:
       properties:
         originalDebtSum:
           nullable: false
-          allOf:
-            - $ref: '#/components/schemas/OriginalDebtSum'
-            - x-field-extra-annotation: |
-                @jakarta.validation.constraints.NotNull(message = "Сумма долга по договору обязательна")
-                @jakarta.validation.constraints.DecimalMin(value = "0.0", message = "Сумма долга по договору не может быть отрицательной")
+          $ref: '#/components/schemas/OriginalDebtSum'
         actualDebtSum:
           nullable: false
-          allOf:
-            - $ref: '#/components/schemas/ActualDebtSum'
-            - x-field-extra-annotation: |
-                @jakarta.validation.constraints.NotNull(message = "Текущий остаток по договору обязателен")
-                @jakarta.validation.constraints.DecimalMin(value = "0.0", message = "Текущий остаток по договору не может быть отрицательным")
+          $ref: '#/components/schemas/ActualDebtSum'
         agreementStartDate:
           nullable: false
-          allOf:
-            - $ref: '#/components/schemas/AgreementStartDate'
-            - x-field-extra-annotation: |
-                @jakarta.validation.constraints.NotNull(message = "Дата подписания договора обязательна")
-                @jakarta.validation.constraints.PastOrPresent(message = "Дата подписания договора должна быть текущей датой или ранее")
+          $ref: '#/components/schemas/AgreementStartDate'
         transferor:
           nullable: false
-          minLength: 1
-          allOf:
-            -  $ref: '#/components/schemas/Transferor'
-            - x-field-extra-annotation: "@jakarta.validation.constraints.NotBlank(message = \"Название банка-кредитора обязательно\")"
+          $ref: '#/components/schemas/Transferor'
         debtors:
           type: array
           description: 'Список заемщиков и других учатсников договора'
@@ -820,39 +760,22 @@ components:
       properties:
         firstname:
           nullable: true
-          allOf:
-            - $ref: '#/components/schemas/FirstName'
-            - x-field-extra-annotation: |
-                @jakarta.validation.constraints.Pattern(regexp = "^[а-яА-ЯёЁa-zA-Z-]+$", message = "Имя может содержать только буквы и дефис")
+          $ref: '#/components/schemas/UpdateFirstName'
         lastname:
           nullable: true
-          allOf:
-            - $ref: '#/components/schemas/LastName'
-            - x-field-extra-annotation: |
-                @jakarta.validation.constraints.Pattern(regexp = "^[а-яА-ЯёЁa-zA-Z-]+$", message = "Фамилия может содержать только буквы и дефис")
+          $ref: '#/components/schemas/UpdateLastName'
         patronymic:
           nullable: true
-          allOf:
-            - $ref: '#/components/schemas/Patronymic'
-            - x-field-extra-annotation: |
-                @jakarta.validation.constraints.Pattern(regexp = "^[а-яА-ЯёЁa-zA-Z-]+$", message = "Отчество может содержать только буквы и дефис")
+          $ref: '#/components/schemas/Patronymic'
         birthday:
           nullable: true
-          allOf:
-            - $ref: '#/components/schemas/Birthday'
-            - x-field-extra-annotation: |
-                @jakarta.validation.constraints.Past(message = "Дата рождения должна быть в прошлом")
+          $ref: '#/components/schemas/UpdateBirthday'
         gender:
           nullable: true
-          allOf:
-            - $ref: '#/components/schemas/Gender'
+          $ref: '#/components/schemas/UpdateGender'
         phoneNumber:
           nullable: true
-          allOf:
-            - $ref: '#/components/schemas/PhoneNumber'
-            - x-field-extra-annotation: |
-                @jakarta.validation.constraints.Pattern(regexp = "^(\\+7|7|8)?[0-9\\s\\-\\(\\)]{10,15}$",
-                message = "Некорректный формат номера телефона")
+          $ref: '#/components/schemas/PhoneNumber'
     ResponseAddressDTO:
       type: object
       description: 'Модель данных для ответа на GET запрос, возвращаемый адрес'
@@ -1067,6 +990,9 @@ components:
       example: 5000000.00
       minimum: 0.0
       exclusiveMinimum: false
+      x-field-extra-annotation: |
+        @jakarta.validation.constraints.NotNull(message = "Сумма долга по договору обязательна")
+          @jakarta.validation.constraints.DecimalMin(value = "0.0", message = "Сумма долга по договору не может быть отрицательной")
     ActualDebtSum:
       type: number
       format: bigdecimal
@@ -1074,32 +1000,78 @@ components:
       example: 3000000.00
       minimum: 0.0
       exclusiveMinimum: false
+      x-field-extra-annotation: |
+        @jakarta.validation.constraints.NotNull(message = "Текущий остаток по договору обязателен")
+          @jakarta.validation.constraints.DecimalMin(value = "0.0", message = "Текущий остаток по договору не может быть отрицательным")
     AgreementStartDate:
       type: string
       format: date
       example: '2023-06-06'
+      x-field-extra-annotation: |
+        @jakarta.validation.constraints.NotNull(message = "Дата подписания договора обязательна")
+          @jakarta.validation.constraints.PastOrPresent(message = "Дата подписания договора должна быть текущей датой или ранее")
     Transferor:
       type: string
       description: 'Название банка-кредитора'
       example: 'Сбербанк'
+      x-field-extra-annotation: "@jakarta.validation.constraints.NotBlank(message = \"Название банка-кредитора обязательно\")"
     FirstName:
       type: string
       description: 'Имя заемщика'
       example: 'Иван'
+      x-field-extra-annotation: |
+        @jakarta.validation.constraints.NotBlank(message = "Имя обязательно")
+          @jakarta.validation.constraints.Pattern(regexp = "^[а-яА-ЯёЁa-zA-Z-]+$", message = "Имя может содержать только буквы и дефис")
+    UpdateFirstName:
+      type: string
+      description: 'Имя заемщика'
+      example: 'Иван'
+      x-field-extra-annotation: |
+        @jakarta.validation.constraints.Pattern(regexp = "^[а-яА-ЯёЁa-zA-Z-]+$", message = "Имя может содержать только буквы и дефис")
     LastName:
       type: string
       description: 'Фамилия заемщика'
       example: 'Иванов'
+      x-field-extra-annotation: |
+        @jakarta.validation.constraints.NotBlank(message = "Фамилия обязательна")
+          @jakarta.validation.constraints.Pattern(regexp = "^[а-яА-ЯёЁa-zA-Z-]+$", message = "Фамилия может содержать только буквы и дефис")
+    UpdateLastName:
+      type: string
+      description: 'Фамилия заемщика'
+      example: 'Иванов'
+      x-field-extra-annotation: |
+        @jakarta.validation.constraints.Pattern(regexp = "^[а-яА-ЯёЁa-zA-Z-]+$", message = "Фамилия может содержать только буквы и дефис")
     Patronymic:
       type: string
       description: 'Отчество заемщика'
       example: 'Иванович'
+      x-field-extra-annotation: |
+        @jakarta.validation.constraints.Pattern(regexp = "^[а-яА-ЯёЁa-zA-Z-]+$", message = "Отчество может содержать только буквы и дефис")
     Birthday:
       type: string
       description: 'Дата рождения заемщика'
       format: date
       example: '2000-01-01'
+      x-field-extra-annotation: |
+        @jakarta.validation.constraints.NotNull(message = "Дата рождения обязательна")
+          @jakarta.validation.constraints.Past(message = "Дата рождения должна быть в прошлом")
+    UpdateBirthday:
+      type: string
+      description: 'Дата рождения заемщика'
+      format: date
+      example: '2000-01-01'
+      x-field-extra-annotation: |
+        @jakarta.validation.constraints.Past(message = "Дата рождения должна быть в прошлом")
     Gender:
+      type: string
+      description: 'Пол заемщика'
+      example: 'male'
+      enum:
+        - 'male'
+        - 'female'
+        - 'unknown'
+      x-field-extra-annotation: "@jakarta.validation.constraints.NotNull(message = \"Пол обязателен\")"
+    UpdateGender:
       type: string
       description: 'Пол заемщика'
       example: 'male'
@@ -1120,10 +1092,14 @@ components:
       type: string
       description: 'Телефонный номер заемщика'
       example: '+79261854567'
+      x-field-extra-annotation: |
+        @jakarta.validation.constraints.Pattern(regexp = "^(\\+7|7|8)?[0-9\\s\\-\\(\\)]{10,15}$",
+        message = "Некорректный формат номера телефона")
     DocumentType:
       type: string
       description: 'Тип документа'
       example: 'NATIONAL_PASSPORT'
+      x-field-extra-annotation: "@jakarta.validation.constraints.NotNull"
       enum:
         - 'NATIONAL_PASSPORT'
         - 'INTERNATIONAL_PASSPORT'
@@ -1134,27 +1110,35 @@ components:
       type: string
       description: 'Номер документа'
       example: '4508731456'
+      x-field-extra-annotation: "@jakarta.validation.constraints.NotBlank(message = \"Номер документа обязателен\")"
     IssueDate:
       type: string
       description: 'Дата выдачи документа'
       format: date
       example: '2010-02-02'
+      x-field-extra-annotation: |
+        @jakarta.validation.constraints.NotNull(message = "Дата выдачи документа обязательна")
+          @jakarta.validation.constraints.PastOrPresent(message = "Дата выдачи документа должна быть текущей датой или ранее")
     Country:
       type: string
       description: 'Страна'
       example: 'Россия'
+      x-field-extra-annotation: "@jakarta.validation.constraints.NotBlank(message = \"Страна обязательна\")"
     City:
       type: string
       description: 'Город'
       example: 'Москва'
+      x-field-extra-annotation: "@jakarta.validation.constraints.NotBlank(message = \"Название города обязательно\")"
     Street:
       type: string
       description: 'Улица'
       example: 'Тверская'
+      x-field-extra-annotation: "@jakarta.validation.constraints.NotBlank(message = \"Название улицы обязательно\")"
     House:
       type: string
       description: 'Номер дома'
       example: '22'
+      x-field-extra-annotation: "@jakarta.validation.constraints.NotBlank(message = \"Дом обязателен\")"
     Apartment:
       type: string
       description: 'Номер квартиры'
@@ -1163,6 +1147,8 @@ components:
       type: string
       description: 'Статус адреса заемщика (прописка или проживание)'
       example: 'registration'
+      x-field-extra-annotation: |
+        @jakarta.validation.constraints.NotNull(message = "Статус обязателен")
       enum:
         - 'registration'
         - 'residential'

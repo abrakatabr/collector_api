@@ -1,6 +1,7 @@
 package ru.pozhar.collector_api.model;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -11,11 +12,10 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.experimental.Accessors;
+import ru.pozhar.collector_api.model.converters.AddressStatusConverter;
 import ru.pozhar.collector_api.openapi.dto.AddressStatus;
 
 @Entity
@@ -52,9 +52,7 @@ public class Address {
     @Column(name = "apartment", length = 50)
     private String apartment = "N/A";
 
-    @NotBlank(message = "Статус обязателен")
-    @Pattern(regexp = "registration|residential",
-            message = "Статус адреса должен быть 'registration' или 'residential'.")
-    @Column(name = "address_status", nullable = false)
+    @Convert(converter = AddressStatusConverter.class)
+    @Column(name = "address_status", length = 20)
     private AddressStatus addressStatus = AddressStatus.REGISTRATION;
 }

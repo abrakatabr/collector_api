@@ -3,6 +3,7 @@ package ru.pozhar.collector_api.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.pozhar.collector_api.exception.ValidationException;
 import ru.pozhar.collector_api.openapi.dto.AddressStatus;
 import ru.pozhar.collector_api.openapi.dto.RequestAddressDTO;
 import ru.pozhar.collector_api.openapi.dto.ResponseAddressDTO;
@@ -92,7 +93,10 @@ public class AddressService {
         return addressDTOList;
     }
 
-    public void deleteAddress(Long debtorId, AddressStatus addressStatus) {
+    public void deleteAddress(Long debtorId, String addressStatus) {
+        if (addressStatus == null) {
+            throw new ValidationException("Статус адреса обязателен");
+        }
         List<Address> addresses = addressRepository.findByFilters(
                 debtorId,
                 null,
@@ -100,7 +104,7 @@ public class AddressService {
                 null,
                 null,
                 null,
-                addressStatus.getValue()
+                addressStatus
         );
         if(addresses.size() > 0) {
             Address address = addresses.stream().findFirst().get();

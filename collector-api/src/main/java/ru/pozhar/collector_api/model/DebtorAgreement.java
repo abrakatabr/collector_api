@@ -1,7 +1,10 @@
 package ru.pozhar.collector_api.model;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -9,9 +12,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotBlank;
+import ru.pozhar.collector_api.model.converters.RoleConverter;
+import ru.pozhar.collector_api.openapi.dto.Role;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -36,9 +39,7 @@ public class DebtorAgreement {
     @JoinColumn(name = "agreement_id", nullable = false)
     private Agreement agreement;
 
-    @NotBlank(message = "Роль заемщика в договоре обязательна.")
-    @Pattern(regexp = "co-debtor|single debtor|guarantor|charger",
-            message = "Роль заемщика в договоре должна быть 'co-debtor', 'single debtor', 'guarantor' или 'charger'.")
-    @Column(name = "role", nullable = false, length = 20)
-    private String role;
+    @Convert(converter = RoleConverter.class)
+    @Column(name = "role", length = 20)
+    private Role role;
 }

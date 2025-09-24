@@ -2,12 +2,11 @@ package ru.pozhar.collector_api.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Convert;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -15,6 +14,7 @@ import jakarta.validation.constraints.PastOrPresent;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.pozhar.collector_api.model.converters.AgreementStatusConverter;
 import ru.pozhar.collector_api.openapi.dto.AgreementStatus;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -48,7 +48,7 @@ public class Agreement {
     @Column(name = "transferor", nullable = false, length = 128)
     private String transferor;
 
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = AgreementStatusConverter.class)
     @Column(name = "status", length = 20)
     private AgreementStatus status = AgreementStatus.ACTIVE;
 }

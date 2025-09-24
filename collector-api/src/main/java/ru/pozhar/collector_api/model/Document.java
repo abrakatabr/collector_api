@@ -1,9 +1,8 @@
 package ru.pozhar.collector_api.model;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -17,6 +16,7 @@ import jakarta.validation.constraints.PastOrPresent;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.pozhar.collector_api.model.converters.DocumentTypeConverter;
 import ru.pozhar.collector_api.openapi.dto.DocumentType;
 
 import java.time.LocalDate;
@@ -36,7 +36,7 @@ public class Document {
     @JoinColumn(name = "debtor_id", nullable = false)
     private Debtor debtor;
 
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = DocumentTypeConverter.class)
     @Column(name = "type", nullable = false)
     private DocumentType documentType;
 

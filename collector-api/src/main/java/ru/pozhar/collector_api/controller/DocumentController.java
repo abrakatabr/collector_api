@@ -41,8 +41,6 @@ public class DocumentController implements DocumentApi {
     @Override
     public ResponseEntity<String> uploadDocumentFile(
             Long debtorId,
-            @Pattern(regexp = "national-passport|international-passport|driver-license|inn|snils",
-                    message = "Неверный тип документа в запросе")
             String type,
             MultipartFile file) {
         String fullPath = documentFileService.saveDocumentFile(file, debtorId, type);
@@ -55,8 +53,6 @@ public class DocumentController implements DocumentApi {
     @Override
     public ResponseEntity<Resource> downloadDocumentFile(
             Long debtorId,
-            @Pattern(regexp = "national-passport|international-passport|driver-license|inn|snils",
-                    message = "Неверный тип документа в запросе")
             String type) {
         FileDownloadDTO file = documentFileService.downloadDocumentFile(debtorId, type);
         return ResponseEntity.status(HttpStatus.OK)
