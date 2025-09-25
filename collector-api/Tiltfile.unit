@@ -13,5 +13,6 @@ k8s_yaml('collector-api.yml')
 k8s_resource('collector-api',
     labels=['api'],
     port_forwards=['30004:8080', '5005:5005'],
-    resource_deps=['postgres', 'redis', 'rabbitmq', 'minIO']
+    resource_deps=['postgres', 'redis', 'rabbitmq', 'minIO'],
+    links=[link('http://localhost:30004/swagger-ui/index.html', 'REST API docs')]
 )
