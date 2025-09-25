@@ -20,7 +20,7 @@ public interface NotificationDataRepository extends JpaRepository<Debtor, Long> 
 
     @Query("""
            SELECT a FROM Address a 
-           WHERE a.debtor.id = :debtorId AND a.addressStatus = 'registration'
+           WHERE a.debtor.id = :debtorId AND a.addressStatus = 'REGISTRATION'
            """)
     Optional<Address> findRegistrationAddress(@Param("debtorId") Long debtorId);
 

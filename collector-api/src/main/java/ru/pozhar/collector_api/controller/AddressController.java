@@ -1,6 +1,5 @@
 package ru.pozhar.collector_api.controller;
 
-import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -44,7 +43,7 @@ public class AddressController implements AddressApi {
     @Override
     public ResponseEntity<Void> deleteAddress(
             Long debtorId,
-            String addressStatus) {
+            AddressStatus addressStatus) {
         addressService.deleteAddress(debtorId, addressStatus);
         return ResponseEntity.noContent().build();
     }

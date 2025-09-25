@@ -1,7 +1,6 @@
 package ru.pozhar.collector_api.model;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -12,7 +11,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import ru.pozhar.collector_api.model.converters.RoleConverter;
 import ru.pozhar.collector_api.openapi.dto.Role;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -39,7 +37,7 @@ public class DebtorAgreement {
     @JoinColumn(name = "agreement_id", nullable = false)
     private Agreement agreement;
 
-    @Convert(converter = RoleConverter.class)
+    @Enumerated(EnumType.STRING)
     @Column(name = "role", length = 20)
     private Role role;
 }

@@ -21,6 +21,10 @@ spring:
     hibernate:
       ddl-auto: validate
     properties:
+      jakarta:
+        persistence:
+          validation:
+            mode: AUTO
       hibernate:
         format_sql: true
 

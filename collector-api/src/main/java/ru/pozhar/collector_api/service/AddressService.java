@@ -93,7 +93,7 @@ public class AddressService {
         return addressDTOList;
     }
 
-    public void deleteAddress(Long debtorId, String addressStatus) {
+    public void deleteAddress(Long debtorId, AddressStatus addressStatus) {
         if (addressStatus == null) {
             throw new ValidationException("Статус адреса обязателен");
         }
@@ -104,7 +104,7 @@ public class AddressService {
                 null,
                 null,
                 null,
-                addressStatus
+                addressStatus.getValue()
         );
         if(addresses.size() > 0) {
             Address address = addresses.stream().findFirst().get();

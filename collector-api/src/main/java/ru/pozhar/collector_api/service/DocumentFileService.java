@@ -30,10 +30,9 @@ public class DocumentFileService {
     private final DocumentRepository documentRepository;
 
     @Transactional
-    public String saveDocumentFile(MultipartFile file, Long debtorId, String type) {
+    public String saveDocumentFile(MultipartFile file, Long debtorId, DocumentType type) {
         validateFile(file);
-        DocumentType documentType = DocumentType.valueOf(type.replace("-", "_").toUpperCase());
-        Document document = documentRepository.findByDebtorIdAndDocumentType(debtorId, documentType);
+        Document document = documentRepository.findByDebtorIdAndDocumentType(debtorId, type);
         if (document == null) {
             throw new EntityNotFoundException("Данные документов заемщика не найдены");
         }
@@ -53,9 +52,8 @@ public class DocumentFileService {
     }
 
     @Transactional(readOnly = true)
-    public FileDownloadDTO downloadDocumentFile(Long debtorId, String type) {
-        DocumentType documentType = DocumentType.valueOf(type.replace("-", "_").toUpperCase());
-        Document document = documentRepository.findByDebtorIdAndDocumentType(debtorId, documentType);
+    public FileDownloadDTO downloadDocumentFile(Long debtorId, DocumentType type) {
+        Document document = documentRepository.findByDebtorIdAndDocumentType(debtorId, type);
         if (document == null) {
             throw new EntityNotFoundException("Данные документов заемщика не найдены");
         }

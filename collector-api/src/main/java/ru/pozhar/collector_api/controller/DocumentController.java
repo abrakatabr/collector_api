@@ -1,6 +1,5 @@
 package ru.pozhar.collector_api.controller;
 
-import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
@@ -12,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import ru.pozhar.collector_api.dto.FileDownloadDTO;
 import ru.pozhar.collector_api.openapi.api.DocumentApi;
+import ru.pozhar.collector_api.openapi.dto.DocumentType;
 import ru.pozhar.collector_api.openapi.dto.ResponseDocumentDTO;
 import ru.pozhar.collector_api.service.DocumentFileService;
 import ru.pozhar.collector_api.service.DocumentService;
@@ -41,7 +41,7 @@ public class DocumentController implements DocumentApi {
     @Override
     public ResponseEntity<String> uploadDocumentFile(
             Long debtorId,
-            String type,
+            DocumentType type,
             MultipartFile file) {
         String fullPath = documentFileService.saveDocumentFile(file, debtorId, type);
         return ResponseEntity.status(HttpStatus.OK)
@@ -53,7 +53,7 @@ public class DocumentController implements DocumentApi {
     @Override
     public ResponseEntity<Resource> downloadDocumentFile(
             Long debtorId,
-            String type) {
+            DocumentType type) {
         FileDownloadDTO file = documentFileService.downloadDocumentFile(debtorId, type);
         return ResponseEntity.status(HttpStatus.OK)
                 .header(HttpHeaders.CONTENT_TYPE, file.contentType())

@@ -1,8 +1,9 @@
 package ru.pozhar.collector_api.model;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -14,7 +15,6 @@ import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.pozhar.collector_api.model.converters.GenderConverter;
 import ru.pozhar.collector_api.openapi.dto.Gender;
 import java.time.LocalDate;
 
@@ -45,7 +45,7 @@ public class Debtor {
     @Column(name = "birthday", nullable = false)
     private LocalDate birthday;
 
-    @Convert(converter = GenderConverter.class)
+    @Enumerated(EnumType.STRING)
     @Column(name = "gender", length = 10)
     private Gender gender = Gender.UNKNOWN;
 

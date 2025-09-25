@@ -33,17 +33,17 @@ function addDebtor() {
         <div class="form-group">
             <label>Пол:</label>
             <select name="debtors[${debtorIndex}].gender" required>
-                <option value="male">Мужской</option>
-                <option value="female">Женский</option>
+                <option value="MALE">Мужской</option>
+                <option value="FEMALE">Женский</option>
             </select>
         </div>
         <div class="form-group">
             <label>Роль:</label>
             <select name="debtors[${debtorIndex}].role" required>
-                <option value="co-debtor">Созаемщик</option>
-                <option value="single debtor">Единственный заемщик</option>
-                <option value="guarantor">Поручитель</option>
-                <option value="charger">Залогодатель</option>
+                <option value="CO_DEBTOR">Созаемщик</option>
+                <option value="SINGLE_DEBTOR">Единственный заемщик</option>
+                <option value="GUARANTOR">Поручитель</option>
+                <option value="CHARGER">Залогодатель</option>
             </select>
         </div>
         <div class="form-group">
@@ -60,8 +60,8 @@ function addDebtor() {
                     <div class="form-group">
                         <label>Тип адреса:</label>
                         <select name="debtors[${debtorIndex}].addressDTOs[0].addressStatus" required>
-                            <option value="registration">Прописка</option>
-                            <option value="residential">Проживание</option>
+                            <option value="REGISTRATION">Прописка</option>
+                            <option value="RESIDENTIAL">Проживание</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -140,8 +140,8 @@ function addAddress(debtorIndex) {
         <div class="form-group">
             <label>Тип адреса:</label>
             <select name="debtors[${debtorIndex}].addressDTOs[${addressIndex}].addressStatus" required>
-                <option value="registration">Прописка</option>
-                <option value="residential">Проживание</option>
+                <option value="REGISTRATION">Прописка</option>
+                <option value="RESIDENTIAL">Проживание</option>
             </select>
         </div>
         <div class="form-group">

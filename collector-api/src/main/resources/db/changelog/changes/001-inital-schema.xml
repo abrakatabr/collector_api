@@ -19,7 +19,7 @@
             <column name="birthday" type="date" remarks="Дата рождения должника">
                 <constraints nullable="false"/>
             </column>
-            <column name="gender" type="varchar(10)" defaultValue="unknown" remarks="Пол должника">
+            <column name="gender" type="varchar(10)" defaultValue="UNKNOWN" remarks="Пол должника">
                 <constraints nullable="false"/>
             </column>
             <column name="phone_number" type="varchar(20)" defaultValue="N/A" remarks="Номер телефона должника">
@@ -33,7 +33,7 @@
 
             ALTER TABLE debtors
             ADD CONSTRAINT chk_debtors_gender
-            CHECK (gender IN ('male', 'female', 'unknown'));
+            CHECK (gender IN ('MALE', 'FEMALE', 'UNKNOWN'));
         </sql>
 
         <createTable tableName="addresses">
@@ -59,7 +59,7 @@
                 <constraints nullable="false"/>
             </column>
             <column name="apartment" type="varchar(50)" defaultValue="N/A" remarks="Номер квартиры"/>
-            <column name="address_status" type="varchar(20)" defaultValue="registration"
+            <column name="address_status" type="varchar(20)" defaultValue="REGISTRATION"
                     remarks="Статус адреса для заемщика">
                 <constraints nullable="false"/>
             </column>
@@ -72,7 +72,7 @@
         <sql>
             ALTER TABLE addresses
             ADD CONSTRAINT chk_addresses_address_status
-            CHECK (address_status IN ('registration', 'residential'));
+            CHECK (address_status IN ('REGISTRATION', 'RESIDENTIAL'));
         </sql>
 
         <createTable tableName="agreements">
@@ -91,7 +91,7 @@
             <column name="transferor" type="varchar(128)" remarks="Название банка-кредитора">
                 <constraints nullable="false"/>
             </column>
-            <column name="status" type="varchar(20)" defaultValue="active" remarks="Статус договора">
+            <column name="status" type="varchar(20)" defaultValue="ACTIVE" remarks="Статус договора">
                 <constraints nullable="false"/>
             </column>
         </createTable>
@@ -104,7 +104,7 @@
 
             ALTER TABLE agreements
             ADD CONSTRAINT chk_agreements_status
-            CHECK (status IN ('active', 'paid', 'deleted'));
+            CHECK (status IN ('ACTIVE', 'PAID', 'DELETED'));
 
             ALTER TABLE agreements
             ADD CONSTRAINT chk_agreements_actual_debt_sum
@@ -182,7 +182,7 @@
         <sql>
             ALTER TABLE debtors_agreements
             ADD CONSTRAINT chk_debtors_agreements_role
-            CHECK (role IN ('co-debtor', 'single debtor', 'guarantor', 'charger'));
+            CHECK (role IN ('CO_DEBTOR', 'SINGLE_DEBTOR', 'GUARANTOR', 'CHARGER'));
         </sql>
 
         <createTable tableName="agreements_keys">

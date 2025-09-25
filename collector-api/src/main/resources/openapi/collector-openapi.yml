@@ -501,13 +501,7 @@ components:
       name: status
       required: true
       schema:
-        type: string
-        nullable: false
-        example: 'registration'
-        enum:
-          - registration
-          - residential
-        pattern: '^(registration|residential)$'
+        $ref: '#/components/schemas/AddressStatus'
     Key:
       in: query
       name: key
@@ -522,12 +516,7 @@ components:
       required: true
       description: 'Новый статус договора (paid или active)'
       schema:
-        type: string
-        example: 'paid'
-        enum:
-          - paid
-          - active
-        pattern: '^(paid|active)$'
+        $ref: '#/components/schemas/AgreementStatus'
     Page:
       in: query
       name: page
@@ -587,27 +576,14 @@ components:
       description: 'Статус договора для фильтрации'
       required: false
       schema:
-        type: string
-        example: 'active'
-        enum:
-          - active
-          - paid
-          - deleted
+        $ref: '#/components/schemas/AgreementStatus'
     DocumentType:
       in: query
       name: type
       required: true
       description: 'Тип документа заемщика для загрузки файла'
       schema:
-        type: string
-        example: 'national-passport'
-        enum:
-          - national-passport
-          - international-passport
-          - driver-license
-          - inn
-          - snils
-        pattern: '^(national-passport|international-passport|driver-license|inn|snils)$'
+        $ref: '#/components/schemas/DocumentType'
   schemas:
     ErrorResponse:
       type: object
@@ -639,21 +615,16 @@ components:
       description: 'Модель данных для POST запроса, создания адресов'
       properties:
         country:
-          nullable: false
           $ref: '#/components/schemas/Country'
         city:
-          nullable: false
           $ref: '#/components/schemas/City'
         street:
-          nullable: false
           $ref: '#/components/schemas/Street'
         house:
-          nullable: false
           $ref: '#/components/schemas/House'
         apartment:
           $ref: '#/components/schemas/Apartment'
         addressStatus:
-          nullable: false
           $ref: '#/components/schemas/AddressStatus'
       required:
         - country
@@ -666,13 +637,10 @@ components:
       description: 'Модель данных для POST запроса, создания документа заемщика'
       properties:
         documentType:
-          nullable: false
           $ref: '#/components/schemas/DocumentType'
         documentNumber:
-          nullable: false
           $ref: '#/components/schemas/DocumentNumber'
         issueDate:
-          nullable: false
           $ref: '#/components/schemas/IssueDate'
       required:
         - documentType
@@ -683,25 +651,18 @@ components:
       description: 'Модель данных для POST запроса, создания заемщика'
       properties:
         firstname:
-          nullable: false
           $ref: '#/components/schemas/FirstName'
         lastname:
-          nullable: false
           $ref: '#/components/schemas/LastName'
         patronymic:
-          nullable: true
           $ref: '#/components/schemas/Patronymic'
         birthday:
-          nullable: false
           $ref: '#/components/schemas/Birthday'
         gender:
-          nullable: false
           $ref: '#/components/schemas/Gender'
         role:
-          nullable: false
           $ref: '#/components/schemas/Role'
         phoneNumber:
-          nullable: true
           $ref: '#/components/schemas/PhoneNumber'
         addressDTOs:
           type: array
@@ -730,16 +691,12 @@ components:
       description: 'Модель данных для POST запроса, создания договора'
       properties:
         originalDebtSum:
-          nullable: false
           $ref: '#/components/schemas/OriginalDebtSum'
         actualDebtSum:
-          nullable: false
           $ref: '#/components/schemas/ActualDebtSum'
         agreementStartDate:
-          nullable: false
           $ref: '#/components/schemas/AgreementStartDate'
         transferor:
-          nullable: false
           $ref: '#/components/schemas/Transferor'
         debtors:
           type: array
@@ -759,22 +716,16 @@ components:
       description: 'Модель данных для PATCH запроса, изменения данных заемщика'
       properties:
         firstname:
-          nullable: true
           $ref: '#/components/schemas/UpdateFirstName'
         lastname:
-          nullable: true
           $ref: '#/components/schemas/UpdateLastName'
         patronymic:
-          nullable: true
           $ref: '#/components/schemas/Patronymic'
         birthday:
-          nullable: true
           $ref: '#/components/schemas/UpdateBirthday'
         gender:
-          nullable: true
-          $ref: '#/components/schemas/UpdateGender'
+          $ref: '#/components/schemas/Gender'
         phoneNumber:
-          nullable: true
           $ref: '#/components/schemas/PhoneNumber'
     ResponseAddressDTO:
       type: object
@@ -973,11 +924,11 @@ components:
     AgreementStatus:
       type: string
       description: 'Статус договора (дуйствует, долг выплачен, удален)'
-      example: 'active'
+      example: 'ACTIVE'
       enum:
-        - 'active'
-        - 'paid'
-        - 'deleted'
+        - 'ACTIVE'
+        - 'PAID'
+        - 'DELETED'
     Id:
       type: integer
       format: int64
@@ -1067,27 +1018,18 @@ components:
       description: 'Пол заемщика'
       example: 'male'
       enum:
-        - 'male'
-        - 'female'
-        - 'unknown'
-      x-field-extra-annotation: "@jakarta.validation.constraints.NotNull(message = \"Пол обязателен\")"
-    UpdateGender:
-      type: string
-      description: 'Пол заемщика'
-      example: 'male'
-      enum:
-        - 'male'
-        - 'female'
-        - 'unknown'
+        - 'MALE'
+        - 'FEMALE'
+        - 'UNKNOWN'
     Role:
       type: string
       description: 'Роль заемщика в договоре займа'
-      example: 'single debtor'
+      example: 'SINGLE_DEBTOR'
       enum:
-        - co-debtor
-        - 'single debtor'
-        - guarantor
-        - charger
+        - CO_DEBTOR
+        - SINGLE_DEBTOR
+        - GUARANTOR
+        - CHARGER
     PhoneNumber:
       type: string
       description: 'Телефонный номер заемщика'
@@ -1146,9 +1088,9 @@ components:
     AddressStatus:
       type: string
       description: 'Статус адреса заемщика (прописка или проживание)'
-      example: 'registration'
+      example: 'REGISTRATION'
       x-field-extra-annotation: |
         @jakarta.validation.constraints.NotNull(message = "Статус обязателен")
       enum:
-        - 'registration'
-        - 'residential'
+        - 'REGISTRATION'
+        - 'RESIDENTIAL'
