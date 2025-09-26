@@ -15,6 +15,9 @@ import ru.pozhar.collector_api.openapi.dto.ResponseGetDebtorDTO;
 import ru.pozhar.collector_api.openapi.dto.ResponseUpdateDebtorDTO;
 import ru.pozhar.collector_api.model.Debtor;
 import ru.pozhar.collector_api.model.DebtorAgreement;
+import ru.pozhar.collector_api.openapi.dto.UpdateAgreementDebtorNotification;
+import ru.pozhar.collector_api.openapi.dto.Role;
+
 import java.util.List;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.ERROR)
@@ -41,6 +44,10 @@ public interface DebtorMapper {
     ResponseGetDebtorDTO toResponseGetDebtorDTO(Debtor debtor,
                                              List<ResponseAddressDTO> addressDTOList,
                                              List<ResponseDocumentDTO> documentDTOList);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "role", source = "role")
+    UpdateAgreementDebtorNotification toDebtorNotification(Debtor debtor, Role role);
 
     ResponseUpdateDebtorDTO toResponseUpdateDebtorDTO(Debtor debtor);
 }

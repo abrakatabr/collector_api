@@ -29,9 +29,12 @@ import ru.pozhar.collector_api.model.AgreementKey;
 import ru.pozhar.collector_api.model.Debtor;
 import ru.pozhar.collector_api.model.DebtorAgreement;
 import ru.pozhar.collector_api.model.Document;
+import ru.pozhar.collector_api.openapi.dto.UpdateAgreementDebtorNotification;
+import ru.pozhar.collector_api.openapi.dto.UpdateAgreementNotification;
 import ru.pozhar.collector_api.repository.AgreementKeyRepository;
 import ru.pozhar.collector_api.repository.AgreementRepository;
 import ru.pozhar.collector_api.repository.DebtorAgreementRepository;
+import ru.pozhar.collector_api.openapi.dto.Role;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -67,6 +70,8 @@ public class AgreementService {
 
     private final DebtorAgreementRepository debtorAgreementRepository;
 
+    private final RabbitSenderService rabbitSenderService;
+
     @Transactional
     public ResponseAgreementDTO createAgreement(RequestAgreementDTO requestAgreementDTO, Long key) {
       List<DebtorAgreement> createdDebtorAgreements = new LinkedList<>();
@@ -75,6 +80,7 @@ public class AgreementService {
       Map<Long, List<Document>> createdDocuments = new HashMap<>();
       Agreement createdAgreement;
       AgreementKey agreementKey = agreementKeyRepository.findByKey(key);
+      boolean isCreated = false;
       if (agreementKey != null && isEqualsAgreements(agreementKey.getAgreement(), requestAgreementDTO)) {
           createdAgreement = agreementKey.getAgreement();
           List<DebtorAgreement> debtorAgreements = debtorAgreementRepository.findByAgreement(createdAgreement);
@@ -105,6 +111,7 @@ public class AgreementService {
               }
               createdAddresses.put(debtor.getId(), createdAddressesList);
           }
+          isCreated = true;
       }
       List<ResponseDebtorDTO> responseDebtorDTOList = new LinkedList<>();
       for (Debtor debtor : createdDebtors) {
@@ -122,7 +129,12 @@ public class AgreementService {
                   .toResponseDebtorDTO(debtor, debtorAgreement, responseAddressDTOList, responseDocumentDTOList);
           responseDebtorDTOList.add(responseDebtorDTO);
       }
-      return agreementMapper.toResponseAgreementDTO(createdAgreement, responseDebtorDTOList);
+      ResponseAgreementDTO responseAgreementDTO = agreementMapper.toResponseAgreementDTO(createdAgreement,
+              responseDebtorDTOList);
+      if (isCreated) {
+          rabbitSenderService.sendAgreementCreatedNotification(responseAgreementDTO);
+      }
+      return responseAgreementDTO;
     }
 
     public ResponsePageAgreement getAllAgreements(Pageable pageable, String transferor, AgreementStatus status) {
@@ -161,8 +173,19 @@ public class AgreementService {
         if (agreement.getStatus() == AgreementStatus.DELETED) {
             throw new BusinessLogicException("Договор уже удален");
         }
+        AgreementStatus oldStatus = agreement.getStatus();
         agreement.setStatus(agreementStatus);
         agreement = agreementRepository.save(agreement);
+        List<DebtorAgreement> debtorAgreements = debtorAgreementRepository.findByAgreement(agreement);
+        List<UpdateAgreementDebtorNotification> debtorNotificationList = new LinkedList<>();
+        for (DebtorAgreement debtorAgreement : debtorAgreements) {
+            Role role = debtorAgreement.getRole();
+            Debtor debtor = debtorService.findDebtorById(debtorAgreement.getDebtor().getId());
+            debtorNotificationList.add(debtorMapper.toDebtorNotification(debtor, role));
+        }
+        UpdateAgreementNotification agreementNotification = agreementMapper.toUpdateAgreementNotification(agreement,
+                oldStatus, debtorNotificationList);
+        rabbitSenderService.sendAgreementUpdatedNotification(agreementNotification);
         ResponseUpdateStatusDTO updateStatusDTO = agreementMapper.toResponseUpdateStatusDTO(agreement);
         return updateStatusDTO;
     }

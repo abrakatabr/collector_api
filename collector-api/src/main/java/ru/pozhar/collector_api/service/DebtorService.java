@@ -3,6 +3,7 @@ package ru.pozhar.collector_api.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.pozhar.collector_api.exception.ValidationException;
 import ru.pozhar.collector_api.openapi.dto.RequestDebtorDTO;
 import ru.pozhar.collector_api.openapi.dto.RequestDocumentDTO;
 import ru.pozhar.collector_api.openapi.dto.RequestUpdateDebtorDTO;
@@ -82,6 +83,9 @@ public class DebtorService {
     @Transactional(readOnly = true)
     public ResponseGetDebtorDTO getDebtor(Long debtorId) {
         Debtor debtor = debtorRepository.findByDebtorId(debtorId);
+        if (debtor == null) {
+            throw new EntityNotFoundException("Заемщик с таким ID не найден");
+        }
         List<ResponseAddressDTO> responseAddressDTOs = addressService.getDebtorAddresses(debtor.getId());
         List<ResponseDocumentDTO> responseDocumentDTOs = documentService.getDebtorDocuments(debtor.getId());
         return debtorMapper.toResponseGetDebtorDTO(debtor, responseAddressDTOs, responseDocumentDTOs);

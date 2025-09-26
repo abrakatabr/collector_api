@@ -921,6 +921,49 @@ components:
           $ref: '#/components/schemas/Transferor'
         status:
           $ref: '#/components/schemas/AgreementStatus'
+    UpdateAgreementNotification:
+      type: object
+      description: 'Модель данных для отпавки информации о договоре в сервис notification при изминении статуса договора'
+      properties:
+        id:
+          $ref: '#/components/schemas/Id'
+        originalDebtSum:
+          $ref: '#/components/schemas/OriginalDebtSum'
+        actualDebtSum:
+          $ref: '#/components/schemas/ActualDebtSum'
+        agreementStartDate:
+          $ref: '#/components/schemas/AgreementStartDate'
+        transferor:
+          $ref: '#/components/schemas/Transferor'
+        oldStatus:
+          $ref: '#/components/schemas/AgreementStatus'
+        newStatus:
+          $ref: '#/components/schemas/AgreementStatus'
+        debtorDTOs:
+          type: array
+          description: 'Список загруженных заемщиков'
+          items:
+            $ref: '#/components/schemas/UpdateAgreementDebtorNotification'
+    UpdateAgreementDebtorNotification:
+      type: object
+      description: 'Модель данных для отпавки информации о заемщике в сервис notification при изминении статуса договора'
+      properties:
+        id:
+          $ref: '#/components/schemas/Id'
+        firstname:
+          $ref: '#/components/schemas/FirstName'
+        lastname:
+          $ref: '#/components/schemas/LastName'
+        patronymic:
+          $ref: '#/components/schemas/Patronymic'
+        birthday:
+          $ref: '#/components/schemas/Birthday'
+        gender:
+          $ref: '#/components/schemas/Gender'
+        role:
+          $ref: '#/components/schemas/Role'
+        phoneNumber:
+          $ref: '#/components/schemas/PhoneNumber'
     AgreementStatus:
       type: string
       description: 'Статус договора (дуйствует, долг выплачен, удален)'

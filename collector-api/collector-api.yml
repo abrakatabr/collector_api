@@ -57,6 +57,10 @@ spec:
               value: "rabbitmq"
             - name: SPRING_RABBITMQ_PORT
               value: "5672"
+            - name: SPRING_RABBITMQ_USER
+              value: "guest"
+            - name: SPRING_RABBITMQ_PASSWORD
+              value: "guest"
             - name: SPRING_MINIO_URL
               value: "http://minio:9000"
             - name: SPRING_MINIO_ACCESS_KEY
