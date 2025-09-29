@@ -14,10 +14,10 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitConfig {
     public static final String EXCHANGE_NAME = "notification.exchange";
-    public  static final String AGREEMENT_CREATED_QUEUE = "agreement.created.queue";
-    public  static final String AGREEMENT_STATUS_UPDATED_QUEUE = "agreement.status.updated.queue";
-    public  static final String AGREEMENT_CREATED_KEY = "agreement.created";
-    public  static final String AGREEMENT_STATUS_UPDATED_KEY = "agreement.status.updated";
+    public static final String AGREEMENT_CREATED_QUEUE = "agreement.created.queue";
+    public static final String AGREEMENT_STATUS_UPDATED_QUEUE = "agreement.status.updated.queue";
+    public static final String AGREEMENT_CREATED_KEY = "agreement.created";
+    public static final String AGREEMENT_STATUS_UPDATED_KEY = "agreement.status.updated";
 
     @Bean
     public TopicExchange notificationExchange() {

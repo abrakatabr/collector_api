@@ -13,5 +13,5 @@ k8s_yaml('frontend.yaml')
 k8s_resource(
     'frontend',
     port_forwards=30006,
-    resource_deps=['postgres', 'redis', 'rabbitmq', 'minIO', 'collector-api']
+    resource_deps=['postgres', 'redis', 'rabbitmq', 'minIO', 'notification', 'collector-api']
 )

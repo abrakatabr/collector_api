@@ -1,12 +1,12 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: collector-api
+  name: notification
   labels:
-    app: collector-api
+    app: notification
 spec:
   selector:
-    app: collector-api
+    app: notification
   ports:
     - name: "8080"
       protocol: TCP
@@ -19,40 +19,28 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: collector-api
+  name: notification
   labels:
-    app: collector-api
+    app: notification
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: collector-api
+      app: notification
   template:
     metadata:
       labels:
-        app: collector-api
+        app: notification
     spec:
       containers:
-        - name: collector-api
-          image: collector-api
+        - name: notification
+          image: notification
           ports:
             - containerPort: 8080
             - containerPort: 5005
           env:
             - name: SERVER_PORT
               value: "8080"
-            - name: SPRING_DATASOURCE_URL
-              value: "jdbc:postgresql://postgres:5432/Collector%20DB"
-            - name: SPRING_DATASOURCE_USERNAME
-              value: "user"
-            - name: SPRING_DATASOURCE_PASSWORD
-              value: "password"
-            - name: SPRING_DATA_REDIS_HOST
-              value: "redis"
-            - name: SPRING_REDIS_PORT
-              value: "6379"
-            - name: SPRING_DATA_REDIS_PASSWORD
-              value: "redis"
             - name: SPRING_RABBITMQ_HOST
               value: "rabbitmq"
             - name: SPRING_RABBITMQ_PORT
@@ -61,32 +49,14 @@ spec:
               value: "guest"
             - name: SPRING_RABBITMQ_PASSWORD
               value: "guest"
-            - name: SPRING_MINIO_URL
-              value: "http://minio:9000"
-            - name: SPRING_MINIO_ACCESS_KEY
-              value: "minioadmin"
-            - name: SPRING_MINIO_SECRET_KEY
-              value: "minioadmin"
-            - name: SPRING_MINIO_BUCKET
-              value: "collector-bucket"
             - name: LOGGING_LEVEL_ROOT
               value: "INFO"
             - name: LOGGING_LEVEL_SPRING
               value: "DEBUG"
-            - name: LOGGING_LEVEL_HIBERNATE_SQL
-              value: "DEBUG"
-            - name: LOGGING_LEVEL_HIBERNATE_BIND
-              value: "DEBUG"
-            - name: LOGGING_LEVEL_LIQUIBASE
-              value: "INFO"
-            - name: LOGGING_LEVEL_MINIO
-              value: "DEBUG"
-            - name: LOGGING_LEVEL_CONTROLLER
-              value: "DEBUG"
             - name: LOGGING_LEVEL_APP
               value: "DEBUG"
             - name: LOGGING_FILE_NAME
-              value: "logs/collector-api.log"
+              value: "logs/notification.log"
             - name: LOGGING_FILE_MAX_SIZE
               value: "10MB"
             - name: LOGGING_FILE_MAX_HISTORY
