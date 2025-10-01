@@ -1,0 +1,564 @@
+openapi: 3.0.3
+info:
+  title: camunda
+  version: 1.0.0
+servers:
+  - url: http://localhost:30008/api
+tags: []
+
+paths: {}
+
+components:
+  schemas:
+    ErrorResponse:
+      type: object
+      description: 'Модель ошибки'
+      properties:
+        timestamp:
+          type: string
+          description: 'Дата и время создания ответа с ошибкой'
+          format: date-time
+          example: "2025-09-18T16:43:19.973103766"
+        status:
+          type: integer
+          description: 'Код ответа'
+          example: '409'
+        error:
+          type: string
+          description: 'Расшифровка кода ответа'
+          example: 'Conflict'
+        message:
+          type: string
+          description: 'Информационное сообщение ошибки'
+          example: 'В базе данных есть другой заемщик с такими документами'
+        path:
+          type: string
+          description: 'Путь по которому был отправлен запрос'
+          example: '/api/agreements'
+    RequestAddressDTO:
+      type: object
+      description: 'Модель данных для POST запроса, создания адресов'
+      properties:
+        country:
+          $ref: '#/components/schemas/Country'
+        city:
+          $ref: '#/components/schemas/City'
+        street:
+          $ref: '#/components/schemas/Street'
+        house:
+          $ref: '#/components/schemas/House'
+        apartment:
+          $ref: '#/components/schemas/Apartment'
+        addressStatus:
+          $ref: '#/components/schemas/AddressStatus'
+      required:
+        - country
+        - city
+        - street
+        - house
+        - addressStatus
+    RequestDocumentDTO:
+      type: object
+      description: 'Модель данных для POST запроса, создания документа заемщика'
+      properties:
+        documentType:
+          $ref: '#/components/schemas/DocumentType'
+        documentNumber:
+          $ref: '#/components/schemas/DocumentNumber'
+        issueDate:
+          $ref: '#/components/schemas/IssueDate'
+      required:
+        - documentType
+        - documentNumber
+        - issueDate
+    RequestDebtorDTO:
+      type: object
+      description: 'Модель данных для POST запроса, создания заемщика'
+      properties:
+        firstname:
+          $ref: '#/components/schemas/FirstName'
+        lastname:
+          $ref: '#/components/schemas/LastName'
+        patronymic:
+          $ref: '#/components/schemas/Patronymic'
+        birthday:
+          $ref: '#/components/schemas/Birthday'
+        gender:
+          $ref: '#/components/schemas/Gender'
+        role:
+          $ref: '#/components/schemas/Role'
+        phoneNumber:
+          $ref: '#/components/schemas/PhoneNumber'
+        addressDTOs:
+          type: array
+          description: 'Список адресов заемщика'
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/RequestAddressDTO'
+            x-field-extra-annotation: "@jakarta.validation.Valid"
+        documentDTOs:
+          type: array
+          description: 'Список документов заемщика'
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/RequestDocumentDTO'
+            x-field-extra-annotation: "@jakarta.validation.Valid"
+      required:
+        - firstname
+        - lastname
+        - birthday
+        - gender
+        - role
+        - addressDTOs
+        - documentDTOs
+    RequestAgreementDTO:
+      type: object
+      description: 'Модель данных для POST запроса, создания договора'
+      properties:
+        originalDebtSum:
+          $ref: '#/components/schemas/OriginalDebtSum'
+        actualDebtSum:
+          $ref: '#/components/schemas/ActualDebtSum'
+        agreementStartDate:
+          $ref: '#/components/schemas/AgreementStartDate'
+        transferor:
+          $ref: '#/components/schemas/Transferor'
+        debtors:
+          type: array
+          description: 'Список заемщиков и других учатсников договора'
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/RequestDebtorDTO'
+            x-field-extra-annotation: "@jakarta.validation.Valid"
+      required:
+        - originalDebtSum
+        - actualDebtSum
+        - agreementStartDate
+        - transferor
+        - debtors
+    RequestUpdateDebtorDTO:
+      type: object
+      description: 'Модель данных для PATCH запроса, изменения данных заемщика'
+      properties:
+        firstname:
+          $ref: '#/components/schemas/UpdateFirstName'
+        lastname:
+          $ref: '#/components/schemas/UpdateLastName'
+        patronymic:
+          $ref: '#/components/schemas/Patronymic'
+        birthday:
+          $ref: '#/components/schemas/UpdateBirthday'
+        gender:
+          $ref: '#/components/schemas/Gender'
+        phoneNumber:
+          $ref: '#/components/schemas/PhoneNumber'
+    ResponseAddressDTO:
+      type: object
+      description: 'Модель данных для ответа на GET запрос, возвращаемый адрес'
+      properties:
+        country:
+          $ref: '#/components/schemas/Country'
+        city:
+          $ref: '#/components/schemas/City'
+        street:
+          $ref: '#/components/schemas/Street'
+        house:
+          $ref: '#/components/schemas/House'
+        apartment:
+          $ref: '#/components/schemas/Apartment'
+        addressStatus:
+          $ref: '#/components/schemas/AddressStatus'
+    ResponseDocumentDTO:
+      type: object
+      description: 'Модуль данных для ответа на GET запрос, возвращаемый документ'
+      properties:
+        documentType:
+          $ref: '#/components/schemas/DocumentType'
+        documentNumber:
+          $ref: '#/components/schemas/DocumentNumber'
+        issueDate:
+          $ref: '#/components/schemas/IssueDate'
+    ResponseDebtorDTO:
+      type: object
+      description: 'Модель данных для ответа на POST запрос загрузки данных договора'
+      properties:
+        id:
+          $ref: '#/components/schemas/Id'
+        firstname:
+          $ref: '#/components/schemas/FirstName'
+        lastname:
+          $ref: '#/components/schemas/LastName'
+        patronymic:
+          $ref: '#/components/schemas/Patronymic'
+        birthday:
+          $ref: '#/components/schemas/Birthday'
+        gender:
+          $ref: '#/components/schemas/Gender'
+        role:
+          $ref: '#/components/schemas/Role'
+        phoneNumber:
+          $ref: '#/components/schemas/PhoneNumber'
+        addressDTOs:
+          type: array
+          description: 'Список загруженных адресов'
+          items:
+            $ref: '#/components/schemas/ResponseAddressDTO'
+        documentDTOs:
+          type: array
+          description: 'Список загруженных документов'
+          items:
+            $ref: '#/components/schemas/ResponseDocumentDTO'
+    ResponseAgreementDTO:
+      type: object
+      description: 'Модель данных для ответа на POST запрос загрузки данных договора'
+      properties:
+        id:
+          $ref: '#/components/schemas/Id'
+        originalDebtSum:
+          $ref: '#/components/schemas/OriginalDebtSum'
+        actualDebtSum:
+          $ref: '#/components/schemas/ActualDebtSum'
+        agreementStartDate:
+          $ref: '#/components/schemas/AgreementStartDate'
+        transferor:
+          $ref: '#/components/schemas/Transferor'
+        status:
+          $ref: '#/components/schemas/AgreementStatus'
+        debtorDTOs:
+          type: array
+          description: 'Список загруженных заемщиков'
+          items:
+            $ref: '#/components/schemas/ResponseDebtorDTO'
+    ResponseGetDebtorDTO:
+      type: object
+      description: 'Модель данных для ответа на GET запрос получения информации о заемщике'
+      properties:
+        id:
+          $ref: '#/components/schemas/Id'
+        firstname:
+          $ref: '#/components/schemas/FirstName'
+        lastname:
+          $ref: '#/components/schemas/LastName'
+        patronymic:
+          $ref: '#/components/schemas/Patronymic'
+        birthday:
+          $ref: '#/components/schemas/Birthday'
+        gender:
+          $ref: '#/components/schemas/Gender'
+        phoneNumber:
+          $ref: '#/components/schemas/PhoneNumber'
+        addressDTOs:
+          type: array
+          description: 'Список адресов запрашиваемого заемщика'
+          items:
+            $ref: '#/components/schemas/ResponseAddressDTO'
+        documentDTOs:
+          type: array
+          description: 'Список документов запрашиваемого заемщика'
+          items:
+            $ref: '#/components/schemas/ResponseDocumentDTO'
+    ResponsePageAgreement:
+      type: object
+      description: 'Модель данных для страницы данных договоров с пагинацией'
+      properties:
+        content:
+          type: array
+          description: 'Список отфильтрованных договоров'
+          items:
+            $ref: '#/components/schemas/AgreementDTO'
+        currentPage:
+          type: integer
+          format: int32
+          description: 'Номер текущей страницы (начиная с 0)'
+          example: 0
+        totalPages:
+          type: integer
+          format: int32
+          description: 'Общее количестов страниц'
+          example: 5
+        totalElements:
+          type: integer
+          format: int64
+          description: 'Суммарное количество элементов со всех страниц'
+          example: 132
+        size:
+          type: integer
+          format: int32
+          description: 'Размер страницы (количество элеметнов)'
+          example: 10
+    ResponseUpdateAddressDTO:
+      type: object
+      description: 'Модель данных для ответа на UPDATE запросы изменения адресов'
+      properties:
+        debtorId:
+          $ref: '#/components/schemas/Id'
+        country:
+          $ref: '#/components/schemas/Country'
+        city:
+          $ref: '#/components/schemas/City'
+        street:
+          $ref: '#/components/schemas/Street'
+        house:
+          $ref: '#/components/schemas/House'
+        apartment:
+          $ref: '#/components/schemas/Apartment'
+        addressStatus:
+          $ref: '#/components/schemas/AddressStatus'
+    ResponseUpdateDebtorDTO:
+      type: object
+      description: 'Модель данных для ответа на UPDATE запросы изменения данных заемщиков'
+      properties:
+        id:
+          $ref: '#/components/schemas/Id'
+        firstname:
+          $ref: '#/components/schemas/FirstName'
+        lastname:
+          $ref: '#/components/schemas/LastName'
+        patronymic:
+          $ref: '#/components/schemas/Patronymic'
+        birthday:
+          $ref: '#/components/schemas/Birthday'
+        gender:
+          $ref: '#/components/schemas/Gender'
+        phoneNumber:
+          $ref: '#/components/schemas/PhoneNumber'
+    ResponseUpdateStatusDTO:
+      type: object
+      description: 'Модель данных для ответа на UPDATE запросы изменения статуса договора'
+      properties:
+        agreementId:
+          $ref: '#/components/schemas/Id'
+        status:
+          $ref: '#/components/schemas/AgreementStatus'
+    AgreementDTO:
+      type: object
+      description: 'Модель данных договоров без привязки заемщиков'
+      properties:
+        id:
+          $ref: '#/components/schemas/Id'
+        originalDebtSum:
+          $ref: '#/components/schemas/OriginalDebtSum'
+        actualDebtSum:
+          $ref: '#/components/schemas/ActualDebtSum'
+        agreementStartDate:
+          $ref: '#/components/schemas/AgreementStartDate'
+        transferor:
+          $ref: '#/components/schemas/Transferor'
+        status:
+          $ref: '#/components/schemas/AgreementStatus'
+    UpdateAgreementNotification:
+      type: object
+      description: 'Модель данных для отпавки информации о договоре в сервис notification при изминении статуса договора'
+      properties:
+        id:
+          $ref: '#/components/schemas/Id'
+        originalDebtSum:
+          $ref: '#/components/schemas/OriginalDebtSum'
+        actualDebtSum:
+          $ref: '#/components/schemas/ActualDebtSum'
+        agreementStartDate:
+          $ref: '#/components/schemas/AgreementStartDate'
+        transferor:
+          $ref: '#/components/schemas/Transferor'
+        oldStatus:
+          $ref: '#/components/schemas/AgreementStatus'
+        newStatus:
+          $ref: '#/components/schemas/AgreementStatus'
+        debtorDTOs:
+          type: array
+          description: 'Список загруженных заемщиков'
+          items:
+            $ref: '#/components/schemas/UpdateAgreementDebtorNotification'
+    UpdateAgreementDebtorNotification:
+      type: object
+      description: 'Модель данных для отпавки информации о заемщике в сервис notification при изминении статуса договора'
+      properties:
+        id:
+          $ref: '#/components/schemas/Id'
+        firstname:
+          $ref: '#/components/schemas/FirstName'
+        lastname:
+          $ref: '#/components/schemas/LastName'
+        patronymic:
+          $ref: '#/components/schemas/Patronymic'
+        birthday:
+          $ref: '#/components/schemas/Birthday'
+        gender:
+          $ref: '#/components/schemas/Gender'
+        role:
+          $ref: '#/components/schemas/Role'
+        phoneNumber:
+          $ref: '#/components/schemas/PhoneNumber'
+    AgreementStatus:
+      type: string
+      description: 'Статус договора (дуйствует, долг выплачен, удален)'
+      example: 'ACTIVE'
+      enum:
+        - 'ACTIVE'
+        - 'PAID'
+        - 'DELETED'
+    Id:
+      type: integer
+      format: int64
+      description: 'ID число-идентификатор (64 бит)'
+      example: 1
+    OriginalDebtSum:
+      type: number
+      format: bigdecimal
+      description: 'Сумма долга по договору займа'
+      example: 5000000.00
+      minimum: 0.0
+      exclusiveMinimum: false
+      x-field-extra-annotation: |
+        @jakarta.validation.constraints.NotNull(message = "Сумма долга по договору обязательна")
+          @jakarta.validation.constraints.DecimalMin(value = "0.0", message = "Сумма долга по договору не может быть отрицательной")
+    ActualDebtSum:
+      type: number
+      format: bigdecimal
+      description: 'Текущий остаток долга по договору займа'
+      example: 3000000.00
+      minimum: 0.0
+      exclusiveMinimum: false
+      x-field-extra-annotation: |
+        @jakarta.validation.constraints.NotNull(message = "Текущий остаток по договору обязателен")
+          @jakarta.validation.constraints.DecimalMin(value = "0.0", message = "Текущий остаток по договору не может быть отрицательным")
+    AgreementStartDate:
+      type: string
+      format: date
+      example: '2023-06-06'
+      x-field-extra-annotation: |
+        @jakarta.validation.constraints.NotNull(message = "Дата подписания договора обязательна")
+          @jakarta.validation.constraints.PastOrPresent(message = "Дата подписания договора должна быть текущей датой или ранее")
+    Transferor:
+      type: string
+      description: 'Название банка-кредитора'
+      example: 'Сбербанк'
+      x-field-extra-annotation: "@jakarta.validation.constraints.NotBlank(message = \"Название банка-кредитора обязательно\")"
+    FirstName:
+      type: string
+      description: 'Имя заемщика'
+      example: 'Иван'
+      x-field-extra-annotation: |
+        @jakarta.validation.constraints.NotBlank(message = "Имя обязательно")
+          @jakarta.validation.constraints.Pattern(regexp = "^[а-яА-ЯёЁa-zA-Z-]+$", message = "Имя может содержать только буквы и дефис")
+    UpdateFirstName:
+      type: string
+      description: 'Имя заемщика'
+      example: 'Иван'
+      x-field-extra-annotation: |
+        @jakarta.validation.constraints.Pattern(regexp = "^[а-яА-ЯёЁa-zA-Z-]+$", message = "Имя может содержать только буквы и дефис")
+    LastName:
+      type: string
+      description: 'Фамилия заемщика'
+      example: 'Иванов'
+      x-field-extra-annotation: |
+        @jakarta.validation.constraints.NotBlank(message = "Фамилия обязательна")
+          @jakarta.validation.constraints.Pattern(regexp = "^[а-яА-ЯёЁa-zA-Z-]+$", message = "Фамилия может содержать только буквы и дефис")
+    UpdateLastName:
+      type: string
+      description: 'Фамилия заемщика'
+      example: 'Иванов'
+      x-field-extra-annotation: |
+        @jakarta.validation.constraints.Pattern(regexp = "^[а-яА-ЯёЁa-zA-Z-]+$", message = "Фамилия может содержать только буквы и дефис")
+    Patronymic:
+      type: string
+      description: 'Отчество заемщика'
+      example: 'Иванович'
+      x-field-extra-annotation: |
+        @jakarta.validation.constraints.Pattern(regexp = "^[а-яА-ЯёЁa-zA-Z-]+$", message = "Отчество может содержать только буквы и дефис")
+    Birthday:
+      type: string
+      description: 'Дата рождения заемщика'
+      format: date
+      example: '2000-01-01'
+      x-field-extra-annotation: |
+        @jakarta.validation.constraints.NotNull(message = "Дата рождения обязательна")
+          @jakarta.validation.constraints.Past(message = "Дата рождения должна быть в прошлом")
+    UpdateBirthday:
+      type: string
+      description: 'Дата рождения заемщика'
+      format: date
+      example: '2000-01-01'
+      x-field-extra-annotation: |
+        @jakarta.validation.constraints.Past(message = "Дата рождения должна быть в прошлом")
+    Gender:
+      type: string
+      description: 'Пол заемщика'
+      example: 'male'
+      enum:
+        - 'MALE'
+        - 'FEMALE'
+        - 'UNKNOWN'
+    Role:
+      type: string
+      description: 'Роль заемщика в договоре займа'
+      example: 'SINGLE_DEBTOR'
+      enum:
+        - CO_DEBTOR
+        - SINGLE_DEBTOR
+        - GUARANTOR
+        - CHARGER
+    PhoneNumber:
+      type: string
+      description: 'Телефонный номер заемщика'
+      example: '+79261854567'
+      x-field-extra-annotation: |
+        @jakarta.validation.constraints.Pattern(regexp = "^(\\+7|7|8)?[0-9\\s\\-\\(\\)]{10,15}$",
+        message = "Некорректный формат номера телефона")
+    DocumentType:
+      type: string
+      description: 'Тип документа'
+      example: 'NATIONAL_PASSPORT'
+      x-field-extra-annotation: "@jakarta.validation.constraints.NotNull"
+      enum:
+        - 'NATIONAL_PASSPORT'
+        - 'INTERNATIONAL_PASSPORT'
+        - 'DRIVER_LICENSE'
+        - 'INN'
+        - 'SNILS'
+    DocumentNumber:
+      type: string
+      description: 'Номер документа'
+      example: '4508731456'
+      x-field-extra-annotation: "@jakarta.validation.constraints.NotBlank(message = \"Номер документа обязателен\")"
+    IssueDate:
+      type: string
+      description: 'Дата выдачи документа'
+      format: date
+      example: '2010-02-02'
+      x-field-extra-annotation: |
+        @jakarta.validation.constraints.NotNull(message = "Дата выдачи документа обязательна")
+          @jakarta.validation.constraints.PastOrPresent(message = "Дата выдачи документа должна быть текущей датой или ранее")
+    Country:
+      type: string
+      description: 'Страна'
+      example: 'Россия'
+      x-field-extra-annotation: "@jakarta.validation.constraints.NotBlank(message = \"Страна обязательна\")"
+    City:
+      type: string
+      description: 'Город'
+      example: 'Москва'
+      x-field-extra-annotation: "@jakarta.validation.constraints.NotBlank(message = \"Название города обязательно\")"
+    Street:
+      type: string
+      description: 'Улица'
+      example: 'Тверская'
+      x-field-extra-annotation: "@jakarta.validation.constraints.NotBlank(message = \"Название улицы обязательно\")"
+    House:
+      type: string
+      description: 'Номер дома'
+      example: '22'
+      x-field-extra-annotation: "@jakarta.validation.constraints.NotBlank(message = \"Дом обязателен\")"
+    Apartment:
+      type: string
+      description: 'Номер квартиры'
+      example: '22'
+    AddressStatus:
+      type: string
+      description: 'Статус адреса заемщика (прописка или проживание)'
+      example: 'REGISTRATION'
+      x-field-extra-annotation: |
+        @jakarta.validation.constraints.NotNull(message = "Статус обязателен")
+      enum:
+        - 'REGISTRATION'
+        - 'RESIDENTIAL'

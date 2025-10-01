@@ -8,5 +8,8 @@ if os.path.exists('./../collector-api/Tiltfile.unit'):
 if os.path.exists('./../notification/Tiltfile.unit'):
   include('./../notification/Tiltfile.unit')
 
+if os.path.exists('./../camunda-service/Tiltfile.unit'):
+  include('./../camunda-service/Tiltfile.unit')
+
 if os.path.exists('./../frontend/Tiltfile.unit'):
   include('./../frontend/Tiltfile.unit')

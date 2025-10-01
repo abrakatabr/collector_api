@@ -15,8 +15,10 @@ import org.springframework.context.annotation.Configuration;
 public class RabbitConfig {
     public static final String EXCHANGE_NAME = "notification.exchange";
     public static final String AGREEMENT_CREATED_QUEUE = "agreement.created.queue";
+    public static final String CAMUNDA_AGREEMENT_CREATED_QUEUE = "camunda.agreement.created.queue";
     public static final String AGREEMENT_STATUS_UPDATED_QUEUE = "agreement.status.updated.queue";
     public static final String AGREEMENT_CREATED_KEY = "agreement.created";
+    public static final String CAMUNDA_AGREEMENT_CREATED_KEY = "camunda.agreement.created";
     public static final String AGREEMENT_STATUS_UPDATED_KEY = "agreement.status.updated";
 
     @Bean
@@ -30,6 +32,11 @@ public class RabbitConfig {
     }
 
     @Bean
+    public Queue camundaAgreementCreatedQueue() {
+        return new Queue(CAMUNDA_AGREEMENT_CREATED_QUEUE, true);
+    }
+
+    @Bean
     public Queue agreementStatusUpdatedQueue() {
         return new Queue(AGREEMENT_STATUS_UPDATED_QUEUE, true);
     }
@@ -39,6 +46,13 @@ public class RabbitConfig {
         return BindingBuilder.bind(agreementCreatedQueue)
                 .to(notificationExchange)
                 .with(AGREEMENT_CREATED_KEY);
+    }
+
+    @Bean
+    public Binding bindingCamundaAgreementCreated(Queue camundaAgreementCreatedQueue, TopicExchange notificationExchange) {
+        return BindingBuilder.bind(camundaAgreementCreatedQueue)
+                .to(notificationExchange)
+                .with(CAMUNDA_AGREEMENT_CREATED_KEY);
     }
 
     @Bean

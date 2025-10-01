@@ -18,6 +18,10 @@ public class RabbitSenderService {
         sendDTO(agreementDTO, RabbitConfig.EXCHANGE_NAME, RabbitConfig.AGREEMENT_CREATED_KEY);
     }
 
+    public void sendCamundaAgreementCreatedNotification(ResponseAgreementDTO agreementDTO) {
+        sendDTO(agreementDTO, RabbitConfig.EXCHANGE_NAME, RabbitConfig.CAMUNDA_AGREEMENT_CREATED_KEY);
+    }
+
     public void sendAgreementUpdatedNotification(UpdateAgreementNotification agreementDTO) {
         sendDTO(agreementDTO, RabbitConfig.EXCHANGE_NAME, RabbitConfig.AGREEMENT_STATUS_UPDATED_KEY);
     }

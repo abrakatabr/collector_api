@@ -133,6 +133,7 @@ public class AgreementService {
               responseDebtorDTOList);
       if (isCreated) {
           rabbitSenderService.sendAgreementCreatedNotification(responseAgreementDTO);
+          rabbitSenderService.sendCamundaAgreementCreatedNotification(responseAgreementDTO);
       }
       return responseAgreementDTO;
     }

@@ -33,6 +33,12 @@ spec:
         env:
         - name: POSTGRES_DB
           value: "Collector DB"
+        - name: POSTGRES_CAMUNDA_DB
+          value: "Camunda DB"
+        - name: POSTGRES_CAMUNDA_USER
+          value: "user"
+        - name: POSTGRES_CAMUNDA_PASSWORD
+          value: "password"
         - name: POSTGRES_USER
           value: "user"
         - name: POSTGRES_PASSWORD

@@ -1,0 +1,89 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: camunda-service
+  labels:
+    app: camunda-service
+spec:
+  selector:
+    app: camunda-service
+  ports:
+    - name: "8080"
+      protocol: TCP
+      port: 8080
+    - name: "5005"
+      protocol: TCP
+      port: 5005
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: camunda-service
+  labels:
+    app: camunda-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: camunda-service
+  template:
+    metadata:
+      labels:
+        app: camunda-service
+    spec:
+      containers:
+        - name: camunda-service
+          image: camunda-service
+          ports:
+            - containerPort: 8080
+            - containerPort: 5005
+          env:
+            - name: SERVER_PORT
+              value: "8080"
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:postgresql://postgres:5432/Camunda%20DB"
+            - name: SPRING_DATASOURCE_USERNAME
+              value: "user"
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: "password"
+            - name: CAMUNDA_USER_ID
+              value: "admin"
+            - name: CAMUNDA_USER_PASSWORD
+              value: "admin"
+            - name: COLLECTOR_API_URL
+              value: "http://collector-api:8080/api"
+            - name: SPRING_RABBITMQ_HOST
+              value: "rabbitmq"
+            - name: SPRING_RABBITMQ_PORT
+              value: "5672"
+            - name: SPRING_RABBITMQ_USER
+              value: "guest"
+            - name: SPRING_RABBITMQ_PASSWORD
+              value: "guest"
+            - name: LOGGING_LEVEL_ROOT
+              value: "INFO"
+            - name: LOGGING_LEVEL_SPRING
+              value: "DEBUG"
+            - name: LOGGING_LEVEL_APP
+              value: "DEBUG"
+            - name: LOGGING_FILE_NAME
+              value: "logs/camunda-service.log"
+            - name: LOGGING_FILE_MAX_SIZE
+              value: "10MB"
+            - name: LOGGING_FILE_MAX_HISTORY
+              value: "10"
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            failureThreshold: 10
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 90
+            periodSeconds: 30
+            failureThreshold: 10

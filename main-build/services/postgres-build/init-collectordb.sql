@@ -1,0 +1,7 @@
+ALTER SYSTEM SET max_connections = 200;
+CREATE DATABASE "Collector DB";
+CREATE USER "user" WITH ENCRYPTED PASSWORD 'password';
+ALTER DATABASE "Collector DB" OWNER TO "user";
+GRANT ALL PRIVILEGES ON DATABASE "Collector DB" TO "user";
+
+

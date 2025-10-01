@@ -1,0 +1,18 @@
+docker_build('camunda-service',
+    context='.',
+    dockerfile='Dockerfile',
+    live_update=[
+        sync('./target', '/app'),
+        sync('./src', '/app/src'),
+        run('mvn compile -DskipTests', trigger=['./pom.xml']),
+    ]
+)
+
+k8s_yaml('camunda-service.yml')
+
+k8s_resource('camunda-service',
+    labels=['camunda'],
+    port_forwards=['30008:8080', '5007:5005'],
+    resource_deps=['postgres', 'redis', 'rabbitmq', 'notification', 'collector-api'],
+    links=[link('http://localhost:30008/camunda', 'Camunda')]
+)
