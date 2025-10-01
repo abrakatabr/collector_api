@@ -3,7 +3,7 @@
   <bpmn:collaboration id="Collaboration_17rnh6k">
     <bpmn:participant id="Participant_15n5zmb" processRef="NotificationProcess" />
   </bpmn:collaboration>
-  <bpmn:process id="NotificationProcess" isExecutable="true" camunda:taskPriority="">
+  <bpmn:process id="NotificationProcess" isExecutable="true" camunda:historyTimeToLive="P30D" camunda:taskPriority="50">
     <bpmn:startEvent id="StartEvent_1" name="Start Notification Process">
       <bpmn:outgoing>Flow_0a463lk</bpmn:outgoing>
     </bpmn:startEvent>

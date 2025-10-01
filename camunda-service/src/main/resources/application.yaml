@@ -43,7 +43,7 @@ camunda:
       index-redirect-enabled: true
     auto-deployment-enabled: true
     deployment-resource-pattern:
-      - "classpath:/processes/create-notification.bpmn"
+      - "classpath:**/*.bpmn"
 
 springdoc:
   api-docs:
@@ -60,6 +60,8 @@ logging:
     root: ${LOGGING_LEVEL_ROOT:INFO}
     org.springframework: ${LOGGING_LEVEL_SPRING:DEBUG}
     org.springframework.web: ${LOGGING_LEVEL_SPRING:DEBUG}
+    org.camunda.bpm.engine: DEBUG
+    org.camunda.bpm.spring.boot.starter: DEBUG
     org.hibernate:
       SQL: ${LOGGING_LEVEL_HIBERNATE_SQL:DEBUG}
       orm.jdbc.bind: ${LOGGING_LEVEL_HIBERNATE_BIND:DEBUG}
