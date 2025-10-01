@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_1yxvm5d" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.39.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.23.0">
+  <bpmn:collaboration id="Collaboration_17rnh6k">
+    <bpmn:participant id="Participant_15n5zmb" processRef="NotificationProcess" />
+  </bpmn:collaboration>
+  <bpmn:process id="NotificationProcess" isExecutable="true" camunda:taskPriority="">
+    <bpmn:startEvent id="StartEvent_1" name="Start Notification Process">
+      <bpmn:outgoing>Flow_0a463lk</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="CreateNotificationTask" name="CreateNotification" camunda:delegateExpression="${createNotificationDelegate}">
+      <bpmn:incoming>Flow_0a463lk</bpmn:incoming>
+      <bpmn:incoming>Flow_03hxw2e</bpmn:incoming>
+      <bpmn:outgoing>Flow_1h3h0p6</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="CheckResultGateway">
+      <bpmn:incoming>Flow_1h3h0p6</bpmn:incoming>
+      <bpmn:outgoing>Flow_0sn4vse</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1xhtzsu</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="SuccessEnd" name="End">
+      <bpmn:incoming>Flow_0sn4vse</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:intermediateCatchEvent id="WaitTimer" name="Wait">
+      <bpmn:incoming>Flow_1xhtzsu</bpmn:incoming>
+      <bpmn:outgoing>Flow_03hxw2e</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_1ego1t8">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT5M</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:intermediateCatchEvent>
+    <bpmn:boundaryEvent id="ErrorBoundary" name="ErrorEvent" attachedToRef="CreateNotificationTask">
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_06j0qm4" camunda:errorCodeVariable="notificationCreationError" camunda:errorMessageVariable="" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_0a463lk" sourceRef="StartEvent_1" targetRef="CreateNotificationTask" />
+    <bpmn:sequenceFlow id="Flow_03hxw2e" sourceRef="WaitTimer" targetRef="CreateNotificationTask" />
+    <bpmn:sequenceFlow id="Flow_1h3h0p6" sourceRef="CreateNotificationTask" targetRef="CheckResultGateway" />
+    <bpmn:sequenceFlow id="Flow_0sn4vse" sourceRef="CheckResultGateway" targetRef="SuccessEnd">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${isCreatedNotifications == true}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1xhtzsu" sourceRef="CheckResultGateway" targetRef="WaitTimer">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${isCreatedNotifications == false}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_17rnh6k">
+      <bpmndi:BPMNShape id="Participant_15n5zmb_di" bpmnElement="Participant_15n5zmb" isHorizontal="true">
+        <dc:Bounds x="160" y="80" width="2050" height="830" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_1_di" bpmnElement="StartEvent_1">
+        <dc:Bounds x="312" y="162" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="291" y="205" width="81" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_17y8k39_di" bpmnElement="CreateNotificationTask">
+        <dc:Bounds x="440" y="150" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1b2n05p_di" bpmnElement="CheckResultGateway" isMarkerVisible="true">
+        <dc:Bounds x="605" y="165" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="746" y="423" width="67" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_18lz9ra_di" bpmnElement="SuccessEnd">
+        <dc:Bounds x="732" y="122" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="740" y="165" width="20" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_15adxuz_di" bpmnElement="WaitTimer">
+        <dc:Bounds x="612" y="272" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="619" y="315" width="22" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0hl9uo5_di" bpmnElement="ErrorBoundary">
+        <dc:Bounds x="522" y="212" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="513" y="253" width="54" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0a463lk_di" bpmnElement="Flow_0a463lk">
+        <di:waypoint x="348" y="180" />
+        <di:waypoint x="394" y="180" />
+        <di:waypoint x="394" y="190" />
+        <di:waypoint x="440" y="190" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_03hxw2e_di" bpmnElement="Flow_03hxw2e">
+        <di:waypoint x="612" y="290" />
+        <di:waypoint x="470" y="290" />
+        <di:waypoint x="470" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1h3h0p6_di" bpmnElement="Flow_1h3h0p6">
+        <di:waypoint x="540" y="190" />
+        <di:waypoint x="605" y="190" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0sn4vse_di" bpmnElement="Flow_0sn4vse">
+        <di:waypoint x="630" y="165" />
+        <di:waypoint x="630" y="140" />
+        <di:waypoint x="732" y="140" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1xhtzsu_di" bpmnElement="Flow_1xhtzsu">
+        <di:waypoint x="630" y="215" />
+        <di:waypoint x="630" y="272" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
