@@ -18,6 +18,7 @@ import lombok.NoArgsConstructor;
 import ru.pozhar.collector_api.openapi.dto.AgreementStatus;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 
 @Entity
@@ -51,4 +52,12 @@ public class Agreement {
     @Enumerated(EnumType.STRING)
     @Column(name = "status", length = 20)
     private AgreementStatus status = AgreementStatus.ACTIVE;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "transaction_status", length = 20)
+    private TransactionStatus transactionStatus = TransactionStatus.NOT_COMPLETED;
+
+    @NotNull
+    @Column(name = "created_at")
+    private LocalDateTime createdAt = LocalDateTime.now();
 }

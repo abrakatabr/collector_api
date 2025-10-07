@@ -1,0 +1,93 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: parser
+  labels:
+    app: parser
+spec:
+  selector:
+    app: parser
+  ports:
+    - name: "8080"
+      protocol: TCP
+      port: 8080
+    - name: "5005"
+      protocol: TCP
+      port: 5005
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: parser
+  labels:
+    app: parser
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: parser
+  template:
+    metadata:
+      labels:
+        app: parser
+    spec:
+      containers:
+        - name: parser
+          image: parser
+          ports:
+            - containerPort: 8080
+            - containerPort: 5005
+          env:
+            - name: SERVER_PORT
+              value: "8080"
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:postgresql://postgres:5432/Collector%20DB"
+            - name: SPRING_DATASOURCE_USERNAME
+              value: "user"
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: "password"
+            - name: SPRING_DATA_REDIS_HOST
+              value: "redis"
+            - name: SPRING_REDIS_PORT
+              value: "6379"
+            - name: SPRING_DATA_REDIS_PASSWORD
+              value: "redis"
+            - name: SPRING_RABBITMQ_HOST
+              value: "rabbitmq"
+            - name: SPRING_RABBITMQ_PORT
+              value: "5672"
+            - name: SPRING_RABBITMQ_USER
+              value: "guest"
+            - name: SPRING_RABBITMQ_PASSWORD
+              value: "guest"
+            - name: COLLECTOR_API_URL
+              value: "http://collector-api:8080/api"
+            - name: LOGGING_LEVEL_ROOT
+              value: "INFO"
+            - name: LOGGING_LEVEL_SPRING
+              value: "DEBUG"
+            - name: LOGGING_LEVEL_HIBERNATE_SQL
+              value: "DEBUG"
+            - name: LOGGING_LEVEL_HIBERNATE_BIND
+              value: "DEBUG"
+            - name: LOGGING_LEVEL_LIQUIBASE
+              value: "INFO"
+            - name: LOGGING_LEVEL_MINIO
+              value: "DEBUG"
+            - name: LOGGING_LEVEL_APP
+              value: "DEBUG"
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            failureThreshold: 10
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 45
+            periodSeconds: 30
+            failureThreshold: 10

@@ -1,0 +1,82 @@
+server.port: ${SERVER_PORT}
+
+spring:
+  application:
+    name: PARSER
+
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: validate
+    properties:
+      jakarta:
+        persistence:
+          validation:
+            mode: AUTO
+      hibernate:
+        format_sql: true
+
+  redis:
+    host: ${SPRING_DATA_REDIS_HOST}
+    port: ${SPRING_REDIS_PORT}
+    password: ${SPRING_DATA_REDIS_PASSWORD}
+    timeout: 7000ms
+    lettuce:
+      pool:
+        max-active: 5
+        max-idle: 4
+        min-idle: 0
+        max-wait: 5000ms
+
+  rabbitmq:
+    host: ${SPRING_RABBITMQ_HOST}
+    port: ${SPRING_RABBITMQ_PORT}
+    username: ${SPRING_RABBITMQ_USER}
+    password: ${SPRING_RABBITMQ_PASSWORD}
+    listener:
+      simple:
+        default-requeue-rejected: false
+        message-converter: jackson2JsonMessageConverter
+
+springdoc:
+  api-docs:
+    path: /api-docs
+    enabled: true
+    version: openapi_3_0
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+    version: 3.0.3
+
+logging:
+  level:
+    root: ${LOGGING_LEVEL_ROOT:INFO}
+    org.springframework: ${LOGGING_LEVEL_SPRING:DEBUG}
+    org.springframework.web: ${LOGGING_LEVEL_SPRING:DEBUG}
+    org.hibernate:
+      SQL: ${LOGGING_LEVEL_HIBERNATE_SQL:DEBUG}
+      orm.jdbc.bind: ${LOGGING_LEVEL_HIBERNATE_BIND:DEBUG}
+    controller: ${LOGGING_LEVEL_CONTROLLER:DEBUG}
+    ru.pozhar.parser: ${LOGGING_LEVEL_APP:DEBUG}
+
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %highlight(%-5level) %cyan(%logger{36}) - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true

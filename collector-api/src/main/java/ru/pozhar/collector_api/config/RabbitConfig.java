@@ -14,16 +14,29 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitConfig {
     public static final String EXCHANGE_NAME = "notification.exchange";
+    public static final String EXCHANGE_TRANSACTION_NAME = "agreement.transaction.exchange";
+    public static final String AGREEMENT_TRANSACTION_QUEUE = "agreement.transaction.queue";
     public static final String AGREEMENT_CREATED_QUEUE = "agreement.created.queue";
     public static final String CAMUNDA_AGREEMENT_CREATED_QUEUE = "camunda.agreement.created.queue";
     public static final String AGREEMENT_STATUS_UPDATED_QUEUE = "agreement.status.updated.queue";
+    public static final String AGREEMENT_TRANSACTION_KEY = "agreement.transaction";
     public static final String AGREEMENT_CREATED_KEY = "agreement.created";
     public static final String CAMUNDA_AGREEMENT_CREATED_KEY = "camunda.agreement.created";
     public static final String AGREEMENT_STATUS_UPDATED_KEY = "agreement.status.updated";
 
     @Bean
+    public TopicExchange transactionExchange() {
+        return new TopicExchange(EXCHANGE_TRANSACTION_NAME, true, false);
+    }
+
+    @Bean
     public TopicExchange notificationExchange() {
         return new TopicExchange(EXCHANGE_NAME, true, false);
+    }
+
+    @Bean
+    public Queue agreementTransactionQueue() {
+        return new Queue(AGREEMENT_TRANSACTION_QUEUE, true);
     }
 
     @Bean
@@ -60,6 +73,13 @@ public class RabbitConfig {
         return BindingBuilder.bind(agreementStatusUpdatedQueue)
                 .to(notificationExchange)
                 .with(AGREEMENT_STATUS_UPDATED_KEY);
+    }
+
+    @Bean
+    public Binding bindingAgreementTransaction(Queue agreementTransactionQueue, TopicExchange transactionExchange) {
+        return BindingBuilder.bind(agreementTransactionQueue)
+                .to(transactionExchange)
+                .with(AGREEMENT_TRANSACTION_KEY);
     }
 
     @Bean

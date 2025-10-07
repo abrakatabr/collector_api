@@ -1,0 +1,18 @@
+docker_build('parser',
+    context='.',
+    dockerfile='Dockerfile',
+    live_update=[
+        sync('./target', '/app'),
+        sync('./src', '/app/src'),
+        run('mvn compile -DskipTests', trigger=['./pom.xml']),
+    ]
+)
+
+k8s_yaml('parser.yml')
+
+k8s_resource('parser',
+    labels=['api'],
+    port_forwards=['30009:8080', '5008:5005'],
+    resource_deps=['postgres', 'redis', 'rabbitmq', 'minIO', 'collector-api', 'camunda-service'],
+    links=[link('http://localhost:30009/swagger-ui/index.html', 'REST API docs')]
+)

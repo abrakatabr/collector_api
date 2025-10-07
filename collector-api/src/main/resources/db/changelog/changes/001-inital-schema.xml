@@ -94,6 +94,12 @@
             <column name="status" type="varchar(20)" defaultValue="ACTIVE" remarks="Статус договора">
                 <constraints nullable="false"/>
             </column>
+            <column name="transaction_status" type="varchar(20)" defaultValue="NOT_COMPLETED" remarks="Статус транзакции">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="timestamp" defaultValueComputed="now()">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
 
         <sql>
@@ -105,6 +111,10 @@
             ALTER TABLE agreements
             ADD CONSTRAINT chk_agreements_status
             CHECK (status IN ('ACTIVE', 'PAID', 'DELETED'));
+
+            ALTER TABLE agreements
+            ADD CONSTRAINT chk_agreements_transaction_status
+            CHECK (transaction_status IN ('COMPLETED', 'NOT_COMPLETED'));
 
             ALTER TABLE agreements
             ADD CONSTRAINT chk_agreements_actual_debt_sum
@@ -236,15 +246,15 @@
         </createIndex>
 
         <createIndex tableName="addresses" indexName="i_addresses_debtor_id">
-            <column name="debtor_id"></column>
+            <column name="debtor_id"/>
         </createIndex>
 
         <createIndex tableName="agreements_keys" indexName="i_agreements_keys_agreement_id">
-            <column name="agreement_id"></column>
+            <column name="agreement_id"/>
         </createIndex>
 
         <createIndex tableName="agreements_keys" indexName="i_agreements_keys_key">
-            <column name="key"></column>
+            <column name="key"/>
         </createIndex>
 
     </changeSet>

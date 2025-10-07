@@ -1,11 +1,14 @@
 package ru.pozhar.collector_api.controller;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.pozhar.collector_api.openapi.api.AgreementApi;
@@ -19,6 +22,8 @@ import org.springframework.http.ResponseEntity;
 import ru.pozhar.collector_api.openapi.dto.ResponsePageAgreement;
 import ru.pozhar.collector_api.exception.ValidationException;
 import ru.pozhar.collector_api.service.AgreementService;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api")
@@ -41,6 +46,14 @@ public class AgreementController implements AgreementApi {
         return ResponseEntity.status(HttpStatus.OK)
                 .header(HttpHeaders.LOCATION, "api/agreements")
                 .body(response);
+    }
+
+    @PostMapping("/agreements/list")
+    public ResponseEntity<List<Long>> createAgreementsFromList(
+            @RequestBody List<@Valid RequestAgreementDTO> requestAgreementDTOs) {
+        List<Long> createdAgreements = agreementService.createAgreementsFromList(requestAgreementDTOs);
+        return  ResponseEntity.status(HttpStatus.CREATED)
+                .body(createdAgreements);
     }
 
     @Override

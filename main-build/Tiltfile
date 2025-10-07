@@ -11,5 +11,8 @@ if os.path.exists('./../notification/Tiltfile.unit'):
 if os.path.exists('./../camunda-service/Tiltfile.unit'):
   include('./../camunda-service/Tiltfile.unit')
 
+if os.path.exists('./../parser/Tiltfile.unit'):
+  include('./../parser/Tiltfile.unit')
+
 if os.path.exists('./../frontend/Tiltfile.unit'):
   include('./../frontend/Tiltfile.unit')
