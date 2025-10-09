@@ -12,6 +12,7 @@ import ru.pozhar.parser.client.CollectorApiClient;
 import ru.pozhar.parser.openapi.dto.RequestAgreementDTO;
 import ru.pozhar.parser.service.AgreementsSendService;
 import ru.pozhar.parser.service.ParseCsvService;
+import ru.pozhar.parser.service.ParseXlsxService;
 
 import java.util.List;
 
@@ -20,12 +21,15 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AgreementCsvController {
     private final ParseCsvService parseCsvService;
+
+    private final ParseXlsxService parseXlsxService;
     private final AgreementsSendService agreementsSendService;
 
     @PostMapping(value = "/agreements")
     public ResponseEntity<Void> uploadAgreementsCSV(
             @RequestParam("file") MultipartFile file) {
-        List<List<RequestAgreementDTO>> batches = parseCsvService.parseCsv(file);
+        //List<List<RequestAgreementDTO>> batches = parseCsvService.parseCsv(file);
+        List<List<RequestAgreementDTO>> batches = parseXlsxService.parseXlsx(file);
         agreementsSendService.sendAgreementsList(batches);
         return ResponseEntity.noContent().build();
     }
