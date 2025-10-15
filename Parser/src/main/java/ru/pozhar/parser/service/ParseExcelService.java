@@ -2,6 +2,7 @@ package ru.pozhar.parser.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
@@ -20,6 +21,7 @@ import ru.pozhar.parser.openapi.dto.RequestDebtorDTO;
 import ru.pozhar.parser.openapi.dto.RequestDocumentDTO;
 import ru.pozhar.parser.openapi.dto.Role;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -32,18 +34,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class ParseXlsxService {
+public class ParseExcelService implements TableParser {
     private final DataFormatter dataFormatter = new DataFormatter();
 
-    public List<List<RequestAgreementDTO>> parseXlsx(MultipartFile file) {
+    @Override
+    public LinkedList<RequestAgreementDTO> parse(MultipartFile file) {
         LinkedList<RequestAgreementDTO> agreementDTOs = new LinkedList<>();
-        try (Workbook workbook = new XSSFWorkbook(file.getInputStream())) {
+        try (Workbook workbook = getWorkBook(file)) {
             Sheet sheet = workbook.cloneSheet(0);
             Map<String, Integer> agreementLocator = new HashMap<>();
             Map<String, Integer> debtorLocator = new HashMap<>();
@@ -67,7 +68,7 @@ public class ParseXlsxService {
                 startRow = Math.max(startRow, mergedCells.getLastRow() + 2);
             }
             int lastRow = 0;
-            for (int i = 0; !dataFormatter.formatCellValue(sheet.getRow(i).getCell(0)).isEmpty(); i++) {
+            for (int i = 0;sheet.getRow(i) != null && !dataFormatter.formatCellValue(sheet.getRow(i).getCell(0)).isEmpty(); i++) {
                 lastRow = i;
             }
             for (int i = startRow; i <= lastRow; i++) {
@@ -79,15 +80,19 @@ public class ParseXlsxService {
                 agreementDTOs.add(agreementDTO);
             }
         } catch (Exception ex) {
-            log.error("Исключение при парсинге XLSX файла {}. Ошибка {}", file.getName(), ex.getMessage(), ex);
-            throw new RuntimeException("Исключение при парсинге XLSX файла {}");
+            log.error("Исключение при парсинге Excel файла {}. Ошибка {}", file.getName(), ex.getMessage(), ex);
+            throw new RuntimeException("Исключение при парсинге Excel файла {}");
         }
-        List<List<RequestAgreementDTO>> agreementBatches =
-                IntStream.iterate(0, i -> i < agreementDTOs.size(), i -> i + 5)
-                        .mapToObj(i -> agreementDTOs.subList(i, Math.min(i + 5, agreementDTOs.size())))
-                        .collect(Collectors.toList());
-        System.out.println(agreementBatches);
-        return agreementBatches;
+        return agreementDTOs;
+    }
+
+    private Workbook getWorkBook(MultipartFile file) throws IOException {
+        boolean isXls = file.getOriginalFilename().toLowerCase().endsWith("xls");
+        if (isXls) {
+            return new HSSFWorkbook(file.getInputStream());
+        } else {
+            return new XSSFWorkbook(file.getInputStream());
+        }
     }
 
     private LocalDate parseDate(String dateString) {

@@ -29,9 +29,10 @@ import java.util.stream.IntStream;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class ParseCsvService {
+public class ParseCsvService implements TableParser {
 
-    public List<List<RequestAgreementDTO>> parseCsv(MultipartFile file) {
+    @Override
+    public LinkedList<RequestAgreementDTO> parse(MultipartFile file) {
         int[] existFlags = new int[4];
         LinkedList<RequestAgreementDTO> agreementDTOs = new LinkedList<>();
         try(Reader reader = new InputStreamReader(file.getInputStream());
@@ -57,11 +58,7 @@ public class ParseCsvService {
             log.error("Исключение при парсинге CSV файла {}. Ошибка {}", file.getName(), ex.getMessage(), ex);
             throw new RuntimeException("Исключение при парсинге CSV файла {}");
         }
-        List<List<RequestAgreementDTO>> agreementBatches =
-                IntStream.iterate(0, i -> i < agreementDTOs.size(), i -> i + 5)
-                .mapToObj(i -> agreementDTOs.subList(i, Math.min(i + 5, agreementDTOs.size())))
-                .collect(Collectors.toList());
-        return agreementBatches;
+        return agreementDTOs;
     }
 
     private RequestAgreementDTO parseAgreement(CSVRecord record, int[] existFlags) {
